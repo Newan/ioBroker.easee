@@ -1,0 +1,37 @@
+{
+    "cli": true,
+    "adapterName": "easee",
+    "title": "easee",
+    "description": "Adapter to connect Easee Wallbox",
+    "keywords": [
+        "wallbox easee"
+    ],
+    "expert": "no",
+    "features": [
+        "adapter"
+    ],
+    "adminFeatures": [],
+    "type": "vehicle",
+    "startMode": "daemon",
+    "connectionType": "cloud",
+    "dataSource": "poll",
+    "connectionIndicator": "no",
+    "language": "JavaScript",
+    "adminReact": "no",
+    "tools": [
+        "ESLint",
+        "type checking"
+    ],
+    "indentation": "Space (4)",
+    "quotes": "single",
+    "es6class": "yes",
+    "authorName": "Newan",
+    "authorGithub": "Newan",
+    "authorEmail": "info@newan.de",
+    "gitRemoteProtocol": "HTTPS",
+    "gitCommit": "no",
+    "license": "MIT License",
+    "ci": "gh-actions",
+    "dependabot": "no",
+    "creatorVersion": "1.31.0"
+}

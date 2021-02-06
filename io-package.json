@@ -1,0 +1,76 @@
+{
+    "common": {
+        "name": "easee",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "easee",
+        "titleLang": {
+            "en": "easee",
+            "de": "Leichtigkeit",
+            "ru": "мольберт",
+            "pt": "facilite",
+            "nl": "gemak",
+            "fr": "facilité",
+            "it": "facilitare",
+            "es": "facilidad",
+            "pl": "easye",
+            "zh-cn": "画架"
+        },
+        "desc": {
+            "en": "Adapter to connect Easee Wallbox",
+            "de": "Adapter zum Anschließen der Easee Wallbox",
+            "ru": "Адаптер для подключения Easee Wallbox",
+            "pt": "Adaptador para conectar a caixa de parede Easee",
+            "nl": "Adapter om Easee Wallbox aan te sluiten",
+            "fr": "Adaptateur pour connecter Easee Wallbox",
+            "it": "Adattatore per collegare Easee Wallbox",
+            "es": "Adaptador para conectar Easee Wallbox",
+            "pl": "Adapter do podłączenia Easee Wallbox",
+            "zh-cn": "连接Easee Wallbox的适配器"
+        },
+        "authors": [
+            "Newan <info@newan.de>"
+        ],
+        "keywords": [
+            "wallbox easee"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "easee.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/Newan/ioBroker.easee/master/admin/easee.png",
+        "readme": "https://github.com/Newan/ioBroker.easee/blob/master/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "vehicle",
+        "compact": true,
+        "connectionType": "cloud",
+        "dataSource": "poll",
+        "materialize": true,
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ]
+    },
+    "native": {
+        "option1": true,
+        "option2": "42"
+    },
+    "objects": [],
+    "instanceObjects": []
+}
