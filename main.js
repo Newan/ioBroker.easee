@@ -11,6 +11,9 @@ const utils = require('@iobroker/adapter-core');
 // Load your modules here, e.g.:
 // const fs = require("fs");
 
+const adapterIntervals = {}; //Ahlten von allen Intervallen
+
+
 class Easee extends utils.Adapter {
 
     /**
@@ -32,6 +35,19 @@ class Easee extends utils.Adapter {
      * Is called when databases are connected and adapter received configuration.
      */
     async onReady() {
+        // Testen ob der Login funktioniert
+
+        // Haben ein Login und müssen nun den TokenTimer setzen
+
+        // Hben wir eine Pollingzeit oder nehmen wir default
+
+        // starten den Statuszyklus der API
+        this.readAllStates();
+
+
+
+
+
         // Initialize your adapter here
 
         // The adapters config (in the instance object everything under the attribute "native") is accessible via
@@ -91,16 +107,20 @@ class Easee extends utils.Adapter {
      */
     onUnload(callback) {
         try {
-            // Here you must clear all timeouts or intervals that may still be active
-            // clearTimeout(timeout1);
-            // clearTimeout(timeout2);
-            // ...
-            // clearInterval(interval1);
-
+            clearTimeout(adapterIntervals.readAllStates);
+            this.log.info(`Adaptor easee cleaned up everything...`);
             callback();
         } catch (e) {
             callback();
         }
+    }
+
+
+    /*****************************************************************************************/
+    readAllStates() {
+        this.log.info("read new states from the API")
+
+        adapterIntervals.readAllStates = setTimeout(this.readAllStates.bind(this), 30000); //this.config.polltimelive);
     }
 
     // If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
