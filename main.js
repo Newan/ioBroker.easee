@@ -10,9 +10,13 @@ const utils = require('@iobroker/adapter-core');
 
 // Load your modules here, e.g.:
 // const fs = require("fs");
+const axios = require('axios').default;
 
+const apiUrl = "https://api.easee.cloud";
 const adapterIntervals = {}; //Ahlten von allen Intervallen
-
+var accessToken = "";
+var refreshToken = "";
+var expireTime = Date.now();
 
 class Easee extends utils.Adapter {
 
@@ -35,14 +39,48 @@ class Easee extends utils.Adapter {
      * Is called when databases are connected and adapter received configuration.
      */
     async onReady() {
+        //Erstes Objekt erstellen
+        await this.setObjectNotExistsAsync('online', {
+            type: 'state',
+            common: {
+                name: 'online',
+                type: 'boolean',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+
         // Testen ob der Login funktioniert
+        if (this.config.username == '' || this.config.password == '') {
+            this.log.error("No Username or Password set");
+            //Status melden
+            await this.setStateAsync('testVariable', true);
+        } else {
+            var login = await this.login(this.config.username, this.config.password);
+    
+            if (login) {
+                //Erstes Objekt erstellen
+                await this.setObjectNotExistsAsync('lastUpdate', {
+                    type: 'state',
+                    common: {
+                        name: 'lastUpdate',
+                        type: 'string',
+                        role: 'indicator',
+                        read: true,
+                        write: false,
+                    },
+                    native: {},
+                });
 
-        // Haben ein Login und müssen nun den TokenTimer setzen
+                // starten den Statuszyklus der API
+                this.readAllStates();
+    
+            }     
+        }
 
-        // Hben wir eine Pollingzeit oder nehmen wir default
-
-        // starten den Statuszyklus der API
-        this.readAllStates();
 
 
 
@@ -60,17 +98,6 @@ class Easee extends utils.Adapter {
         Here a simple template for a boolean variable named "testVariable"
         Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
         */
-        await this.setObjectNotExistsAsync('testVariable', {
-            type: 'state',
-            common: {
-                name: 'testVariable',
-                type: 'boolean',
-                role: 'indicator',
-                read: true,
-                write: true,
-            },
-            native: {},
-        });
 
         // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
         this.subscribeStates('testVariable');
@@ -84,7 +111,6 @@ class Easee extends utils.Adapter {
             you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
         */
         // the variable testVariable is set to true as command (ack=false)
-        await this.setStateAsync('testVariable', true);
 
         // same thing, but the value is flagged "ack"
         // ack should be always set to true if the value is received from or acknowledged from the target system
@@ -108,7 +134,7 @@ class Easee extends utils.Adapter {
     onUnload(callback) {
         try {
             clearTimeout(adapterIntervals.readAllStates);
-            this.log.info(`Adaptor easee cleaned up everything...`);
+            this.log.info('Adaptor easee cleaned up everything...');
             callback();
         } catch (e) {
             callback();
@@ -117,9 +143,15 @@ class Easee extends utils.Adapter {
 
 
     /*****************************************************************************************/
-    readAllStates() {
-        this.log.info("read new states from the API")
+    async readAllStates() {
+        if(expireTime <= Date.now()) {
+            //Token ist expired!
+            this.log.info("Token is Expired - refresh")
+            this.refreshToken()
+        }
 
+        this.log.info("read new states from the API")
+        await this.setStateAsync('lastUpdate', new Date().toLocaleTimeString()); 
         adapterIntervals.readAllStates = setTimeout(this.readAllStates.bind(this), 30000); //this.config.polltimelive);
     }
 
@@ -173,6 +205,31 @@ class Easee extends utils.Adapter {
     //     }
     // }
 
+    //Todo auslagern
+
+
+    async login(username, password) {
+        const response = await axios.post(apiUrl + '/api/accounts/token', {
+                userName: username,
+                password: password          
+            });
+
+        this.log.info("Login successful")
+
+        accessToken = response.data.accessToken;
+        refreshToken = response.data.refreshToken;
+        expireTime = Date.now() + (response.data.expiresIn - 60) * 1000;
+
+        await this.setStateAsync('online', true);
+
+
+        return true;
+    }
+
+    async refreshToken(){
+
+    }
+
 }
 
 // @ts-ignore parent is a valid property on module
@@ -186,3 +243,7 @@ if (module.parent) {
     // otherwise start the instance directly
     new Easee();
 }
+
+
+
+
