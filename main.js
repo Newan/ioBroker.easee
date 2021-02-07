@@ -1,17 +1,10 @@
 'use strict';
 
-/*
- * Created with @iobroker/create-adapter v1.31.0
- */
-
-// The adapter-core module gives you access to the core ioBroker functions
-// you need to create an adapter
 const utils = require('@iobroker/adapter-core');
 
-// Load your modules here, e.g.:
-// const fs = require("fs");
 const axios = require('axios').default;
 
+//Eigene Variablen 
 const apiUrl = "https://api.easee.cloud";
 const adapterIntervals = {}; //Ahlten von allen Intervallen
 var accessToken = "";
@@ -30,16 +23,15 @@ class Easee extends utils.Adapter {
         });
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
-        // this.on('objectChange', this.onObjectChange.bind(this));
-        // this.on('message', this.onMessage.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
 
     /**
-     * Is called when databases are connected and adapter received configuration.
+     * Starten den Adapter 
      */
     async onReady() {
-        //Erstes Objekt erstellen
+
+        //Erstes Objekt erstellen, für den Onlinestatus
         await this.setObjectNotExistsAsync('online', {
             type: 'state',
             common: {
@@ -57,7 +49,7 @@ class Easee extends utils.Adapter {
         if (this.config.username == '' || this.config.password == '') {
             this.log.error("No Username or Password set");
             //Status melden
-            await this.setStateAsync('testVariable', true);
+            await this.setStateAsync('online', false);
         } else {
             var login = await this.login(this.config.username, this.config.password);
     
@@ -75,10 +67,13 @@ class Easee extends utils.Adapter {
                     native: {},
                 });
 
-                // starten den Statuszyklus der API
+                // starten den Statuszyklus der API neu
                 this.readAllStates();
     
-            }     
+            } else {
+                //Login hat nicht funktionert, Adapter kann nicht gestartet werden
+                //Errohandling in der Loginfunktion derzeit
+            }    
         }
 
 
@@ -87,11 +82,6 @@ class Easee extends utils.Adapter {
 
 
         // Initialize your adapter here
-
-        // The adapters config (in the instance object everything under the attribute "native") is accessible via
-        // this.config:
-        this.log.info('config option1: ' + this.config.option1);
-        this.log.info('config option2: ' + this.config.option2);
 
         /*
         For every state in the system there has to be also an object of type state
@@ -128,13 +118,13 @@ class Easee extends utils.Adapter {
     }
 
     /**
-     * Is called when adapter shuts down - callback has to be called under any circumstances!
-     * @param {() => void} callback
+     * Clear all Timeouts an inform the USers
      */
     onUnload(callback) {
         try {
             clearTimeout(adapterIntervals.readAllStates);
             this.log.info('Adaptor easee cleaned up everything...');
+            this.setState('online', false);
             callback();
         } catch (e) {
             callback();
@@ -147,30 +137,27 @@ class Easee extends utils.Adapter {
         if(expireTime <= Date.now()) {
             //Token ist expired!
             this.log.info("Token is Expired - refresh")
-            this.refreshToken()
-        }
+            await this.refreshToken()
+        } 
 
-        this.log.info("read new states from the API")
+        this.log.info("read new states from the API")        
+        
+        //Lesen alle Charger aus
+        let tmpAllChargers = await this.getAllCharger();
+        tmpAllChargers.forEach(async charger => {
+            this.log.debug("Charger gefunden")
+            this.log.debug(JSON.stringify(charger));
+                
+            //Lesen den Status aus 
+            let tmpChargerState = await this.getCharger(charger.id);
+            //Setzen die Status der Charger
+            this.setNewStatusToCharger(charger, tmpChargerState);
+
+        });
+        //Melden das Update
         await this.setStateAsync('lastUpdate', new Date().toLocaleTimeString()); 
         adapterIntervals.readAllStates = setTimeout(this.readAllStates.bind(this), 30000); //this.config.polltimelive);
     }
-
-    // If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
-    // You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
-    // /**
-    //  * Is called if a subscribed object changes
-    //  * @param {string} id
-    //  * @param {ioBroker.Object | null | undefined} obj
-    //  */
-    // onObjectChange(id, obj) {
-    //     if (obj) {
-    //         // The object was changed
-    //         this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-    //     } else {
-    //         // The object was deleted
-    //         this.log.info(`object ${id} deleted`);
-    //     }
-    // }
 
     /**
      * Is called if a subscribed state changes
@@ -187,28 +174,17 @@ class Easee extends utils.Adapter {
         }
     }
 
-    // If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
-    // /**
-    //  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-    //  * Using this method requires "common.messagebox" property to be set to true in io-package.json
-    //  * @param {ioBroker.Message} obj
-    //  */
-    // onMessage(obj) {
-    //     if (typeof obj === 'object' && obj.message) {
-    //         if (obj.command === 'send') {
-    //             // e.g. send email or pushover or whatever
-    //             this.log.info('send command');
 
-    //             // Send response in callback if required
-    //             if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-    //         }
-    //     }
-    // }
-
-    //Todo auslagern
+    /*************************************************************************
+     * API CALLS
+     * //Todo auslagern in eigene Datei ?
+     **************************************************************************/
 
 
+    //Get Token from API
     async login(username, password) {
+
+
         const response = await axios.post(apiUrl + '/api/accounts/token', {
                 userName: username,
                 password: password          
@@ -226,9 +202,248 @@ class Easee extends utils.Adapter {
         return true;
     }
 
-    async refreshToken(){
-
+    //GET net Token from API
+    async refreshToken() {
+        return await axios.post(apiUrl + '/api/accounts/refresh_token', {            
+            accessToken: accessToken,
+            refreshToken: refreshToken
+        }).then(response => {
+            this.log.info("RefreshToken successful");
+            accessToken = response.data.accessToken;
+            refreshToken = response.data.refreshToken;
+            expireTime = Date.now() + (response.data.expiresIn - 60) * 1000;
+    
+            this.log.info(JSON.stringify(response.data));
+        }).catch((error) => {
+            this.log.info("RefreshToken error");
+            this.log.error(error)
+        });
     }
+
+    //Lese alle Charger aus
+    async getAllCharger(){
+        return await axios.get(apiUrl + '/api/chargers' , 
+            { headers: {"Authorization" : `Bearer ${accessToken}`} 
+        }).then(response => {
+            this.log.debug("Chargers ausgelesen");
+            this.log.info(JSON.stringify(response.data));
+            return response.data
+        }).catch((error) => {
+            this.log.error(error)
+        });
+    }
+
+    // Lese den Charger aus
+    async getCharger(charger_id){
+        return await axios.get(apiUrl + '/api/chargers/' + charger_id +'/state', 
+            { headers: {"Authorization" : `Bearer ${accessToken}`} 
+        }).then(response => {
+            this.log.debug("Charger ausgelesen mit id" + charger_id);
+            this.log.info(JSON.stringify(response.data));
+            return response.data
+        }).catch((error) => {
+            this.log.error(error)
+        });
+    }
+
+
+
+
+
+    /***********************************************************************
+     * Funktionen für Staus der Reading um den Code aufgeräumeter zu machen
+     ***********************************************************************/
+
+    //Setzen alle Staus für Charger
+    async setNewStatusToCharger(charger, charger_states) {
+        //Legen die Steurungsbutton für jeden Charger an
+        await this.setObjectNotExistsAsync(charger.id + '.control.start', {
+            type: 'state',
+            common: {
+                name: charger.id + '.chargerStart',
+                type: "boolean",
+                role: "button",
+                read: false,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync(charger.id + '.control.stop', {
+            type: 'state',
+            common: {
+                name: charger.id + '.chargerStop',
+                type: "boolean",
+                role: "button",
+                read: false,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync(charger.id + '.control.pause', {
+            type: 'state',
+            common: {
+                name: charger.id + '.chargerPause',
+                type: "boolean",
+                role: "button",
+                read: false,
+                write: true,
+            },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync(charger.id + '.control.resume', {
+            type: 'state',
+            common: {
+                name: charger.id + '.chargerResume',
+                type: "boolean",
+                role: "button",
+                read: false,
+                write: true,
+            },
+            native: {},
+        });
+
+        //"cableLocked": true,
+        await this.setObjectNotExistsAsync(charger.id + '.cableLocked', {
+            type: 'state',
+            common: {
+                name: 'cableLocked',
+                type: 'boolean',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        this.setState(charger.id + '.cableLocked', charger_states.cableLocked);
+
+         //"chargerOpMode": 1,
+         await this.setObjectNotExistsAsync(charger.id + '.chargerOpMode', {
+            type: 'state',
+            common: {
+                name: 'chargerOpMode',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        this.setState(charger.id + '.chargerOpMode', charger_states.chargerOpMode);
+
+         //"totalPower": 0,
+         await this.setObjectNotExistsAsync(charger.id + '.totalPower', {
+            type: 'state',
+            common: {
+                name: 'totalPower',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        this.setState(charger.id + '.totalPower', charger_states.totalPower);
+
+        //"wiFiRSSI": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.wiFiRSSI', {
+            type: 'state',
+            common: {
+                name: 'wiFiRSSI',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        this.setState(charger.id + '.wiFiRSSI', charger_states.wiFiRSSI);
+
+        //"chargerFirmware": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.chargerFirmware', {
+            type: 'state',
+            common: {
+                name: 'chargerFirmware',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        this.setState(charger.id + '.chargerFirmware', charger_states.chargerFirmware);
+
+        //"latestFirmware": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.latestFirmware', {
+            type: 'state',
+            common: {
+                name: 'latestFirmware',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        this.setState(charger.id + '.latestFirmware', charger_states.latestFirmware);
+
+        //"voltage": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.voltage', {
+            type: 'state',
+            common: {
+                name: 'voltage',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        this.setState(charger.id + '.voltage', charger_states.voltage);
+
+        //"outputCurrent": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.outputCurrent', {
+            type: 'state',
+            common: {
+                name: 'outputCurrent',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        this.setState(charger.id + '.outputCurrent', charger_states.outputCurrent);
+
+        //"isOnline": true,
+        await this.setObjectNotExistsAsync(charger.id + '.isOnline', {
+            type: 'state',
+            common: {
+                name: 'isOnline',
+                type: 'boolean',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        this.setState(charger.id + '.isOnline', charger_states.isOnline);
+
+        //"wiFiAPEnabled": true,
+        await this.setObjectNotExistsAsync(charger.id + '.wiFiAPEnabled', {
+            type: 'state',
+            common: {
+                name: 'wiFiAPEnabled',
+                type: 'boolean',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        this.setState(charger.id + '.wiFiAPEnabled', charger_states.wiFiAPEnabled);
+     
+     }
+
 
 }
 
