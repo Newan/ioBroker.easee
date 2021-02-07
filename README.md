@@ -20,6 +20,9 @@ Adapter to connect Easee Wallbox
 
 ### 0.0.1
 * (Newan) initial release
+### 0.0.1
+* (Newan) add config values
+
 
 ## License
 MIT License
