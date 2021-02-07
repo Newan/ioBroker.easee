@@ -75,46 +75,6 @@ class Easee extends utils.Adapter {
                 //Errohandling in der Loginfunktion derzeit
             }    
         }
-
-
-
-
-
-
-        // Initialize your adapter here
-
-        /*
-        For every state in the system there has to be also an object of type state
-        Here a simple template for a boolean variable named "testVariable"
-        Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
-        */
-
-        // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
-        this.subscribeStates('testVariable');
-        // You can also add a subscription for multiple states. The following line watches all states starting with "lights."
-        // this.subscribeStates('lights.*');
-        // Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
-        // this.subscribeStates('*');
-
-        /*
-            setState examples
-            you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-        */
-        // the variable testVariable is set to true as command (ack=false)
-
-        // same thing, but the value is flagged "ack"
-        // ack should be always set to true if the value is received from or acknowledged from the target system
-        await this.setStateAsync('testVariable', { val: true, ack: true });
-
-        // same thing, but the state is deleted after 30s (getState will return null afterwards)
-        await this.setStateAsync('testVariable', { val: true, ack: true, expire: 30 });
-
-        // examples for the checkPassword/checkGroup functions
-        let result = await this.checkPasswordAsync('admin', 'iobroker');
-        this.log.info('check user admin pw iobroker: ' + result);
-
-        result = await this.checkGroupAsync('admin', 'admin');
-        this.log.info('check group user admin group admin: ' + result);
     }
 
     /**
@@ -154,6 +114,7 @@ class Easee extends utils.Adapter {
             this.setNewStatusToCharger(charger, tmpChargerState);
 
         });
+
         //Melden das Update
         await this.setStateAsync('lastUpdate', new Date().toLocaleTimeString()); 
         adapterIntervals.readAllStates = setTimeout(this.readAllStates.bind(this), 30000); //this.config.polltimelive);
@@ -166,11 +127,35 @@ class Easee extends utils.Adapter {
      */
     onStateChange(id, state) {
         if (state) {
-            // The state was changed
-            this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+            // control charger            
+            let tmpControl = id.split('.');
+            switch (tmpControl[4]) {
+                case 'start':
+                    // Starten Ladevorgang
+                    this.log.info("Starting charging for Charger.id:" + tmpControl[2]);
+                    this.startCharging(tmpControl[2]);
+                    break;
+                case 'stop':
+                    //  Stopen Ladevorgang
+                    this.log.info("Stopping charging for Charger.id:" + tmpControl[2]);
+                    this.stopCharging(tmpControl[2]);                  
+                    break;                
+                case 'pause':
+                    //  Pausiere Ladevorgang
+                    this.log.info("Pause charging for Charger.id:" + tmpControl[2]);
+                    this.pauseCharging(tmpControl[2]);
+                    break;  
+                case 'resume':
+                    //  Resume Ladevorgang
+                    this.log.info("Resume charging for Charger.id:" + tmpControl[2]);
+                    this.resumeCharging(tmpControl[2]);                    
+                    break;                          
+                default:
+                    this.log.error("No command for state found")
+            }
         } else {
             // The state was deleted
-            this.log.info(`state ${id} deleted`);
+            this.log.error(`state ${id} deleted`);
         }
     }
 
@@ -179,7 +164,6 @@ class Easee extends utils.Adapter {
      * API CALLS
      * //Todo auslagern in eigene Datei ?
      **************************************************************************/
-
 
     //Get Token from API
     async login(username, password) {
@@ -213,9 +197,9 @@ class Easee extends utils.Adapter {
             refreshToken = response.data.refreshToken;
             expireTime = Date.now() + (response.data.expiresIn - 60) * 1000;
     
-            this.log.info(JSON.stringify(response.data));
+            this.log.debug(JSON.stringify(response.data));
         }).catch((error) => {
-            this.log.info("RefreshToken error");
+            this.log.error("RefreshToken error");
             this.log.error(error)
         });
     }
@@ -226,7 +210,7 @@ class Easee extends utils.Adapter {
             { headers: {"Authorization" : `Bearer ${accessToken}`} 
         }).then(response => {
             this.log.debug("Chargers ausgelesen");
-            this.log.info(JSON.stringify(response.data));
+            this.log.debug(JSON.stringify(response.data));
             return response.data
         }).catch((error) => {
             this.log.error(error)
@@ -239,14 +223,60 @@ class Easee extends utils.Adapter {
             { headers: {"Authorization" : `Bearer ${accessToken}`} 
         }).then(response => {
             this.log.debug("Charger ausgelesen mit id" + charger_id);
-            this.log.info(JSON.stringify(response.data));
+            this.log.debug(JSON.stringify(response.data));
             return response.data
         }).catch((error) => {
             this.log.error(error)
         });
     }
 
+    async startCharging(id) {
+        return await axios.post(apiUrl + '/api/chargers/' + id + '/commands/start_charging', {},
+            { headers: {"Authorization" : `Bearer ${accessToken}`}}
+        ).then(response => {
+            this.log.info("Start charging successful");
+            this.log.debug(JSON.stringify(response.data));
+        }).catch((error) => {
+            this.log.error("Start charging error");
+            this.log.error(error)
+        });
+    }
 
+    async stopCharging(id) {
+        return await axios.post(apiUrl + '/api/chargers/' + id + '/commands/stop_charging', {},
+            { headers: {"Authorization" : `Bearer ${accessToken}`}}
+        ).then(response => {
+            this.log.info("Stop charging successful");
+            this.log.debug(JSON.stringify(response.data));
+        }).catch((error) => {
+            this.log.error("Stop charging error");
+            this.log.error(error)
+        });
+    }
+
+    async pauseCharging(id) {
+        return await axios.post(apiUrl + '/api/chargers/' + id + '/commands/pause_charging', {},
+            { headers: {"Authorization" : `Bearer ${accessToken}`}}
+        ).then(response => {
+            this.log.info("Pause charging successful");
+            this.log.debug(JSON.stringify(response.data));
+        }).catch((error) => {
+            this.log.error("Pause charging error");
+            this.log.error(error)
+        });
+    }
+
+    async resumeCharging(id) {
+        return await axios.post(apiUrl + '/api/chargers/' + id + '/commands/resume_charging', {},
+            { headers: {"Authorization" : `Bearer ${accessToken}`}}
+        ).then(response => {
+            this.log.info("Resume charging successful");
+            this.log.debug(JSON.stringify(response.data));
+        }).catch((error) => {
+            this.log.error("Resume charging error");
+            this.log.error(error)
+        });
+    }
 
 
 
@@ -260,18 +290,20 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.control.start', {
             type: 'state',
             common: {
-                name: charger.id + '.chargerStart',
+                name: "Start charging",
                 type: "boolean",
                 role: "button",
-                read: false,
+                read: true,
                 write: true,
             },
             native: {},
         });
+        this.subscribeStates(charger.id + '.control.start');
+
         await this.setObjectNotExistsAsync(charger.id + '.control.stop', {
             type: 'state',
             common: {
-                name: charger.id + '.chargerStop',
+                name: "Stop charging",
                 type: "boolean",
                 role: "button",
                 read: false,
@@ -279,10 +311,12 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
+        this.subscribeStates(charger.id + '.control.stop');
+
         await this.setObjectNotExistsAsync(charger.id + '.control.pause', {
             type: 'state',
             common: {
-                name: charger.id + '.chargerPause',
+                name: "Pause charging",
                 type: "boolean",
                 role: "button",
                 read: false,
@@ -290,10 +324,12 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
+        this.subscribeStates(charger.id + '.control.pause');
+
         await this.setObjectNotExistsAsync(charger.id + '.control.resume', {
             type: 'state',
             common: {
-                name: charger.id + '.chargerResume',
+                name: "Resume charging",
                 type: "boolean",
                 role: "button",
                 read: false,
@@ -301,6 +337,7 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
+        this.subscribeStates(charger.id + '.control.resume');
 
         //"cableLocked": true,
         await this.setObjectNotExistsAsync(charger.id + '.cableLocked', {
