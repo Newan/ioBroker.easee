@@ -10,6 +10,7 @@ const adapterIntervals = {}; //Ahlten von allen Intervallen
 var accessToken = "";
 var refreshToken = "";
 var expireTime = Date.now();
+var polltime = 30;
 
 class Easee extends utils.Adapter {
 
@@ -44,6 +45,12 @@ class Easee extends utils.Adapter {
             native: {},
         });
 
+        //Schauen ob die Polltime realistisch ist
+        if (this.config.polltime < 1) {
+            this.log.error("Interval in seconds to short -> got to default 30")
+        } else {
+            polltime = this.config.polltime;
+        }
 
         // Testen ob der Login funktioniert
         if (this.config.username == '' || this.config.password == '') {
@@ -119,7 +126,7 @@ class Easee extends utils.Adapter {
 
         //Melden das Update
         await this.setStateAsync('lastUpdate', new Date().toLocaleTimeString()); 
-        adapterIntervals.readAllStates = setTimeout(this.readAllStates.bind(this), 30000); //this.config.polltimelive);
+        adapterIntervals.readAllStates = setTimeout(this.readAllStates.bind(this), polltime * 1000); 
     }
 
     /**
@@ -180,7 +187,7 @@ class Easee extends utils.Adapter {
 
         accessToken = response.data.accessToken;
         refreshToken = response.data.refreshToken;
-        expireTime = Date.now() + (response.data.expiresIn - 60) * 1000;
+        expireTime = Date.now() + (response.data.expiresIn - (polltime * 2)) * 1000;
 
         await this.setStateAsync('online', true);
 
@@ -197,7 +204,7 @@ class Easee extends utils.Adapter {
             this.log.info("RefreshToken successful");
             accessToken = response.data.accessToken;
             refreshToken = response.data.refreshToken;
-            expireTime = Date.now() + (response.data.expiresIn - 60) * 1000;
+            expireTime = Date.now() + (response.data.expiresIn - (polltime * 2)) * 1000;
     
             this.log.debug(JSON.stringify(response.data));
         }).catch((error) => {

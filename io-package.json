@@ -49,7 +49,8 @@
     },
     "native": {
         "username": "+49",
-        "password": "pass"
+        "password": "pass",
+        "polltime": 30
     },
     "objects": [],
     "instanceObjects": []

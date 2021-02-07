@@ -21,5 +21,10 @@ systemDictionary = {
     'password': {
         'en': 'Password',
         'de': 'Passwort'
+    },
+    'polltime': {
+        'en': 'Poll interval in seconds',
+        'de': 'Abfrageinterval in Sekunden'
     }
+
 };
