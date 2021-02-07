@@ -44,8 +44,8 @@
         ]
     },
     "native": {
-        "username": "",
-        "password": ""
+        "username": "+49",
+        "password": "pass"
     },
     "objects": [],
     "instanceObjects": []
