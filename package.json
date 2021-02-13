@@ -1,6 +1,6 @@
 {
   "name": "iobroker.easee",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Adapter to connect Easee Wallbox",
   "author": {
     "name": "Jens Nachtigal",

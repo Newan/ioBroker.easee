@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "easee",
-        "version": "0.0.3",
+        "version": "0.0.4",
         "news": {
+            "0.0.4": {
+                "en": "fixed config writeable. Reboot Charger add",
+                "de": "Konfigwerte schreibbar repariert. Neustart Wallbox hinzugefügt"
+            },
             "0.0.3": {
                 "en": "Add config writeable",
                 "de": "Konfigwerte schreibbar"

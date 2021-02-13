@@ -121,7 +121,10 @@ class Easee extends utils.Adapter {
             let tmpChargerConfig = await this.getChargerConfig(charger.id);
 
             //Setzen die Daten der Charger
-            this.setNewStatusToCharger(charger, tmpChargerState, tmpChargerConfig);
+            this.setNewStatusToCharger(charger, tmpChargerState);
+
+            //Setzen die Config zum Charger
+            this.setNewConfigToCharger(charger, tmpChargerConfig);
         });
 
         //Melden das Update
@@ -169,6 +172,11 @@ class Easee extends utils.Adapter {
                         this.log.info("Resume charging for Charger.id: " + tmpControl[2]);
                         this.resumeCharging(tmpControl[2]);                    
                         break;                          
+                    case 'reboot':
+                        //  Reboot Charger
+                        this.log.info("Reboot Charger.id: " + tmpControl[2]);
+                        this.rebootCharging(tmpControl[2]);                    
+                        break;                              
                     default:
                         this.log.error("No command for Control found for: " + id)
                 }    
@@ -320,6 +328,19 @@ class Easee extends utils.Adapter {
         });
     }
 
+    async rebootCharging(id) {
+        return await axios.post(apiUrl + '/api/chargers/' + id + '/commands/reboot', {},
+            { headers: {"Authorization" : `Bearer ${accessToken}`}}
+        ).then(response => {
+            this.log.info("Reboot charging successful");
+            this.log.debug(JSON.stringify(response.data));
+        }).catch((error) => {
+            this.log.error("Reboot charging error");
+            this.log.error(error)
+        });
+    }
+
+
     async changeConfig(id, configvalue, value) {
         this.log.debug(JSON.stringify( {
             [configvalue]: value
@@ -343,7 +364,7 @@ class Easee extends utils.Adapter {
      ***********************************************************************/
 
     //Setzen alle Staus für Charger
-    async setNewStatusToCharger(charger, charger_states, charger_config) {
+    async setNewStatusToCharger(charger, charger_states) {
         //Legen die Steurungsbutton für jeden Charger an
         await this.setObjectNotExistsAsync(charger.id + '.control.start', {
             type: 'state',
@@ -396,6 +417,20 @@ class Easee extends utils.Adapter {
             native: {},
         });
         this.subscribeStates(charger.id + '.control.resume');
+
+        await this.setObjectNotExistsAsync(charger.id + '.control.reboot', {
+            type: 'state',
+            common: {
+                name: "Reboot Charger",
+                type: "boolean",
+                role: "button",
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        this.subscribeStates(charger.id + '.control.reboot');
+
 
         //id
         await this.setObjectNotExistsAsync(charger.id + '.id', {
@@ -564,7 +599,10 @@ class Easee extends utils.Adapter {
             native: {},
         });
         this.setState(charger.id + '.status.wiFiAPEnabled', charger_states.wiFiAPEnabled);
-     
+    }
+
+    async setNewConfigToCharger(charger, charger_config) {
+
         /*************** Config Reading ****************/
         //isEnabled
         await this.setObjectNotExistsAsync(charger.id + '.config.isEnabled', {
@@ -593,7 +631,8 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
-        this.setState(charger.id + '.config.phaseMode', charger_config.phaseMode);
+        this.setState(charger.id + '.config.phaseMode', { val: charger_config.phaseMode, ack: true });
+        this.subscribeStates(charger.id + '.config.phaseMode');
 
         //ledStripBrightness
         await this.setObjectNotExistsAsync(charger.id + '.config.ledStripBrightness', {
@@ -607,7 +646,8 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
-        this.setState(charger.id + '.config.ledStripBrightness', charger_config.ledStripBrightness);
+        this.setState(charger.id + '.config.ledStripBrightness', { val: charger_config.ledStripBrightness, ack: true });
+        this.subscribeStates(charger.id + '.config.ledStripBrightness');
 
         //wiFiSSID
         await this.setObjectNotExistsAsync(charger.id + '.config.wiFiSSID', {
@@ -621,7 +661,8 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
-        this.setState(charger.id + '.config.wiFiSSID', charger_config.wiFiSSID);
+        this.setState(charger.id + '.config.wiFiSSID', { val: charger_config.wiFiSSID, ack: true });
+        this.subscribeStates(charger.id + '.config.wiFiSSID');
 
      }
 
