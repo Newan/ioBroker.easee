@@ -20,8 +20,10 @@ Adapter to connect Easee Wallbox
 
 ### 0.0.1
 * (Newan) initial release
-### 0.0.1
+### 0.0.2
 * (Newan) add config values
+### 0.0.3
+* (Newan) add config writeable
 
 
 ## License

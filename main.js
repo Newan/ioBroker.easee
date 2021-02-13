@@ -136,37 +136,58 @@ class Easee extends utils.Adapter {
      */
     onStateChange(id, state) {
         if (state) {
-            // control charger            
+            // The state was changed
+            this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
             let tmpControl = id.split('.');
-            switch (tmpControl[4]) {
-                case 'start':
-                    // Starten Ladevorgang
-                    this.log.info("Starting charging for Charger.id: " + tmpControl[2]);
-                    this.startCharging(tmpControl[2]);
-                    break;
-                case 'stop':
-                    //  Stopen Ladevorgang
-                    this.log.info("Stopping charging for Charger.id: " + tmpControl[2]);
-                    this.stopCharging(tmpControl[2]);                  
-                    break;                
-                case 'pause':
-                    //  Pausiere Ladevorgang
-                    this.log.info("Pause charging for Charger.id: " + tmpControl[2]);
-                    this.pauseCharging(tmpControl[2]);
-                    break;  
-                case 'resume':
-                    //  Resume Ladevorgang
-                    this.log.info("Resume charging for Charger.id: " + tmpControl[2]);
-                    this.resumeCharging(tmpControl[2]);                    
-                    break;                          
-                default:
-                    this.log.error("No command for state found")
+            if (tmpControl[3] == "config") {
+                // change config, wenn ack = false
+                if (!state.ack) {
+                    this.log.debug("update config to API: " + id);
+                    this.changeConfig(tmpControl[2], tmpControl[4], state.val);
+                    this.log.info("Changes send to API");
+                }
+            } else {
+                // control charger            
+                switch (tmpControl[4]) {
+                    case 'start':
+                        // Starten Ladevorgang
+                        this.log.info("Starting charging for Charger.id: " + tmpControl[2]);
+                        this.startCharging(tmpControl[2]);
+                        break;
+                    case 'stop':
+                        //  Stopen Ladevorgang
+                        this.log.info("Stopping charging for Charger.id: " + tmpControl[2]);
+                        this.stopCharging(tmpControl[2]);                  
+                        break;                
+                    case 'pause':
+                        //  Pausiere Ladevorgang
+                        this.log.info("Pause charging for Charger.id: " + tmpControl[2]);
+                        this.pauseCharging(tmpControl[2]);
+                        break;  
+                    case 'resume':
+                        //  Resume Ladevorgang
+                        this.log.info("Resume charging for Charger.id: " + tmpControl[2]);
+                        this.resumeCharging(tmpControl[2]);                    
+                        break;                          
+                    default:
+                        this.log.error("No command for Control found for: " + id)
+                }    
             }
+        } else {
+            // The state was deleted
+            this.log.info(`state ${id} deleted`);
+        }
+    }
+
+    /*onStateChange(id, state) {
+        if (state) {            
+            
+            }            
         } else {
             // The state was deleted
             this.log.error(`state ${id} deleted`);
         }
-    }
+    }*/
 
 
     /*************************************************************************
@@ -188,7 +209,7 @@ class Easee extends utils.Adapter {
         accessToken = response.data.accessToken;
         refreshToken = response.data.refreshToken;
         expireTime = Date.now() + (response.data.expiresIn - (polltime * 2)) * 1000;
-
+        this.log.debug(JSON.stringify(response.data));
         await this.setStateAsync('online', true);
 
 
@@ -299,6 +320,22 @@ class Easee extends utils.Adapter {
         });
     }
 
+    async changeConfig(id, configvalue, value) {
+        this.log.debug(JSON.stringify( {
+            [configvalue]: value
+        }));
+        return await axios.post(apiUrl + '/api/chargers/' + id + '/settings', {
+            [configvalue]: value
+            },
+            { headers: {"Authorization" : `Bearer ${accessToken}`}}
+        ).then(response => {
+            this.log.info("Config update successful");
+            this.log.debug(JSON.stringify(response.data));
+        }).catch((error) => {
+            this.log.error("Config update error");
+            this.log.error(error)
+        });
+    }
 
 
     /***********************************************************************
@@ -529,19 +566,6 @@ class Easee extends utils.Adapter {
         this.setState(charger.id + '.status.wiFiAPEnabled', charger_states.wiFiAPEnabled);
      
         /*************** Config Reading ****************/
-        await this.setObjectNotExistsAsync(charger.id + '.config.isEnabled', {
-            type: 'state',
-            common: {
-                name: 'isEnabled',
-                type: 'boolean',
-                role: 'indicator',
-                read: true,
-                write: false,
-            },
-            native: {},
-        });
-        this.setState(charger.id + '.config.isEnabled', charger_config.isEnabled);
-
         //isEnabled
         await this.setObjectNotExistsAsync(charger.id + '.config.isEnabled', {
             type: 'state',
@@ -554,7 +578,8 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
-        this.setState(charger.id + '.config.isEnabled', charger_config.isEnabled);
+        this.setState(charger.id + '.config.isEnabled',{ val: charger_config.isEnabled, ack: true } );
+        this.subscribeStates(charger.id + '.config.isEnabled');
 
         //phaseMode
         await this.setObjectNotExistsAsync(charger.id + '.config.phaseMode', {
@@ -564,7 +589,7 @@ class Easee extends utils.Adapter {
                 type: 'number',
                 role: 'indicator',
                 read: true,
-                write: false,
+                write: true,
             },
             native: {},
         });
@@ -578,7 +603,7 @@ class Easee extends utils.Adapter {
                 type: 'number',
                 role: 'indicator',
                 read: true,
-                write: false,
+                write: true,
             },
             native: {},
         });
@@ -592,7 +617,7 @@ class Easee extends utils.Adapter {
                 type: 'string',
                 role: 'indicator',
                 read: true,
-                write: false,
+                write: true,
             },
             native: {},
         });

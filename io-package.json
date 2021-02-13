@@ -3,6 +3,10 @@
         "name": "easee",
         "version": "0.0.2",
         "news": {
+            "0.0.3": {
+                "en": "Add config writeable",
+                "de": "Konfigwerte schreibbar"
+            },
             "0.0.2": {
                 "en": "Add config values",
                 "de": "Konfigwerte hinzugefügt"
