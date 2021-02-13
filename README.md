@@ -27,6 +27,8 @@ Adapter to connect Easee Wallbox
 ### 0.0.4
 * (Newan) fixed config writeable
 * (Newan) reboot charger
+### 0.0.5
+* (Newan) add energy used values
 
 
 ## License

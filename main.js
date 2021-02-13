@@ -11,7 +11,8 @@ var accessToken = "";
 var refreshToken = "";
 var expireTime = Date.now();
 var polltime = 30;
-
+var minPollTimeEnergy = 120;
+var roundCounter = 0;
 class Easee extends utils.Adapter {
 
     /**
@@ -125,7 +126,23 @@ class Easee extends utils.Adapter {
 
             //Setzen die Config zum Charger
             this.setNewConfigToCharger(charger, tmpChargerConfig);
+
+            //setzen und erechnen der Energiedaten, aber gebremste
+            if(roundCounter > (minPollTimeEnergy/polltime)) {
+                //lesen der Energiedaten
+                let tmpChargerSession = await this.getChargerSession(charger.id);
+                //etzen die Objekte
+                this.setNewSessionToCharger(charger, tmpChargerSession)
+            }
         });
+
+        //Energiedaten dürfen nur einmal in der Minute aufgerufen werden, daher müssen wir das bremsen
+        if(roundCounter > (minPollTimeEnergy/polltime)) {
+            this.log.info("Hole Energiedaten: " + roundCounter)
+            roundCounter = 0;
+        }
+        //Zählen die Runde!
+        roundCounter = roundCounter + 1;
 
         //Melden das Update
         await this.setStateAsync('lastUpdate', new Date().toLocaleTimeString()); 
@@ -273,6 +290,18 @@ class Easee extends utils.Adapter {
             { headers: {"Authorization" : `Bearer ${accessToken}`} 
         }).then(response => {
             this.log.debug("Charger config ausgelesen mit id: " + charger_id);
+            this.log.debug(JSON.stringify(response.data));
+            return response.data
+        }).catch((error) => {
+            this.log.error(error)
+        });
+    }
+
+    async getChargerSession(charger_id){
+        return await axios.get(apiUrl + '/api/sessions/charger/' + charger_id +'/monthly', 
+            { headers: {"Authorization" : `Bearer ${accessToken}`} 
+        }).then(response => {
+            this.log.debug("Charger session ausgelesen mit id: " + charger_id);
             this.log.debug(JSON.stringify(response.data));
             return response.data
         }).catch((error) => {
@@ -601,9 +630,87 @@ class Easee extends utils.Adapter {
         this.setState(charger.id + '.status.wiFiAPEnabled', charger_states.wiFiAPEnabled);
     }
 
+    /*************** Session Reading ****************/
+    async setNewSessionToCharger(charger, charger_session) {
+        this.log.debug(JSON.stringify(charger_session));
+        charger_session.forEach(async session => {  
+
+            //für jeden Monat errechnen wir das?
+            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalEnergyUsage', {
+                type: 'state',
+                common: {
+                    name: 'totalEnergyUsage',
+                    type: 'number',
+                    role: 'indicator',
+                    read: true,
+                    write: false,
+                },
+                native: {},
+            });                 
+            this.setState(charger.id + '.session.' + session.year + '.' + session.month+ '.totalEnergyUsage', session.totalEnergyUsage);     
+
+            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalCost', {
+                type: 'state',
+                common: {
+                    name: 'totalCost',
+                    type: 'number',
+                    role: 'indicator',
+                    read: true,
+                    write: false,
+                },
+                native: {},
+            });                 
+            this.setState(charger.id + '.session.' + session.year + '.' + session.month+ '.totalCost', session.totalCost);     
+
+            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.currencyId', {
+                type: 'state',
+                common: {
+                    name: 'currencyId',
+                    type: 'string',
+                    role: 'indicator',
+                    read: true,
+                    write: false,
+                },
+                native: {},
+            });                 
+            this.setState(charger.id + '.session.' + session.year + '.' + session.month+ '.currencyId', session.currencyId);     
+
+            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.total_year', {
+                type: 'state',
+                common: {
+                    name: 'total_year',
+                    type: 'number',
+                    role: 'indicator',
+                    read: true,
+                    write: false,
+                },
+                native: {},
+            });   
+
+            
+        });
+
+        let tmpYear = 1970;
+        let tmpYearCount = 0;
+        charger_session.forEach(session => {  
+            //Jahreszähler umhängen
+            this.log.info('set session year data');
+            if (tmpYear != session.year) {
+                //neues Jahr setzen alles zurück
+                this.setState(charger.id + '.session.' + session.year + '.total_year', session.totalEnergyUsage);     
+                tmpYearCount = session.totalEnergyUsage;
+                tmpYear = session.year;
+            } else {
+                tmpYearCount = tmpYearCount + session.totalEnergyUsage;
+                this.setState(charger.id + '.session.' + session.year + '.total_year', tmpYearCount);     
+            }
+        });
+
+    }    
+
+    /*************** Config Reading ****************/
     async setNewConfigToCharger(charger, charger_config) {
 
-        /*************** Config Reading ****************/
         //isEnabled
         await this.setObjectNotExistsAsync(charger.id + '.config.isEnabled', {
             type: 'state',
