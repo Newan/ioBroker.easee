@@ -6,7 +6,7 @@ const axios = require('axios').default;
 
 //Eigene Variablen 
 const apiUrl = "https://api.easee.cloud";
-const adapterIntervals = {}; //Ahlten von allen Intervallen
+const adapterIntervals = {}; //halten von allen Intervallen
 var accessToken = "";
 var refreshToken = "";
 var expireTime = Date.now();

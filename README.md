@@ -29,6 +29,9 @@ Adapter to connect Easee Wallbox
 * (Newan) reboot charger
 ### 0.0.5
 * (Newan) add energy used values
+### 0.1.0
+* (Newan) Preparation for the first stable version
+
 
 ## Donation
 [![](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=L55UBQJKJEUJL)
@@ -36,7 +39,7 @@ Adapter to connect Easee Wallbox
 ## License
 MIT License
 
-Copyright (c) 2021 Newan <info@newan.de>
+Copyright (c) 2021 Newan <iobroker@newan.de>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "easee",
-        "version": "0.0.5",
+        "version": "0.1.0",
         "news": {
+            "0.1.0": {
+                "en": "Preparation for the first stable version",
+                "de": "Vorbereitung für die erste stable Version"
+            },
             "0.0.5": {
                 "en": "add energy used value",
                 "de": "Verbrauchswerte hinzugefügt"
