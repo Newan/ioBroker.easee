@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "easee",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "news": {
+            "0.1.1": {
+                "en": "Password encrypt + bugfix for the stable version",
+                "de": "Password verschlüsselt + Fehlerkorrektur fürstable Version"
+            },
             "0.1.0": {
                 "en": "Preparation for the first stable version",
                 "de": "Vorbereitung für die erste stable Version"

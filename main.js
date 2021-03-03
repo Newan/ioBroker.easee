@@ -52,36 +52,54 @@ class Easee extends utils.Adapter {
         } else {
             polltime = this.config.polltime;
         }
-
+            
         // Testen ob der Login funktioniert
-        if (this.config.username == '' || this.config.password == '') {
-            this.log.error("No Username or Password set");
+        if (this.config.username == '' ) {
+            this.log.error("No username set");
             //Status melden
             await this.setStateAsync('online', false);
         } else {
-            var login = await this.login(this.config.username, this.config.password);
-    
-            if (login) {
-                //Erstes Objekt erstellen
-                await this.setObjectNotExistsAsync('lastUpdate', {
-                    type: 'state',
-                    common: {
-                        name: 'lastUpdate',
-                        type: 'string',
-                        role: 'indicator',
-                        read: true,
-                        write: false,
-                    },
-                    native: {},
-                });
+            
+            this.config.password = ''; //reset old passwords
+            this.getForeignObject('system.config', async (err, obj) => {
+                if ((obj && obj.native && obj.native.secret) || this.config.client_secret == '') {
+                    this.log.info("Secret is: " + this.config.client_secret);
 
-                // starten den Statuszyklus der API neu
-                this.readAllStates();
+                    this.config.password = decrypt(obj.native.secret, this.config.client_secret);            
+                    this.log.info("Password decrypted");
+                    this.log.debug("Password is:" + this.config.password);
+
+                    var login = await this.login(this.config.username, this.config.password);
     
-            } else {
-                //Login hat nicht funktionert, Adapter kann nicht gestartet werden
-                //Errohandling in der Loginfunktion derzeit
-            }    
+                    if (login) {
+                        //Erstes Objekt erstellen
+                        await this.setObjectNotExistsAsync('lastUpdate', {
+                            type: 'state',
+                            common: {
+                                name: 'lastUpdate',
+                                type: 'string',
+                                role: 'indicator',
+                                read: true,
+                                write: false,
+                            },
+                            native: {},
+                        });
+        
+                        // starten den Statuszyklus der API neu
+                        await this.readAllStates();
+            
+                    } else {
+                        //Login hat nicht funktionert, Adapter kann nicht gestartet werden
+                        //Errohandling in der Loginfunktion derzeit
+                    }    
+                } else {
+                    this.log.error("No password set");
+                    //Status melden
+                    await this.setStateAsync('online', false);
+        
+                }
+            });
+                
         }
     }
 
@@ -122,10 +140,10 @@ class Easee extends utils.Adapter {
             let tmpChargerConfig = await this.getChargerConfig(charger.id);
 
             //Setzen die Daten der Charger
-            this.setNewStatusToCharger(charger, tmpChargerState);
+            await this.setNewStatusToCharger(charger, tmpChargerState);
 
             //Setzen die Config zum Charger
-            this.setNewConfigToCharger(charger, tmpChargerConfig);
+            await this.setNewConfigToCharger(charger, tmpChargerConfig);
 
             //setzen und erechnen der Energiedaten, aber gebremste
             if(roundCounter > (minPollTimeEnergy/polltime)) {
@@ -389,10 +407,10 @@ class Easee extends utils.Adapter {
 
 
     /***********************************************************************
-     * Funktionen für Staus der Reading um den Code aufgeräumeter zu machen
+     * Funktionen für Status der Reading um den Code aufgeräumter zu machen
      ***********************************************************************/
 
-    //Setzen alle Staus für Charger
+    //Setzen alle Status für Charger
     async setNewStatusToCharger(charger, charger_states) {
         //Legen die Steurungsbutton für jeden Charger an
         await this.setObjectNotExistsAsync(charger.id + '.control.start', {
@@ -772,8 +790,14 @@ class Easee extends utils.Adapter {
         this.subscribeStates(charger.id + '.config.wiFiSSID');
 
      }
+}
 
-
+function decrypt(key, value) {
+    let result = '';
+    for (let i = 0; i < value.length; ++i) {
+        result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
+    }
+    return result;
 }
 
 // @ts-ignore parent is a valid property on module

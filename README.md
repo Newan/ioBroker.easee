@@ -31,6 +31,8 @@ Adapter to connect Easee Wallbox
 * (Newan) add energy used values
 ### 0.1.0
 * (Newan) Preparation for the first stable version
+### 0.1.1
+* (Newan) Password encrypt + bugfix for the stable version
 
 
 ## Donation
