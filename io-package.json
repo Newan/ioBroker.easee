@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "easee",
-        "version": "0.1.1",
+        "version": "0.1.2",
         "news": {
+            "0.1.2": {
+                "en": "Object reconstruction",
+                "de": "Objektumbau"
+            },
             "0.1.1": {
                 "en": "Password encrypt + bugfix for the stable version",
                 "de": "Password verschlüsselt + Fehlerkorrektur fürstable Version"

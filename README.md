@@ -33,6 +33,8 @@ Adapter to connect Easee Wallbox
 * (Newan) Preparation for the first stable version
 ### 0.1.1
 * (Newan) Password encrypt + bugfix for the stable version
+### 0.1.2
+* (Newan) Object reconstruction
 
 
 ## Donation
