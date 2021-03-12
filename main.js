@@ -420,7 +420,6 @@ class Easee extends utils.Adapter {
         });
     }
 
-
     /***********************************************************************
      * Funktionen für Status der Reading um den Code aufgeräumter zu machen
      ***********************************************************************/
