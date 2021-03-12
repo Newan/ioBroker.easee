@@ -438,6 +438,10 @@ class Easee extends utils.Adapter {
         this.setState(charger.id + '.status.outputCurrent', charger_states.outputCurrent);
         this.setState(charger.id + '.status.isOnline', charger_states.isOnline);
         this.setState(charger.id + '.status.wiFiAPEnabled', charger_states.wiFiAPEnabled);    
+
+        //wert der config wird nur hier gesendet
+        this.setState(charger.id + '.config.dynamicChargerCurrent', { val: charger_states.dynamicChargerCurrent, ack: true });
+
     }
 
     /***********************************************************************
@@ -786,6 +790,20 @@ class Easee extends utils.Adapter {
             native: {},
         });
         this.subscribeStates(charger.id + '.config.phaseMode');
+
+        //dynamicChargerCurrent
+        await this.setObjectNotExistsAsync(charger.id + '.config.dynamicChargerCurrent', {
+            type: 'state',
+            common: {
+                name: 'dynamicChargerCurrent',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        this.subscribeStates(charger.id + '.config.dynamicChargerCurrent');
 
         //ledStripBrightness
         await this.setObjectNotExistsAsync(charger.id + '.config.ledStripBrightness', {

@@ -35,6 +35,8 @@ Adapter to connect Easee Wallbox
 * (Newan) Password encrypt + bugfix for the stable version
 ### 0.1.2
 * (Newan) Object reconstruction
+### 0.1.3
+* (Newan) Add #2 max Ampere changeable
 
 
 ## Donation
