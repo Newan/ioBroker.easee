@@ -546,7 +546,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.status.cableLocked', {
             type: 'state',
             common: {
-                name: 'cableLocked',
+                name: 'Cable lock state',
                 type: 'boolean',
                 role: 'indicator',
                 read: true,
@@ -559,7 +559,7 @@ class Easee extends utils.Adapter {
          await this.setObjectNotExistsAsync(charger.id + '.status.chargerOpMode', {
             type: 'state',
             common: {
-                name: 'chargerOpMode',
+                name: 'Charger operation mode according to charger mode table',
                 type: 'number',
                 role: 'indicator',
                 read: true,
@@ -572,7 +572,7 @@ class Easee extends utils.Adapter {
          await this.setObjectNotExistsAsync(charger.id + '.status.totalPower', {
             type: 'state',
             common: {
-                name: 'totalPower',
+                name: 'Total power [kW]',
                 type: 'number',
                 role: 'indicator',
                 read: true,
@@ -585,7 +585,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.status.wiFiRSSI', {
             type: 'state',
             common: {
-                name: 'wiFiRSSI',
+                name: 'WiFi signal strength [dBm]',
                 type: 'number',
                 role: 'indicator',
                 read: true,
@@ -598,7 +598,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.status.chargerFirmware', {
             type: 'state',
             common: {
-                name: 'chargerFirmware',
+                name: 'Modem firmware version',
                 type: 'number',
                 role: 'indicator',
                 read: true,
@@ -611,7 +611,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.status.latestFirmware', {
             type: 'state',
             common: {
-                name: 'latestFirmware',
+                name: 'Latest Modem firmware version',
                 type: 'number',
                 role: 'indicator',
                 read: true,
@@ -637,7 +637,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.status.outputCurrent', {
             type: 'state',
             common: {
-                name: 'outputCurrent',
+                name: 'Active output phase(s) to EV according to output phase type table.',
                 type: 'number',
                 role: 'indicator',
                 read: true,
@@ -663,7 +663,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.status.wiFiAPEnabled', {
             type: 'state',
             common: {
-                name: 'wiFiAPEnabled',
+                name: 'True if WiFi Access Point is enabled, otherwise false',
                 type: 'boolean',
                 role: 'indicator',
                 read: true,
@@ -766,7 +766,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.config.isEnabled', {
             type: 'state',
             common: {
-                name: 'isEnabled',
+                name: 'Set true to enable charger, false disables charger',
                 type: 'boolean',
                 role: 'indicator',
                 read: true,
@@ -780,7 +780,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.config.phaseMode', {
             type: 'state',
             common: {
-                name: 'phaseMode',
+                name: 'Phase mode on this charger. 1-Locked to 1-Phase, 2-Auto, 3-Locked to 3-phase(only Home)',
                 type: 'number',
                 role: 'indicator',
                 read: true,
@@ -794,7 +794,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.config.dynamicChargerCurrent', {
             type: 'state',
             common: {
-                name: 'dynamicChargerCurrent',
+                name: 'Max current this charger is allowed to offer to car (A)',
                 type: 'number',
                 role: 'indicator',
                 read: true,
@@ -808,7 +808,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.config.ledStripBrightness', {
             type: 'state',
             common: {
-                name: 'ledStripBrightness',
+                name: 'LED strip brightness, 0-100%',
                 type: 'number',
                 role: 'indicator',
                 read: true,
@@ -822,7 +822,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.config.wiFiSSID', {
             type: 'state',
             common: {
-                name: 'wiFiSSID',
+                name: 'WiFi SSID name',
                 type: 'string',
                 role: 'indicator',
                 read: true,
