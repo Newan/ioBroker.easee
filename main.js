@@ -436,7 +436,13 @@ class Easee extends utils.Adapter {
         this.setState(charger.id + '.status.voltage', charger_states.voltage);
         this.setState(charger.id + '.status.outputCurrent', charger_states.outputCurrent);
         this.setState(charger.id + '.status.isOnline', charger_states.isOnline);
-        this.setState(charger.id + '.status.wiFiAPEnabled', charger_states.wiFiAPEnabled);    
+        this.setState(charger.id + '.status.wiFiAPEnabled', charger_states.wiFiAPEnabled);
+        this.setState(charger.id + '.status.lifetimeEnergy', charger_states.lifetimeEnergy);    
+        this.setState(charger.id + '.status.energyPerHour', charger_states.energyPerHour);    
+        this.setState(charger.id + '.status.inCurrentT2', charger_states.inCurrentT2);    
+        this.setState(charger.id + '.status.inCurrentT3', charger_states.inCurrentT3);    
+        this.setState(charger.id + '.status.inCurrentT4', charger_states.inCurrentT4);    
+        this.setState(charger.id + '.status.inCurrentT5', charger_states.inCurrentT5);    
 
         //wert der config wird nur hier gesendet
         this.setState(charger.id + '.config.dynamicChargerCurrent', { val: charger_states.dynamicChargerCurrent, ack: true });
@@ -646,6 +652,58 @@ class Easee extends utils.Adapter {
             native: {},
         });
 
+        //"inCurrentT2": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inCurrentT2', {
+            type: 'state',
+            common: {
+                name: 'Current RMS for input T2 [Amperes]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+        //"inCurrentT3": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inCurrentT3', {
+            type: 'state',
+            common: {
+                name: 'Current RMS for input T3 [Amperes]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+        //"inCurrentT4": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inCurrentT4', {
+            type: 'state',
+            common: {
+                name: 'Current RMS for input T4 [Amperes]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+        //"inCurrentT5": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inCurrentT5', {
+            type: 'state',
+            common: {
+                name: 'Current RMS for input T5 [Amperes]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        
         //"isOnline": true,
         await this.setObjectNotExistsAsync(charger.id + '.status.isOnline', {
             type: 'state',
@@ -671,6 +729,63 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
+
+        //"lifetimeEnergy": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.lifetimeEnergy', {
+            type: 'state',
+            common: {
+                name: 'Accumulated energy in the lifetime of the charger [kWh]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+        //"energyPerHour": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.energyPerHour', {
+            type: 'state',
+            common: {
+                name: 'Accumulated energy per hour [kWh]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+        //"energyPerHour": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.energyPerHour', {
+            type: 'state',
+            common: {
+                name: 'Accumulated energy per hour [kWh]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        
+        
+        // Ab hier nur Objekte die über SignalR kommen
+
+        //TempMax
+        await this.setObjectNotExistsAsync(charger.id + '.status.TempMax', {
+            type: 'state',
+            common: {
+                name:'SignaleR only: Maximum temperature for all sensors [Celsius]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+        
     }
 
     /*************** Session Reading ****************/

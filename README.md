@@ -37,6 +37,8 @@ Adapter to connect Easee Wallbox
 * (Newan) Object reconstruction
 ### 0.1.3
 * (Newan) Add #2 max Ampere changeable
+### 0.1.4
+* (Newan) Add new objects
 
 
 ## Donation
