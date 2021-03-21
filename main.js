@@ -134,41 +134,44 @@ class Easee extends utils.Adapter {
         
         //Lesen alle Charger aus
         let tmpAllChargers = await this.getAllCharger();
-        tmpAllChargers.forEach(async charger => {
-
-            //Prüfen ob wir das Object kennen
-            if (!this.arrCharger.includes(charger.id)) {
-                //setzen als erstes alle Objekte
-                await this.setAllStatusObjects(charger)
-                await this.setAllConfigObjects(charger)
-
-                //meken uns den charger
-                this.arrCharger.push(charger.id)
-            }
-
-            this.log.debug("Charger gefunden")
-            this.log.debug(JSON.stringify(charger));
-                
-            //Lesen den Status aus 
-            let tmpChargerState = await this.getChargerState(charger.id);
-            //Lesen die config
-            let tmpChargerConfig = await this.getChargerConfig(charger.id);
-
-            //Setzen die Daten der Charger
-            await this.setNewStatusToCharger(charger, tmpChargerState);
-
-            //Setzen die Config zum Charger
-            await this.setConfigStatus(charger, tmpChargerConfig);
-
-            //setzen und erechnen der Energiedaten, aber gebremste
-            if(roundCounter > (minPollTimeEnergy/polltime)) {
-                //lesen der Energiedaten
-                let tmpChargerSession = await this.getChargerSession(charger.id);
-                //etzen die Objekte
-                this.setNewSessionToCharger(charger, tmpChargerSession)
-            }
-        });
-
+        if (tmpAllChargers != undefined)  {
+            tmpAllChargers.forEach(async charger => {
+                //Prüfen ob wir das Object kennen
+                if (!arrCharger.includes(charger.id)) {
+                    //setzen als erstes alle Objekte
+                    await this.setAllStatusObjects(charger)
+                    await this.setAllConfigObjects(charger)
+    
+                    //meken uns den charger
+                    arrCharger.push(charger.id)
+                }
+    
+                this.log.debug("Charger gefunden")
+                this.log.debug(JSON.stringify(charger));
+                    
+                //Lesen den Status aus 
+                let tmpChargerState = await this.getChargerState(charger.id);
+                //Lesen die config
+                let tmpChargerConfig = await this.getChargerConfig(charger.id);
+    
+                //Setzen die Daten der Charger
+                await this.setNewStatusToCharger(charger, tmpChargerState);
+    
+                //Setzen die Config zum Charger
+                await this.setConfigStatus(charger, tmpChargerConfig);
+    
+                //setzen und erechnen der Energiedaten, aber gebremste
+                if(roundCounter > (minPollTimeEnergy/polltime)) {
+                    //lesen der Energiedaten
+                    let tmpChargerSession = await this.getChargerSession(charger.id);
+                    //etzen die Objekte
+                    this.setNewSessionToCharger(charger, tmpChargerSession);
+                }
+            });            
+        } else {
+            this.log.warn("No Chargers found!");
+        }
+        
         //Energiedaten dürfen nur einmal in der Minute aufgerufen werden, daher müssen wir das bremsen
         if(roundCounter > (minPollTimeEnergy/polltime)) {
             this.log.info("Hole Energiedaten: " + roundCounter)
@@ -426,26 +429,26 @@ class Easee extends utils.Adapter {
 
     //Setzen alle Status für Charger
     async setNewStatusToCharger(charger, charger_states) {
-        this.setState(charger.id + '.name', charger.name);
-        this.setState(charger.id + '.status.cableLocked', charger_states.cableLocked);
-        this.setState(charger.id + '.status.chargerOpMode', charger_states.chargerOpMode);
-        this.setState(charger.id + '.status.totalPower', charger_states.totalPower);
-        this.setState(charger.id + '.status.wiFiRSSI', charger_states.wiFiRSSI);
-        this.setState(charger.id + '.status.chargerFirmware', charger_states.chargerFirmware);
-        this.setState(charger.id + '.status.latestFirmware', charger_states.latestFirmware);
-        this.setState(charger.id + '.status.voltage', charger_states.voltage);
-        this.setState(charger.id + '.status.outputCurrent', charger_states.outputCurrent);
-        this.setState(charger.id + '.status.isOnline', charger_states.isOnline);
-        this.setState(charger.id + '.status.wiFiAPEnabled', charger_states.wiFiAPEnabled);
-        this.setState(charger.id + '.status.lifetimeEnergy', charger_states.lifetimeEnergy);    
-        this.setState(charger.id + '.status.energyPerHour', charger_states.energyPerHour);    
-        this.setState(charger.id + '.status.inCurrentT2', charger_states.inCurrentT2);    
-        this.setState(charger.id + '.status.inCurrentT3', charger_states.inCurrentT3);    
-        this.setState(charger.id + '.status.inCurrentT4', charger_states.inCurrentT4);    
-        this.setState(charger.id + '.status.inCurrentT5', charger_states.inCurrentT5);    
+        await this.setStateAsync(charger.id + '.name', charger.name);
+        await this.setStateAsync(charger.id + '.status.cableLocked', charger_states.cableLocked);
+        await this.setStateAsync(charger.id + '.status.chargerOpMode', charger_states.chargerOpMode);
+        await this.setStateAsync(charger.id + '.status.totalPower', charger_states.totalPower);
+        await this.setStateAsync(charger.id + '.status.wiFiRSSI', charger_states.wiFiRSSI);
+        await this.setStateAsync(charger.id + '.status.chargerFirmware', charger_states.chargerFirmware);
+        await this.setStateAsync(charger.id + '.status.latestFirmware', charger_states.latestFirmware);
+        await this.setStateAsync(charger.id + '.status.voltage', charger_states.voltage);
+        await this.setStateAsync(charger.id + '.status.outputCurrent', charger_states.outputCurrent);
+        await this.setStateAsync(charger.id + '.status.isOnline', charger_states.isOnline);
+        await this.setStateAsync(charger.id + '.status.wiFiAPEnabled', charger_states.wiFiAPEnabled);
+        await this.setStateAsync(charger.id + '.status.lifetimeEnergy', charger_states.lifetimeEnergy);    
+        await this.setStateAsync(charger.id + '.status.energyPerHour', charger_states.energyPerHour);    
+        await this.setStateAsync(charger.id + '.status.inCurrentT2', charger_states.inCurrentT2);    
+        await this.setStateAsync(charger.id + '.status.inCurrentT3', charger_states.inCurrentT3);    
+        await this.setStateAsync(charger.id + '.status.inCurrentT4', charger_states.inCurrentT4);    
+        await this.setStateAsync(charger.id + '.status.inCurrentT5', charger_states.inCurrentT5);    
 
         //wert der config wird nur hier gesendet
-        this.setState(charger.id + '.config.dynamicChargerCurrent', { val: charger_states.dynamicChargerCurrent, ack: true });
+        await this.setStateAsync(charger.id + '.config.dynamicChargerCurrent', { val: charger_states.dynamicChargerCurrent, ack: true });
 
     }
 
@@ -520,7 +523,6 @@ class Easee extends utils.Adapter {
         });
         this.subscribeStates(charger.id + '.control.reboot');
 
-
         //id
         await this.setObjectNotExistsAsync(charger.id + '.id', {
             type: 'state',
@@ -533,7 +535,7 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
-        this.setState(charger.id + '.id', charger.id);
+        await this.setStateAsync(charger.id + '.id', charger.id);
         
         //name
         await this.setObjectNotExistsAsync(charger.id + '.name', {
@@ -805,7 +807,7 @@ class Easee extends utils.Adapter {
                 },
                 native: {},
             });                 
-            this.setState(charger.id + '.session.' + session.year + '.' + session.month+ '.totalEnergyUsage', session.totalEnergyUsage);     
+            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalEnergyUsage', session.totalEnergyUsage);     
 
             await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalCost', {
                 type: 'state',
@@ -818,7 +820,7 @@ class Easee extends utils.Adapter {
                 },
                 native: {},
             });                 
-            this.setState(charger.id + '.session.' + session.year + '.' + session.month+ '.totalCost', session.totalCost);     
+            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalCost', session.totalCost);     
 
             await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.currencyId', {
                 type: 'state',
@@ -831,7 +833,7 @@ class Easee extends utils.Adapter {
                 },
                 native: {},
             });                 
-            this.setState(charger.id + '.session.' + session.year + '.' + session.month+ '.currencyId', session.currencyId);     
+            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.currencyId', session.currencyId);     
 
             await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.total_year', {
                 type: 'state',
@@ -869,10 +871,10 @@ class Easee extends utils.Adapter {
     /*************** Config Reading ****************/
 
     async setConfigStatus(charger, charger_config) {
-        this.setState(charger.id + '.config.isEnabled',{ val: charger_config.isEnabled, ack: true } );
-        this.setState(charger.id + '.config.phaseMode', { val: charger_config.phaseMode, ack: true });
-        this.setState(charger.id + '.config.ledStripBrightness', { val: charger_config.ledStripBrightness, ack: true });
-        this.setState(charger.id + '.config.wiFiSSID', { val: charger_config.wiFiSSID, ack: true });
+        await this.setStateAsync(charger.id + '.config.isEnabled',{ val: charger_config.isEnabled, ack: true } );
+        await this.setStateAsync(charger.id + '.config.phaseMode', { val: charger_config.phaseMode, ack: true });
+        await this.setStateAsync(charger.id + '.config.ledStripBrightness', { val: charger_config.ledStripBrightness, ack: true });
+        await this.setStateAsync(charger.id + '.config.wiFiSSID', { val: charger_config.wiFiSSID, ack: true });
     }
 
     async setAllConfigObjects(charger) {
