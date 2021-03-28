@@ -449,7 +449,6 @@ class Easee extends utils.Adapter {
 
         //wert der config wird nur hier gesendet
         await this.setStateAsync(charger.id + '.config.dynamicChargerCurrent', { val: charger_states.dynamicChargerCurrent, ack: true });
-
     }
 
     /***********************************************************************
@@ -875,6 +874,8 @@ class Easee extends utils.Adapter {
         await this.setStateAsync(charger.id + '.config.phaseMode', { val: charger_config.phaseMode, ack: true });
         await this.setStateAsync(charger.id + '.config.ledStripBrightness', { val: charger_config.ledStripBrightness, ack: true });
         await this.setStateAsync(charger.id + '.config.wiFiSSID', { val: charger_config.wiFiSSID, ack: true });
+        await this.setStateAsync(charger.id + '.config.maxChargerCurrent', { val: charger_config.maxChargerCurrent, ack: true });
+
     }
 
     async setAllConfigObjects(charger) {
@@ -907,11 +908,26 @@ class Easee extends utils.Adapter {
         });
         this.subscribeStates(charger.id + '.config.phaseMode');
 
+        //maxChargerCurrent
+        await this.setObjectNotExistsAsync(charger.id + '.config.maxChargerCurrent', {
+            type: 'state',
+            common: {
+                name: 'Max current this charger is allowed to offer to car (A)',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        this.subscribeStates(charger.id + '.config.maxChargerCurrent');
+
+
         //dynamicChargerCurrent
         await this.setObjectNotExistsAsync(charger.id + '.config.dynamicChargerCurrent', {
             type: 'state',
             common: {
-                name: 'Max current this charger is allowed to offer to car (A)',
+                name: 'Dynamic max current this charger is allowed to offer to car (A)',
                 type: 'number',
                 role: 'indicator',
                 read: true,

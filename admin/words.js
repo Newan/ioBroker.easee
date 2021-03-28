@@ -14,8 +14,8 @@ systemDictionary = {
         'pl': 'Ustawienia adaptera dla easee',
         'zh-cn': 'easee的适配器设置'
     },
-    'username': {
-        "en": "username",
+    'Username': {
+        "en": "Username",
         "de": "Nutzername",
         "ru": "имя пользователя",
         "pt": "nome de usuário",
@@ -26,8 +26,8 @@ systemDictionary = {
         "pl": "Nazwa Użytkownika",
         "zh-cn": "用户名"
    },
-    'password': {
-        "en": "password",
+    'Password': {
+        "en": "Password",
         "de": "Passwort",
         "ru": "пароль",
         "pt": "senha",
@@ -38,7 +38,7 @@ systemDictionary = {
         "pl": "hasło",
         "zh-cn": "密码"
     },
-    'polltime': {
+    'Poll interval in seconds': {
         "en": "Poll interval in seconds",
         "de": "Abfrageintervall in Sekunden",
         "ru": "Интервал опроса в секундах",
@@ -49,6 +49,42 @@ systemDictionary = {
         "es": "Intervalo de encuesta en segundos",
         "pl": "Okres odpytywania w sekundach",
         "zh-cn": "轮询间隔（秒）"
-    }
+    },
+    'Api settings': {
+        "en": "Api settings",
+        "de": "API-Einstellungen",
+        "ru": "Настройки API",
+        "pt": "Configurações de API",
+        "nl": "API-instellingen",
+        "fr": "Paramètres de l'API",
+        "it": "Impostazioni API",
+        "es": "Configuración de api",
+        "pl": "Ustawienia API",
+        "zh-cn": "api设置"
+    },
+    "Account settings": {
+        "en": "Account settings",
+        "de": "Kontoeinstellungen",
+        "ru": "Настройки учетной записи",
+        "pt": "Configurações de Conta",
+        "nl": "Account instellingen",
+        "fr": "Paramètres du compte",
+        "it": "Impostazioni dell'account",
+        "es": "Configuraciones de la cuenta",
+        "pl": "Ustawienia konta",
+        "zh-cn": ",帐号设定"
+    },
+    "Use SignalR": {
+        "en": "Use SignalR",
+        "de": "SignalR verwenden",
+        "ru": "Используйте SignalR",
+        "pt": "Use SignalR",
+        "nl": "Gebruik SignalR",
+        "fr": "Utiliser SignalR",
+        "it": "Usa SignalR",
+        "es": "Usar SignalR",
+        "pl": "Użyj SignalR",
+        "zh-cn": "使用SignalR"
+      }
 
 };

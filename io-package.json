@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "easee",
-        "version": "0.1.5",
+        "version": "0.1.6",
         "news": {
             "0.1.4": {
                 "en": "Add new objects",
