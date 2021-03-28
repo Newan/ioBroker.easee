@@ -315,6 +315,10 @@ class Easee extends utils.Adapter {
 
         //wert der config wird nur hier gesendet
         await this.setStateAsync(charger.id + '.config.dynamicChargerCurrent', { val: charger_states.dynamicChargerCurrent, ack: true });
+        await this.setStateAsync(charger.id + '.config.dynamicCircuitCurrentP1', { val: charger_states.dynamicCircuitCurrentP1, ack: true });
+        await this.setStateAsync(charger.id + '.config.dynamicCircuitCurrentP2', { val: charger_states.dynamicCircuitCurrentP2, ack: true });
+        await this.setStateAsync(charger.id + '.config.dynamicCircuitCurrentP3', { val: charger_states.dynamicCircuitCurrentP3, ack: true });
+
     }
 
 
@@ -820,9 +824,7 @@ class Easee extends utils.Adapter {
             native: {},
         });
 
-
         // Ab hier nur Objekte die über SignalR kommen
-
         //TempMax
         await this.setObjectNotExistsAsync(charger.id + '.status.TempMax', {
             type: 'state',
@@ -976,6 +978,45 @@ class Easee extends utils.Adapter {
             native: {},
         });
         this.subscribeStates(charger.id + '.config.dynamicChargerCurrent');
+
+        await this.setObjectNotExistsAsync(charger.id + '.config.dynamicCircuitCurrentP1', {
+            type: 'state',
+            common: {
+                name:'Dynamically set circuit maximum current for phase 1 [Amperes]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        //this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP1');
+
+        await this.setObjectNotExistsAsync(charger.id + '.config.dynamicCircuitCurrentP2', {
+            type: 'state',
+            common: {
+                name:'Dynamically set circuit maximum current for phase 2 [Amperes]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        //this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP2');
+
+        await this.setObjectNotExistsAsync(charger.id + '.config.dynamicCircuitCurrentP3', {
+            type: 'state',
+            common: {
+                name:'Dynamically set circuit maximum current for phase 3 [Amperes]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        //this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP3');
 
         //ledStripBrightness
         await this.setObjectNotExistsAsync(charger.id + '.config.ledStripBrightness', {
