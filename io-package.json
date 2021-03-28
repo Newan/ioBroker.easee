@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "easee",
-        "version": "0.1.6",
+        "version": "1.0.0",
         "news": {
+            "1.0.0": {
+                "en": "Add SignalR support",
+                "de": "SignalR Unterstützung hinzugefügt"
+            },
             "0.1.4": {
                 "en": "Add new objects",
                 "de": "Neue Objekte hinzugefügt"
@@ -75,14 +79,15 @@
         "materialize": true,
         "dependencies": [
             {
-                "js-controller": ">=2.0.0"
+                "js-controller": ">=3.1.0"
             }
         ]
     },
     "native": {
         "username": "+49",
-        "password": "pass",
-        "polltime": 30
+        "client_secret": "",
+        "polltime": 30,
+        "signalR": false
     },
     "objects": [],
     "instanceObjects": []

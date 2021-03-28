@@ -1,6 +1,6 @@
 {
   "name": "iobroker.easee",
-  "version": "0.1.6",
+  "version": "1.0.0",
   "description": "Adapter to connect Easee Wallbox",
   "author": {
     "name": "Jens Nachtigal",
@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^2.4.0",
+    "@microsoft/signalr": "^5.0.4",
     "axios": "^0.21.1"
   },
   "devDependencies": {
