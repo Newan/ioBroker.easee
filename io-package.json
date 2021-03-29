@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "easee",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "news": {
+            "1.0.1": {
+                "en": "Add circuitMaxCurrentPX to limit current ampere",
+                "de": "circuitMaxCurrentPX hinzugefügt für Amperebegrenzung"
+            },            
             "1.0.0": {
                 "en": "Add SignalR support",
                 "de": "SignalR Unterstützung hinzugefügt"

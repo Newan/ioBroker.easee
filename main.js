@@ -247,9 +247,26 @@ class Easee extends utils.Adapter {
             if (tmpControl[3] == 'config') {
                 // change config, wenn ack = false
                 if (!state.ack) {
-                    this.log.debug('update config to API: ' + id);
-                    this.changeConfig(tmpControl[2], tmpControl[4], state.val);
-                    this.log.info('Changes send to API');
+                    if (tmpControl[4] == 'circuitMaxCurrentP1' || tmpControl[4] == 'circuitMaxCurrentP2' || tmpControl[4] == 'circuitMaxCurrentP3') {
+
+                        //Load site for Charger
+                        this.getChargerSite(tmpControl[2]).then( (site) => {
+                            this.log.debug('Update circuitMaxCurrent to: ' + state.val);
+                            this.log.debug('Get infos from site:');
+                            this.log.debug(JSON.stringify(site));
+                            this.log.debug('Get infos from site:');
+                            this.log.debug(JSON.stringify(site));
+
+                            this.changeCircuitConfig(site.id, site.circuits[0].id, state.val);
+                            this.log.info('Changes send to API');
+                        });
+
+
+                    } else {
+                        this.log.debug('update config to API: ' + id);
+                        this.changeConfig(tmpControl[2], tmpControl[4], state.val);
+                        this.log.info('Changes send to API');
+                    }
                 }
             } else {
                 // control charger
@@ -330,6 +347,12 @@ class Easee extends utils.Adapter {
         await this.setStateAsync(charger.id + '.config.wiFiSSID', { val: charger_config.wiFiSSID, ack: true });
         await this.setStateAsync(charger.id + '.config.maxChargerCurrent', { val: charger_config.maxChargerCurrent, ack: true });
 
+        //Values for sites
+        await this.setStateAsync(charger.id + '.config.circuitMaxCurrentP1', { val: charger_config.circuitMaxCurrentP1, ack: true });
+        await this.setStateAsync(charger.id + '.config.circuitMaxCurrentP2', { val: charger_config.circuitMaxCurrentP3, ack: true });
+        await this.setStateAsync(charger.id + '.config.circuitMaxCurrentP3', { val: charger_config.circuitMaxCurrentP3, ack: true });
+
+
     }
 
     /*************************************************************************
@@ -407,6 +430,18 @@ class Easee extends utils.Adapter {
             { headers: {'Authorization' : `Bearer ${accessToken}`}
             }).then(response => {
             this.log.debug('Charger config ausgelesen mit id: ' + charger_id);
+            this.log.debug(JSON.stringify(response.data));
+            return response.data;
+        }).catch((error) => {
+            this.log.error(error);
+        });
+    }
+
+    async getChargerSite(charger_id){
+        return await axios.get(apiUrl + '/api/chargers/' + charger_id +'/site',
+            { headers: {'Authorization' : `Bearer ${accessToken}`}
+            }).then(response => {
+            this.log.debug('Charger site ausgelesen mit id: ' + charger_id);
             this.log.debug(JSON.stringify(response.data));
             return response.data;
         }).catch((error) => {
@@ -504,6 +539,22 @@ class Easee extends utils.Adapter {
         });
     }
 
+    //circuitMaxCurrentPX
+    async changeCircuitConfig(site_id, circuit_id, value) {
+        return await axios.post(apiUrl + '/api/sites/' + site_id + '/circuits/' + circuit_id + '/settings', {
+            'maxCircuitCurrentP1': value,
+            'maxCircuitCurrentP2': value,
+            'maxCircuitCurrentP3': value,
+        },
+        { headers: {'Authorization' : `Bearer ${accessToken}`}}
+        ).then(response => {
+            this.log.info('Circuit update successful');
+            this.log.debug(JSON.stringify(response.data));
+        }).catch((error) => {
+            this.log.error('Circuit update error');
+            this.log.error(error);
+        });
+    }
 
     /***********************************************************************
      * Funktionen zum erstellen der Objekte der Reading
@@ -1016,7 +1067,46 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
-        //this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP3');
+        this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP3');
+
+        await this.setObjectNotExistsAsync(charger.id + '.config.circuitMaxCurrentP1', {
+            type: 'state',
+            common: {
+                name:'Set circuit maximum current [Amperes]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        this.subscribeStates(charger.id + '.config.circuitMaxCurrentP1');
+
+        await this.setObjectNotExistsAsync(charger.id + '.config.circuitMaxCurrentP2', {
+            type: 'state',
+            common: {
+                name:'Set circuit maximum current [Amperes]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        this.subscribeStates(charger.id + '.config.circuitMaxCurrentP2');
+
+        await this.setObjectNotExistsAsync(charger.id + '.config.circuitMaxCurrentP3', {
+            type: 'state',
+            common: {
+                name:'Set circuit maximum current [Amperes]',
+                type: 'number',
+                role: 'indicator',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        //this.subscribeStates(charger.id + '.config.circuitMaxCurrentP3');
 
         //ledStripBrightness
         await this.setObjectNotExistsAsync(charger.id + '.config.ledStripBrightness', {
