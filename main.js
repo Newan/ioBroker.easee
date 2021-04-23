@@ -97,12 +97,15 @@ class Easee extends utils.Adapter {
         }
 
         // Testen ob der Login funktioniert
-        if (this.config.username == '' ) {
+        if (this.config.username == '' || this.config.username == '+49') {
             this.log.error('No username set');
             //Status melden
             await this.setStateAsync('online', false);
+        } else if (this.config.client_secret == "") {
+            this.log.error('No password set');
+            //Status melden
+            await this.setStateAsync('online', false);
         } else {
-
             password = ''; //reset old passwords
             this.getForeignObject('system.config', async (err, obj) => {
                 if ((obj && obj.native && obj.native.secret) || this.config.client_secret == '') {
