@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "easee",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "news": {
+            "1.0.2": {
+                "en": "bugfix for the new stable version",
+                "de": "Fehlerkorrektur für die neue stable Version"
+            },            
             "1.0.1": {
                 "en": "Add circuitMaxCurrentPX to limit current ampere",
                 "de": "circuitMaxCurrentPX hinzugefügt für Amperebegrenzung"
@@ -25,7 +29,7 @@
             },
             "0.1.1": {
                 "en": "Password encrypt + bugfix for the stable version",
-                "de": "Password verschlüsselt + Fehlerkorrektur fürstable Version"
+                "de": "Password verschlüsselt + Fehlerkorrektur für stable Version"
             },
             "0.1.0": {
                 "en": "Preparation for the first stable version",
