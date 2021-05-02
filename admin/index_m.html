@@ -1,7 +1,5 @@
 <html>
-
 <head>
-
     <!-- Load ioBroker scripts and styles-->
     <link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
     <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
@@ -18,67 +16,52 @@
     <script type="text/javascript" src="words.js"></script>
 
     <script type="text/javascript">
+        var _secret;
+  
 
-        var secret;
-        function encrypt(key, value) {
-            var result = '';
-            for(var i = 0; i < value.length; ++i) {
-                result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
+        // This will be called by the admin adapter when the settings page loads
+        function load(settings, onChange) {
+            if (typeof supportsFeature !== 'function' || !supportsFeature('ADAPTER_AUTO_DECRYPT_NATIVE')) {
+
+                if (typeof systemSecret !== 'undefined') {
+                    _secret = systemSecret;
+                } else {
+                    _secret = (systemConfig && systemConfig.native && systemConfig.native.secret) || 'Zgfr56gFe87jJOM';
+                }
+
+                if (settings.client_secret) {
+                    settings.client_secret = decrypt(_secret, settings.client_secret);
+                }                
             }
-            return result;
-        }
-        
-        function decrypt(key, value) {
-            var result = '';
-            for(var i = 0; i < value.length; ++i) {
-                result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
-            }
-            return result;
-        }
-      
-        // the function loadSettings has to exist ...
-        function loadHelper(settings, onChange) {
+            
             // example: select elements with id=key and class=value and insert value
             if (!settings) return;
-            if (settings.electricityPollingInterval === undefined) settings.electricityPollingInterval = 20;
             $('.value').each(function () {
                 var $key = $(this);
                 var id = $key.attr('id');
-                if (id === 'client_secret') {
-                    settings[id] = decrypt(secret, settings[id]);
-                }
                 if ($key.attr('type') === 'checkbox') {
                     // do not call onChange direct, because onChange could expect some arguments
-                    $key.prop('checked', settings[id]).change(function() {
-                        onChange();
-                    });
+                    $key.prop('checked', settings[id])
+                        .on('change', () => onChange())
+                        ;
                 } else {
                     // do not call onChange direct, because onChange could expect some arguments
-                    $key.val(settings[id]).change(function() {
-                        onChange();
-                    }).keyup(function() {
-                        onChange();
-                    });
+                    $key.val(settings[id])
+                        .on('change', () => onChange())
+                        .on('keyup', () => onChange())
+                        ;
                 }
             });
-        
             onChange(false);
-            // function Materialize.updateTextFields(); to reinitialize all the Materialize labels on the page if you are dynamically adding inputs.
-            M.updateTextFields();
+            
+            // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
+            if (M) M.updateTextFields();
         }
-      
-        // This will be called by the admin adapter when the settings page loads
-        function load(settings, onChange) {
-            socket.emit('getObject', 'system.config', function (err, obj) {
-                secret = (obj.native ? obj.native.secret : '') || 'Zgfr56gFe87jJOM';
-                loadHelper(settings, onChange);
-            });
-            onChange(false);
-        }
-      
-        // This will be called by the admin adapter when the user presses the save button 
+
+        // This will be called by the admin adapter when the user presses the save button
         function save(callback) {
             // example: select elements with class=value and build settings object
+            console.log(_secret);
             var obj = {};
             $('.value').each(function () {
                 var $this = $(this);
@@ -87,19 +70,18 @@
                     obj[id] = $this.prop('checked');
                 } else {
                     var value = $this.val();
-                    if (id === 'client_secret') {
-                        value = encrypt(secret, value);
+                    if (typeof supportsFeature !== 'function' || !supportsFeature('ADAPTER_AUTO_DECRYPT_NATIVE')) {
+                        if (id === 'client_secret') {
+                            value = encrypt(_secret, value);
+                        }
                     }
                     obj[id] = value;
                 }
             });
-        
             callback(obj);
         }
     </script>
-
 </head>
-
 <body>
 
     <div class="m adapter-container">
@@ -109,13 +91,29 @@
                 <img src="easee.png" class="logo">
             </div>
         </div>
+
+        <div class="row">
+            <div class="col s12 m12">
+                <p class="translate title">Donate</p>
+            </div>
+            <div class="col s12 m2 center">
+                <form action="https://www.paypal.com/donate" method="post" target="_top">
+                    <input type="hidden" name="hosted_button_id" value="AAFQ3WMM46LT8" />
+                    <input type="image" src="https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+                    <img alt="" border="0" src="https://www.paypal.com/en_DE/i/scr/pixel.gif" width="1" height="1" />
+                </form>
+            </div>
+            <div class="col s10 m10" style="padding-top: 10px">
+                <p class="translate">donate_desc</p> 
+            </div>            
+        </div>
 		<div class="row">
 			<div class="col s12">
 				<h6 class="title translate">Account settings</h6>
 			</div>
 		</div>
-        <div class="row">
-            <div class="col s6 input-field">
+		<div class="row">
+			<div class="col s6 input-field">
                 <input type="text" class="value" id="username" />
                 <label for="username" class="translate">Username</label>
             </div>
@@ -124,26 +122,22 @@
                 <input type="password" class="value" id="client_secret" />
                 <label for="client_secret" class="translate">Password</label>
             </div>
-        </div>
+		</div>
 		<div class="row">
 			<div class="col s12">
 				<h6 class="title translate">Api settings</h6>
 			</div>
 		</div>
-
-        <div class="row">
-            <div class="col s6 input-field">
+		<div class="row">
+			<div class="col s6 input-field">
                 <input type="number" class="value" id="polltime" />
                 <label for="polltime" class="translate">Poll interval in seconds</label>
             </div>
-            <div class="col s6 input-field">
+			<div class="col s6 input-field">
                 <input type="checkbox" class="value" id="signalR" />
                 <label for="option1" class="translate">Use SignalR</label>
             </div>
-        </div>
-
+		</div>
     </div>
-
 </body>
-
 </html>

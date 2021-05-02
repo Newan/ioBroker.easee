@@ -87,6 +87,12 @@
             }
         ]
     },
+    "protectedNative": [
+        "client_secret"
+      ],
+    "encryptedNative": [
+        "client_secret"
+      ],    
     "native": {
         "username": "+49",
         "client_secret": "",
@@ -94,5 +100,26 @@
         "signalR": false
     },
     "objects": [],
-    "instanceObjects": []
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },        
+        {
+        "_id": "info.connection",
+        "type": "state",
+        "common": {
+            "role": "indicator.connected",
+            "name": "If communication with easee works",
+            "type": "boolean",
+            "read": true,
+            "write": false,
+            "def": false
+        },
+        "native": {}
+    }]
 }

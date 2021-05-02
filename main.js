@@ -13,7 +13,6 @@ let accessToken = '';
 let refreshToken = '';
 let expireTime = Date.now();
 let polltime = 30;
-let password = '';
 const minPollTimeEnergy = 120;
 let roundCounter = 0;
 const arrCharger = [];
@@ -75,19 +74,8 @@ class Easee extends utils.Adapter {
      * Starten den Adapter
      */
     async onReady() {
-
-        //Erstes Objekt erstellen, für den Onlinestatus
-        await this.setObjectNotExistsAsync('online', {
-            type: 'state',
-            common: {
-                name: 'online',
-                type: 'boolean',
-                role: 'indicator',
-                read: true,
-                write: false,
-            },
-            native: {},
-        });
+        //initial Status melden
+        await this.setStateAsync('info.connection', false, true);
 
         //Schauen ob die Polltime realistisch ist
         if (this.config.polltime < 1) {
@@ -95,67 +83,40 @@ class Easee extends utils.Adapter {
         } else {
             polltime = this.config.polltime;
         }
-
         // Testen ob der Login funktioniert
         if (this.config.username == '' || this.config.username == '+49') {
             this.log.error('No username set');
-            //Status melden
-            await this.setStateAsync('online', false);
-        } else if (this.config.client_secret == "") {
+        } else if (this.config.client_secret == '') {
             this.log.error('No password set');
-            //Status melden
-            await this.setStateAsync('online', false);
         } else {
-            password = ''; //reset old passwords
-            this.getForeignObject('system.config', async (err, obj) => {
-                if ((obj && obj.native && obj.native.secret) || this.config.client_secret == '') {
-                    this.log.info('Secret is: ' + this.config.client_secret);
+            this.log.info('Api login started');
+            this.log.debug('Password is:' + this.config.client_secret);
+            const login = await this.login(this.config.username, this.config.client_secret);
+            if (login) {
+                //Erstes Objekt erstellen
+                await this.setObjectNotExistsAsync('lastUpdate', {
+                    type: 'state',
+                    common: {
+                        name: 'lastUpdate',
+                        type: 'string',
+                        role: 'indicator',
+                        read: true,
+                        write: false,
+                    },
+                    native: {},
+                });
 
-                    // @ts-ignore
-                    password = decrypt(obj.native.secret, this.config.client_secret);
-                    this.log.info('Password decrypted');
-                    this.log.debug('Password is:' + password);
+                //reset all to start
+                this.arrCharger = [];
 
-                    const login = await this.login(this.config.username, password);
+                // starten den Statuszyklus der API neu
+                await this.readAllStates();
 
-                    if (login) {
-                        //Erstes Objekt erstellen
-                        await this.setObjectNotExistsAsync('lastUpdate', {
-                            type: 'state',
-                            common: {
-                                name: 'lastUpdate',
-                                type: 'string',
-                                role: 'indicator',
-                                read: true,
-                                write: false,
-                            },
-                            native: {},
-                        });
-
-                        //reset all to start
-                        this.arrCharger = [];
-
-                        // starten den Statuszyklus der API neu
-                        await this.readAllStates();
-
-                        if (this.config.signalR) {
-                            this.log.info('Starting SignalR');
-                            this.startSignal();
-                        }
-
-                    } else {
-                        //Login hat nicht funktionert, Adapter kann nicht gestartet werden
-                        //Errohandling in der Loginfunktion derzeit
-                    }
-
-                } else {
-                    this.log.error('No password set');
-                    //Status melden
-                    await this.setStateAsync('online', false);
-
+                if (this.config.signalR) {
+                    this.log.info('Starting SignalR');
+                    this.startSignal();
                 }
-            });
-
+            }
         }
     }
 
@@ -166,7 +127,7 @@ class Easee extends utils.Adapter {
         try {
             clearTimeout(adapterIntervals.readAllStates);
             this.log.info('Adaptor easee cleaned up everything...');
-            this.setState('online', false);
+            this.setState('info.connection', false, true);
             callback();
         } catch (e) {
             callback();
@@ -366,22 +327,26 @@ class Easee extends utils.Adapter {
     //Get Token from API
     async login(username, password) {
 
+        try {
+            const response = await axios.post(apiUrl + '/api/accounts/token', {
+                userName: username,
+                password: password
+            });
 
-        const response = await axios.post(apiUrl + '/api/accounts/token', {
-            userName: username,
-            password: password
-        });
+            this.log.info('Login successful');
 
-        this.log.info('Login successful');
-
-        accessToken = response.data.accessToken;
-        refreshToken = response.data.refreshToken;
-        expireTime = Date.now() + (response.data.expiresIn - (polltime * 2)) * 1000;
-        this.log.debug(JSON.stringify(response.data));
-        await this.setStateAsync('online', true);
-
-
-        return true;
+            accessToken = response.data.accessToken;
+            refreshToken = response.data.refreshToken;
+            expireTime = Date.now() + (response.data.expiresIn - (polltime * 2)) * 1000;
+            this.log.debug(JSON.stringify(response.data));
+            await this.setStateAsync('info.connection', true, true);
+            return true;
+        } catch (error) {
+            this.log.error('Api login error - check Username and password');
+            this.log.debug(error.message);
+            await this.setStateAsync('info.connection', false, true);
+            return false;
+        }
     }
 
     //GET net Token from API
@@ -1140,14 +1105,6 @@ class Easee extends utils.Adapter {
         this.subscribeStates(charger.id + '.config.wiFiSSID');
 
     }
-}
-
-function decrypt(key, value) {
-    let result = '';
-    for (let i = 0; i < value.length; ++i) {
-        result += String.fromCharCode(key[i % key.length].charCodeAt(0) ^ value.charCodeAt(i));
-    }
-    return result;
 }
 
 // @ts-ignore parent is a valid property on module
