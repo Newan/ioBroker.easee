@@ -2,59 +2,163 @@
     "common": {
         "name": "easee",
         "version": "1.0.2",
-        "news": {
+        "news": {            
             "1.0.2": {
                 "en": "bugfix for the new stable version",
-                "de": "Fehlerkorrektur für die neue stable Version"
-            },            
+                "de": "Bugfix für die neue stabile Version",
+                "ru": "исправление для новой стабильной версии",
+                "pt": "correção de bug para a nova versão estável",
+                "nl": "bugfix voor de nieuwe stabiele versie",
+                "fr": "correction de bogue pour la nouvelle version stable",
+                "it": "bugfix per la nuova versione stabile",
+                "es": "corrección de errores para la nueva versión estable",
+                "pl": "poprawka dla nowej stabilnej wersji",
+                "zh-cn": "新的稳定版本的错误修正"
+            },
             "1.0.1": {
                 "en": "Add circuitMaxCurrentPX to limit current ampere",
-                "de": "circuitMaxCurrentPX hinzugefügt für Amperebegrenzung"
-            },            
+                "de": "Fügen Sie CircuitMaxCurrentPX hinzu, um die Stromstärke zu begrenzen",
+                "ru": "Добавьте circuitMaxCurrentPX для ограничения тока в амперах",
+                "pt": "Adicione circuitMaxCurrentPX para limitar o ampere atual",
+                "nl": "Voeg circuitMaxCurrentPX toe om de huidige ampère te beperken",
+                "fr": "Ajouter circuitMaxCurrentPX pour limiter l'ampère de courant",
+                "it": "Aggiungi circuitMaxCurrentPX per limitare gli ampere di corrente",
+                "es": "Agregue circuitMaxCurrentPX para limitar el amperio actual",
+                "pl": "Dodaj circuitMaxCurrentPX, aby ograniczyć prąd w amperach",
+                "zh-cn": "添加circuitMaxCurrentPX以限制电流"
+            },
             "1.0.0": {
                 "en": "Add SignalR support",
-                "de": "SignalR Unterstützung hinzugefügt"
+                "de": "SignalR-Unterstützung hinzufügen",
+                "ru": "Добавить поддержку SignalR",
+                "pt": "Adicionar suporte SignalR",
+                "nl": "Voeg SignalR-ondersteuning toe",
+                "fr": "Ajouter la prise en charge de SignalR",
+                "it": "Aggiungi il supporto SignalR",
+                "es": "Agregar compatibilidad con SignalR",
+                "pl": "Dodaj obsługę SignalR",
+                "zh-cn": "添加SignalR支持"
             },
             "0.1.4": {
                 "en": "Add new objects",
-                "de": "Neue Objekte hinzugefügt"
+                "de": "Neue Objekte hinzufügen",
+                "ru": "Добавить новые объекты",
+                "pt": "Adicionar novos objetos",
+                "nl": "Voeg nieuwe objecten toe",
+                "fr": "Ajouter de nouveaux objets",
+                "it": "Aggiungi nuovi oggetti",
+                "es": "Agregar nuevos objetos",
+                "pl": "Dodaj nowe obiekty",
+                "zh-cn": "添加新对象"
             },
             "0.1.3": {
                 "en": "Add #2 max Ampere changeable",
-                "de": "Hinzugefügt #2 maximale Ampere einstellbar"
+                "de": "Fügen Sie # 2 max Ampere austauschbar hinzu",
+                "ru": "Добавить # 2 макс. Ампер изменяемый",
+                "pt": "Adicionar # 2 Ampere máximo mutável",
+                "nl": "Voeg # 2 max Ampere toe, veranderlijk",
+                "fr": "Ajouter n ° 2 max ampère modifiable",
+                "it": "Aggiungi # 2 Ampere max modificabile",
+                "es": "Agregue el amperio máximo n. ° 2 cambiable",
+                "pl": "Dodaj # 2 max Amper do zmiany",
+                "zh-cn": "增加＃2最大安培可变"
             },
             "0.1.2": {
                 "en": "Object reconstruction",
-                "de": "Objektumbau"
+                "de": "Objektrekonstruktion",
+                "ru": "Реконструкция объекта",
+                "pt": "Reconstrução de objeto",
+                "nl": "Object reconstructie",
+                "fr": "Reconstruction d'objets",
+                "it": "Ricostruzione di oggetti",
+                "es": "Reconstrucción de objetos",
+                "pl": "Rekonstrukcja obiektu",
+                "zh-cn": "对象重建"
             },
             "0.1.1": {
                 "en": "Password encrypt + bugfix for the stable version",
-                "de": "Password verschlüsselt + Fehlerkorrektur für stable Version"
+                "de": "Passwortverschlüsselung + Bugfix für die stabile Version",
+                "ru": "Шифрование паролей + исправление ошибок для стабильной версии",
+                "pt": "Criptografia de senha + correção de bug para a versão estável",
+                "nl": "Wachtwoord versleutelen + bugfix voor de stabiele versie",
+                "fr": "Crypter le mot de passe + correction de bogue pour la version stable",
+                "it": "Crittografia password + correzione bug per la versione stabile",
+                "es": "Cifrado de contraseña + corrección de errores para la versión estable",
+                "pl": "Szyfrowanie hasła + poprawka błędu dla stabilnej wersji",
+                "zh-cn": "稳定版本的密码加密+错误修正"
             },
             "0.1.0": {
                 "en": "Preparation for the first stable version",
-                "de": "Vorbereitung für die erste stable Version"
+                "de": "Vorbereitung für die erste stabile Version",
+                "ru": "Подготовка к первой стабильной версии",
+                "pt": "Preparação para a primeira versão estável",
+                "nl": "Voorbereiding voor de eerste stabiele versie",
+                "fr": "Préparation à la première version stable",
+                "it": "Preparazione per la prima versione stabile",
+                "es": "Preparación para la primera versión estable",
+                "pl": "Przygotowanie do pierwszej stabilnej wersji",
+                "zh-cn": "准备第一个稳定版本"
             },
             "0.0.5": {
                 "en": "add energy used value",
-                "de": "Verbrauchswerte hinzugefügt"
+                "de": "Energieverbrauch hinzufügen",
+                "ru": "добавить ценность использованной энергии",
+                "pt": "adicionar valor de energia usada",
+                "nl": "energie verbruikte waarde toevoegen",
+                "fr": "ajouter de la valeur énergétique utilisée",
+                "it": "aggiungere valore all'energia utilizzata",
+                "es": "agregar valor de energía utilizada",
+                "pl": "dodać wartość zużytej energii",
+                "zh-cn": "增加能源使用价值"
             },
             "0.0.4": {
                 "en": "fixed config writeable. Reboot Charger add",
-                "de": "Konfigwerte schreibbar repariert. Neustart Wallbox hinzugefügt"
+                "de": "feste Konfiguration beschreibbar. Ladegerät neu starten hinzufügen",
+                "ru": "фиксированная конфигурация с возможностью записи. Reboot Charger добавить",
+                "pt": "configuração fixa gravável. Reboot Charger add",
+                "nl": "vaste configuratie beschrijfbaar. Herstart oplader toevoegen",
+                "fr": "configuration fixe inscriptible. Redémarrer le chargeur ajouter",
+                "it": "configurazione fissa scrivibile. Riavvia caricatore aggiungi",
+                "es": "configuración fija escribible. Reboot Charger añadir",
+                "pl": "naprawiono zapisywalną konfigurację. Zrestartuj ładowarkę dodaj",
+                "zh-cn": "固定配置可写。重新启动Charger添加"
             },
             "0.0.3": {
                 "en": "Add config writeable",
-                "de": "Konfigwerte schreibbar"
+                "de": "Fügen Sie die beschreibbare Konfiguration hinzu",
+                "ru": "Добавить конфигурацию с возможностью записи",
+                "pt": "Adicionar configuração gravável",
+                "nl": "Voeg schrijfbare configuratie toe",
+                "fr": "Ajouter une configuration inscriptible",
+                "it": "Aggiungi configurazione scrivibile",
+                "es": "Agregar configuración de escritura",
+                "pl": "Dodaj zapisywalną konfigurację",
+                "zh-cn": "添加可写的配置"
             },
             "0.0.2": {
                 "en": "Add config values",
-                "de": "Konfigwerte hinzugefügt"
+                "de": "Konfigurationswerte hinzufügen",
+                "ru": "Добавить значения конфигурации",
+                "pt": "Adicionar valores de configuração",
+                "nl": "Voeg configuratie-waarden toe",
+                "fr": "Ajouter des valeurs de configuration",
+                "it": "Aggiungi valori di configurazione",
+                "es": "Agregar valores de configuración",
+                "pl": "Dodaj wartości konfiguracyjne",
+                "zh-cn": "添加配置值"
             },
             "0.0.1": {
                 "en": "initial release",
-                "de": "Erstveröffentlichung"
-            }
+                "de": "Erstveröffentlichung",
+                "ru": "Первый выпуск",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "初始发行"
+            }            
         },
         "title": "Easee Wallbox API",
         "titleLang": {
