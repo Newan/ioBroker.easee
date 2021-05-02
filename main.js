@@ -194,7 +194,7 @@ class Easee extends utils.Adapter {
         roundCounter = roundCounter + 1;
 
         //Melden das Update
-        await this.setStateAsync('lastUpdate', new Date().toLocaleTimeString());
+        await this.setStateAsync('lastUpdate', new Date().toLocaleTimeString(), {ack: true});
         adapterIntervals.readAllStates = setTimeout(this.readAllStates.bind(this), polltime * 1000);
     }
 
@@ -206,7 +206,7 @@ class Easee extends utils.Adapter {
     onStateChange(id, state) {
         if (state) {
             // The state was changed
-            this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+            this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
             const tmpControl = id.split('.');
             if (tmpControl[3] == 'config') {
                 // change config, wenn ack = false
@@ -276,23 +276,23 @@ class Easee extends utils.Adapter {
 
     //Setzen alle Status für Charger
     async setNewStatusToCharger(charger, charger_states) {
-        await this.setStateAsync(charger.id + '.name', charger.name);
-        await this.setStateAsync(charger.id + '.status.cableLocked', charger_states.cableLocked);
-        await this.setStateAsync(charger.id + '.status.chargerOpMode', charger_states.chargerOpMode);
-        await this.setStateAsync(charger.id + '.status.totalPower', charger_states.totalPower);
-        await this.setStateAsync(charger.id + '.status.wiFiRSSI', charger_states.wiFiRSSI);
-        await this.setStateAsync(charger.id + '.status.chargerFirmware', charger_states.chargerFirmware);
-        await this.setStateAsync(charger.id + '.status.latestFirmware', charger_states.latestFirmware);
-        await this.setStateAsync(charger.id + '.status.voltage', charger_states.voltage);
-        await this.setStateAsync(charger.id + '.status.outputCurrent', charger_states.outputCurrent);
-        await this.setStateAsync(charger.id + '.status.isOnline', charger_states.isOnline);
-        await this.setStateAsync(charger.id + '.status.wiFiAPEnabled', charger_states.wiFiAPEnabled);
-        await this.setStateAsync(charger.id + '.status.lifetimeEnergy', charger_states.lifetimeEnergy);
-        await this.setStateAsync(charger.id + '.status.energyPerHour', charger_states.energyPerHour);
-        await this.setStateAsync(charger.id + '.status.inCurrentT2', charger_states.inCurrentT2);
-        await this.setStateAsync(charger.id + '.status.inCurrentT3', charger_states.inCurrentT3);
-        await this.setStateAsync(charger.id + '.status.inCurrentT4', charger_states.inCurrentT4);
-        await this.setStateAsync(charger.id + '.status.inCurrentT5', charger_states.inCurrentT5);
+        await this.setStateAsync(charger.id + '.name', charger.name, true);
+        await this.setStateAsync(charger.id + '.status.cableLocked', charger_states.cableLocked, true);
+        await this.setStateAsync(charger.id + '.status.chargerOpMode', charger_states.chargerOpMode, true);
+        await this.setStateAsync(charger.id + '.status.totalPower', charger_states.totalPower, true);
+        await this.setStateAsync(charger.id + '.status.wiFiRSSI', charger_states.wiFiRSSI, true);
+        await this.setStateAsync(charger.id + '.status.chargerFirmware', charger_states.chargerFirmware, true);
+        await this.setStateAsync(charger.id + '.status.latestFirmware', charger_states.latestFirmware, true);
+        await this.setStateAsync(charger.id + '.status.voltage', charger_states.voltage, true);
+        await this.setStateAsync(charger.id + '.status.outputCurrent', charger_states.outputCurrent, true);
+        await this.setStateAsync(charger.id + '.status.isOnline', charger_states.isOnline, true);
+        await this.setStateAsync(charger.id + '.status.wiFiAPEnabled', charger_states.wiFiAPEnabled, true);
+        await this.setStateAsync(charger.id + '.status.lifetimeEnergy', charger_states.lifetimeEnergy, true);
+        await this.setStateAsync(charger.id + '.status.energyPerHour', charger_states.energyPerHour, true);
+        await this.setStateAsync(charger.id + '.status.inCurrentT2', charger_states.inCurrentT2, true);
+        await this.setStateAsync(charger.id + '.status.inCurrentT3', charger_states.inCurrentT3, true);
+        await this.setStateAsync(charger.id + '.status.inCurrentT4', charger_states.inCurrentT4, true);
+        await this.setStateAsync(charger.id + '.status.inCurrentT5', charger_states.inCurrentT5, true);
 
         //wert der config wird nur hier gesendet
         await this.setStateAsync(charger.id + '.config.dynamicChargerCurrent', { val: charger_states.dynamicChargerCurrent, ack: true });
@@ -601,7 +601,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'id',
                 type: 'string',
-                role: 'indicator',
+                role: 'info.name',
                 read: true,
                 write: false,
             },
@@ -615,7 +615,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'name',
                 type: 'string',
-                role: 'indicator',
+                role: 'info.name',
                 read: true,
                 write: false,
             },
@@ -628,7 +628,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Cable lock state',
                 type: 'boolean',
-                role: 'indicator',
+                role: 'value.lock',
                 read: true,
                 write: false,
             },
@@ -641,7 +641,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Charger operation mode according to charger mode table',
                 type: 'number',
-                role: 'indicator',
+                role: 'value',
                 read: true,
                 write: false,
             },
@@ -654,7 +654,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Total power [kW]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value',
                 read: true,
                 write: false,
             },
@@ -667,7 +667,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'WiFi signal strength [dBm]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value',
                 read: true,
                 write: false,
             },
@@ -680,7 +680,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Modem firmware version',
                 type: 'number',
-                role: 'indicator',
+                role: 'value',
                 read: true,
                 write: false,
             },
@@ -693,7 +693,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Latest Modem firmware version',
                 type: 'number',
-                role: 'indicator',
+                role: 'value',
                 read: true,
                 write: false,
             },
@@ -706,7 +706,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'voltage',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.voltage',
                 read: true,
                 write: false,
             },
@@ -719,7 +719,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Active output phase(s) to EV according to output phase type table.',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: false,
             },
@@ -732,7 +732,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Current RMS for input T2 [Amperes]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: false,
             },
@@ -745,7 +745,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Current RMS for input T3 [Amperes]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: false,
             },
@@ -758,7 +758,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Current RMS for input T4 [Amperes]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: false,
             },
@@ -771,7 +771,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Current RMS for input T5 [Amperes]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: false,
             },
@@ -784,7 +784,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'isOnline',
                 type: 'boolean',
-                role: 'indicator',
+                role: 'indicator.reachable',
                 read: true,
                 write: false,
             },
@@ -797,7 +797,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'True if WiFi Access Point is enabled, otherwise false',
                 type: 'boolean',
-                role: 'indicator',
+                role: 'value',
                 read: true,
                 write: false,
             },
@@ -810,7 +810,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Accumulated energy in the lifetime of the charger [kWh]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value',
                 read: true,
                 write: false,
             },
@@ -823,7 +823,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Accumulated energy per hour [kWh]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value',
                 read: true,
                 write: false,
             },
@@ -836,7 +836,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Accumulated energy per hour [kWh]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value',
                 read: true,
                 write: false,
             },
@@ -850,7 +850,7 @@ class Easee extends utils.Adapter {
             common: {
                 name:'SignaleR only: Maximum temperature for all sensors [Celsius]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.temperature.max',
                 read: true,
                 write: false,
             },
@@ -871,7 +871,7 @@ class Easee extends utils.Adapter {
                 common: {
                     name: 'totalEnergyUsage',
                     type: 'number',
-                    role: 'indicator',
+                    role: 'value',
                     read: true,
                     write: false,
                 },
@@ -884,7 +884,7 @@ class Easee extends utils.Adapter {
                 common: {
                     name: 'totalCost',
                     type: 'number',
-                    role: 'indicator',
+                    role: 'value',
                     read: true,
                     write: false,
                 },
@@ -897,7 +897,7 @@ class Easee extends utils.Adapter {
                 common: {
                     name: 'currencyId',
                     type: 'string',
-                    role: 'indicator',
+                    role: 'value',
                     read: true,
                     write: false,
                 },
@@ -910,7 +910,7 @@ class Easee extends utils.Adapter {
                 common: {
                     name: 'total_year',
                     type: 'number',
-                    role: 'indicator',
+                    role: 'value',
                     read: true,
                     write: false,
                 },
@@ -947,7 +947,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Set true to enable charger, false disables charger',
                 type: 'boolean',
-                role: 'indicator',
+                role: 'value',
                 read: true,
                 write: false,
             },
@@ -961,7 +961,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Phase mode on this charger. 1-Locked to 1-Phase, 2-Auto, 3-Locked to 3-phase(only Home)',
                 type: 'number',
-                role: 'indicator',
+                role: 'value',
                 read: true,
                 write: true,
             },
@@ -975,7 +975,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Max current this charger is allowed to offer to car (A)',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: true,
             },
@@ -990,7 +990,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Dynamic max current this charger is allowed to offer to car (A)',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: true,
             },
@@ -1003,7 +1003,7 @@ class Easee extends utils.Adapter {
             common: {
                 name:'Dynamically set circuit maximum current for phase 1 [Amperes]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: false,
             },
@@ -1016,7 +1016,7 @@ class Easee extends utils.Adapter {
             common: {
                 name:'Dynamically set circuit maximum current for phase 2 [Amperes]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: false,
             },
@@ -1029,7 +1029,7 @@ class Easee extends utils.Adapter {
             common: {
                 name:'Dynamically set circuit maximum current for phase 3 [Amperes]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: false,
             },
@@ -1042,7 +1042,7 @@ class Easee extends utils.Adapter {
             common: {
                 name:'Set circuit maximum current [Amperes]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: true,
             },
@@ -1055,7 +1055,7 @@ class Easee extends utils.Adapter {
             common: {
                 name:'Set circuit maximum current [Amperes]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: true,
             },
@@ -1068,7 +1068,7 @@ class Easee extends utils.Adapter {
             common: {
                 name:'Set circuit maximum current [Amperes]',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.current',
                 read: true,
                 write: true,
             },
@@ -1082,7 +1082,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'LED strip brightness, 0-100%',
                 type: 'number',
-                role: 'indicator',
+                role: 'value.brightness',
                 read: true,
                 write: true,
             },
@@ -1096,7 +1096,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'WiFi SSID name',
                 type: 'string',
-                role: 'indicator',
+                role: 'value',
                 read: true,
                 write: true,
             },
