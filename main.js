@@ -89,7 +89,7 @@ class Easee extends utils.Adapter {
         } else if (this.config.client_secret == '') {
             this.log.error('No password set');
         } else {
-            this.log.info('Api login started');
+            this.log.debug('Api login started');
             this.log.debug('Password is:' + this.config.client_secret);
             const login = await this.login(this.config.username, this.config.client_secret);
             if (login) {
@@ -127,7 +127,7 @@ class Easee extends utils.Adapter {
         try {
             clearTimeout(adapterIntervals.readAllStates);
             this.log.info('Adaptor easee cleaned up everything...');
-            this.setState('info.connection', false, true);
+            this.setStateAsync('info.connection', false, true);
             callback();
         } catch (e) {
             callback();
@@ -143,7 +143,7 @@ class Easee extends utils.Adapter {
             await this.refreshToken();
         }
 
-        this.log.info('read new states from the API');
+        this.log.debug('read new states from the API');
 
         //Lesen alle Charger aus
         const tmpAllChargers = await this.getAllCharger();
@@ -161,25 +161,31 @@ class Easee extends utils.Adapter {
 
                 this.log.debug('Charger gefunden');
                 this.log.debug(JSON.stringify(charger));
+                try {
 
-                //Lesen den Status aus
-                const tmpChargerState = await this.getChargerState(charger.id);
-                //Lesen die config
-                const tmpChargerConfig = await this.getChargerConfig(charger.id);
+                    //Lesen den Status aus
+                    const tmpChargerState = await this.getChargerState(charger.id);
+                    //Lesen die config
+                    const tmpChargerConfig = await this.getChargerConfig(charger.id);
 
-                //Setzen die Daten der Charger
-                await this.setNewStatusToCharger(charger, tmpChargerState);
+                    //Setzen die Daten der Charger
+                    await this.setNewStatusToCharger(charger, tmpChargerState);
 
-                //Setzen die Config zum Charger
-                await this.setConfigStatus(charger, tmpChargerConfig);
+                    //Setzen die Config zum Charger
+                    await this.setConfigStatus(charger, tmpChargerConfig);
 
-                //setzen und erechnen der Energiedaten, aber gebremste
-                if(roundCounter > (minPollTimeEnergy/polltime)) {
-                    //lesen der Energiedaten
-                    const tmpChargerSession = await this.getChargerSession(charger.id);
-                    //etzen die Objekte
-                    this.setNewSessionToCharger(charger, tmpChargerSession);
+                    //setzen und erechnen der Energiedaten, aber gebremste
+                    if(roundCounter > (minPollTimeEnergy/polltime)) {
+                        //lesen der Energiedaten
+                        const tmpChargerSession = await this.getChargerSession(charger.id);
+                        //etzen die Objekte
+                        this.setNewSessionToCharger(charger, tmpChargerSession);
+                    }
+                } catch (err) {
+                    //geben die FEhlermeldng der API-funktion aus
+                    this.log.error(err);
                 }
+
             });
         } else {
             this.log.warn('No Chargers found!');
@@ -187,14 +193,14 @@ class Easee extends utils.Adapter {
 
         //Energiedaten dürfen nur einmal in der Minute aufgerufen werden, daher müssen wir das bremsen
         if(roundCounter > (minPollTimeEnergy/polltime)) {
-            this.log.info('Hole Energiedaten: ' + roundCounter);
+            this.log.debug('Hole Energiedaten: ' + roundCounter);
             roundCounter = 0;
         }
         //Zählen die Runde!
         roundCounter = roundCounter + 1;
 
         //Melden das Update
-        await this.setStateAsync('lastUpdate', new Date().toLocaleTimeString(), {ack: true});
+        await this.setStateAsync('lastUpdate', new Date().toLocaleTimeString(), true);
         adapterIntervals.readAllStates = setTimeout(this.readAllStates.bind(this), polltime * 1000);
     }
 
@@ -222,14 +228,14 @@ class Easee extends utils.Adapter {
                             this.log.debug(JSON.stringify(site));
 
                             this.changeCircuitConfig(site.id, site.circuits[0].id, state.val);
-                            this.log.info('Changes send to API');
+                            this.log.debug('Changes send to API');
                         });
 
 
                     } else {
                         this.log.debug('update config to API: ' + id);
                         this.changeConfig(tmpControl[2], tmpControl[4], state.val);
-                        this.log.info('Changes send to API');
+                        this.log.debug('Changes send to API');
                     }
                 }
             } else {
@@ -333,7 +339,7 @@ class Easee extends utils.Adapter {
                 password: password
             });
 
-            this.log.info('Login successful');
+            this.log.info('Easee Api Login successful');
 
             accessToken = response.data.accessToken;
             refreshToken = response.data.refreshToken;
@@ -390,6 +396,7 @@ class Easee extends utils.Adapter {
             return response.data;
         }).catch((error) => {
             this.log.error(error);
+            throw new Error('Easee API error on charger state - stop refresh');
         });
     }
 
@@ -402,6 +409,7 @@ class Easee extends utils.Adapter {
             return response.data;
         }).catch((error) => {
             this.log.error(error);
+            throw new Error('Easee API error on charger config - stop refresh');
         });
     }
 
@@ -414,6 +422,7 @@ class Easee extends utils.Adapter {
             return response.data;
         }).catch((error) => {
             this.log.error(error);
+            throw new Error('Easee API error on charger site - stop refresh');
         });
     }
 
@@ -426,6 +435,7 @@ class Easee extends utils.Adapter {
             return response.data;
         }).catch((error) => {
             this.log.error(error);
+            throw new Error('Easee API error on charger session - stop refresh');
         });
     }
 
@@ -607,7 +617,7 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
-        await this.setStateAsync(charger.id + '.id', charger.id);
+        await this.setStateAsync(charger.id + '.id', charger.id, true);
 
         //name
         await this.setObjectNotExistsAsync(charger.id + '.name', {
@@ -877,7 +887,7 @@ class Easee extends utils.Adapter {
                 },
                 native: {},
             });
-            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalEnergyUsage', session.totalEnergyUsage);
+            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalEnergyUsage', session.totalEnergyUsage, true);
 
             await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalCost', {
                 type: 'state',
@@ -890,7 +900,7 @@ class Easee extends utils.Adapter {
                 },
                 native: {},
             });
-            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalCost', session.totalCost);
+            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalCost', session.totalCost, true);
 
             await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.currencyId', {
                 type: 'state',
@@ -903,7 +913,7 @@ class Easee extends utils.Adapter {
                 },
                 native: {},
             });
-            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.currencyId', session.currencyId);
+            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.currencyId', session.currencyId, true);
 
             await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.total_year', {
                 type: 'state',
@@ -924,15 +934,15 @@ class Easee extends utils.Adapter {
         let tmpYearCount = 0;
         charger_session.forEach(session => {
             //Jahreszähler umhängen
-            this.log.info('set session year data');
+            this.log.debug('set session year data');
             if (tmpYear != session.year) {
                 //neues Jahr setzen alles zurück
-                this.setState(charger.id + '.session.' + session.year + '.total_year', session.totalEnergyUsage);
+                this.setStateAsync(charger.id + '.session.' + session.year + '.total_year', session.totalEnergyUsage, true);
                 tmpYearCount = session.totalEnergyUsage;
                 tmpYear = session.year;
             } else {
                 tmpYearCount = tmpYearCount + session.totalEnergyUsage;
-                this.setState(charger.id + '.session.' + session.year + '.total_year', tmpYearCount);
+                this.setStateAsync(charger.id + '.session.' + session.year + '.total_year', tmpYearCount, true);
             }
         });
 
@@ -1035,7 +1045,7 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
-        this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP3');
+        //this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP3');
 
         await this.setObjectNotExistsAsync(charger.id + '.config.circuitMaxCurrentP1', {
             type: 'state',
