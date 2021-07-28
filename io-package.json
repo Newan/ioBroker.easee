@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "easee",
-        "version": "1.0.2",
-        "news": {            
+        "version": "1.0.3",
+        "news": {
+            "1.0.3": {
+                "en": "Adapter crash fixed an other bugfixes",
+                "de": "Adapterabsturz behoben und weitere Bugfixes",
+                "ru": "Авария адаптера исправила другие исправления.",
+                "pt": "Falha do adaptador corrigida e outras correções de bugs",
+                "nl": "Adaptercrash heeft andere bugfixes opgelost",
+                "fr": "Le crash de l'adaptateur a corrigé une autre correction de bugs",
+                "it": "Il crash dell'adattatore ha risolto un altro bugfix",
+                "es": "La falla del adaptador corrigió otras correcciones de errores",
+                "pl": "Awaria adaptera naprawiono inne poprawki błędów",
+                "zh-cn": "适配器崩溃修复了其他错误修复"
+            },
             "1.0.2": {
                 "en": "bugfix for the new stable version",
                 "de": "Bugfix für die neue stabile Version",
