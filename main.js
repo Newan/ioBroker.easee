@@ -227,13 +227,23 @@ class Easee extends utils.Adapter {
                             this.log.debug('Get infos from site:');
                             this.log.debug(JSON.stringify(site));
 
-                            this.changeCircuitConfig(site.id, site.circuits[0].id, state.val);
+                            this.changeMaxCircuitConfig(site.id, site.circuits[0].id, state.val);
                             this.log.debug('Changes send to API');
                         });
+                    } else if (tmpControl[4] == 'dynamicCircuitCurrentP1' || tmpControl[4] == 'dynamicCircuitCurrentP2' || tmpControl[4] == 'dynamicCircuitCurrentP3') {
 
+                        this.getChargerSite(tmpControl[2]).then( (site) => {
+                            this.log.debug('Update dynamicCircuitCurrent to: ' + state.val);
+                            this.log.debug('Get infos from site:');
+                            this.log.debug(JSON.stringify(site));
+
+                            this.changeCircuitConfig(tmpControl[4], site.id, site.circuits[0].id, state.val);
+                            this.log.debug('DynamicCircuitCurrent Changes send to API');
+                        });
 
                     } else {
                         this.log.debug('update config to API: ' + id);
+                        this.log.warn(tmpControl[4]);
                         this.changeConfig(tmpControl[2], tmpControl[4], state.val);
                         this.log.debug('Changes send to API');
                     }
@@ -518,11 +528,26 @@ class Easee extends utils.Adapter {
     }
 
     //circuitMaxCurrentPX
-    async changeCircuitConfig(site_id, circuit_id, value) {
+    async changeMaxCircuitConfig(site_id, circuit_id, value) {
         return await axios.post(apiUrl + '/api/sites/' + site_id + '/circuits/' + circuit_id + '/settings', {
             'maxCircuitCurrentP1': value,
             'maxCircuitCurrentP2': value,
             'maxCircuitCurrentP3': value,
+        },
+        { headers: {'Authorization' : `Bearer ${accessToken}`}}
+        ).then(response => {
+            this.log.info('CircuitMax update successful');
+            this.log.debug(JSON.stringify(response.data));
+        }).catch((error) => {
+            this.log.error('CircuitMax update error');
+            this.log.error(error);
+        });
+    }
+
+    //dynamicCircuitCurrentPX
+    async changeCircuitConfig(configkey, site_id, circuit_id, value) {
+        return await axios.post(apiUrl + '/api/sites/' + site_id + '/circuits/' + circuit_id + '/settings', {
+            [configkey]: value
         },
         { headers: {'Authorization' : `Bearer ${accessToken}`}}
         ).then(response => {
@@ -533,6 +558,7 @@ class Easee extends utils.Adapter {
             this.log.error(error);
         });
     }
+
 
     /***********************************************************************
      * Funktionen zum erstellen der Objekte der Reading
@@ -1015,11 +1041,11 @@ class Easee extends utils.Adapter {
                 type: 'number',
                 role: 'value.current',
                 read: true,
-                write: false,
+                write: true,
             },
             native: {},
         });
-        //this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP1');
+        this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP1');
 
         await this.setObjectNotExistsAsync(charger.id + '.config.dynamicCircuitCurrentP2', {
             type: 'state',
@@ -1028,11 +1054,11 @@ class Easee extends utils.Adapter {
                 type: 'number',
                 role: 'value.current',
                 read: true,
-                write: false,
+                write: true,
             },
             native: {},
         });
-        //this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP2');
+        this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP2');
 
         await this.setObjectNotExistsAsync(charger.id + '.config.dynamicCircuitCurrentP3', {
             type: 'state',
@@ -1041,11 +1067,11 @@ class Easee extends utils.Adapter {
                 type: 'number',
                 role: 'value.current',
                 read: true,
-                write: false,
+                write: true,
             },
             native: {},
         });
-        //this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP3');
+        this.subscribeStates(charger.id + '.config.dynamicCircuitCurrentP3');
 
         await this.setObjectNotExistsAsync(charger.id + '.config.circuitMaxCurrentP1', {
             type: 'state',
