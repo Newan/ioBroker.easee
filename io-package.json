@@ -3,6 +3,18 @@
         "name": "easee",
         "version": "1.0.4",
         "news": {
+            "1.0.4": {
+                "en": "dynamicCircuitCurrentPX writeable (set all phases in 500ms) to limit ampere ",
+                "de": "dynamicCircuitCurrentPX beschreibbar (alle Phasen in 500ms einstellen) um Ampere zu begrenzen",
+                "ru": "dynamicCircuitCurrentPX с возможностью записи (установить все фазы в 500 мс) для ограничения силы тока",
+                "pt": "dynamicCircuitCurrentPX gravável (definir todas as fases em 500 ms) para limitar ampere",
+                "nl": "dynamicCircuitCurrentPX beschrijfbaar (stel alle fasen in op 500 ms) om ampère te beperken",
+                "fr": "dynamicCircuitCurrentPX inscriptible (définir toutes les phases en 500ms) pour limiter l'ampère",
+                "it": "dynamicCircuitCurrentPX scrivibile (imposta tutte le fasi in 500 ms) per limitare l'ampere",
+                "es": "dynamicCircuitCurrentPX escribible (establezca todas las fases en 500ms) para limitar los amperios",
+                "pl": "Możliwość zapisu dynamicCircuitCurrentPX (ustaw wszystkie fazy na 500 ms), aby ograniczyć ampery",
+                "zh-cn": "dynamicCircuitCurrentPX 可写（在 500 毫秒内设置所有阶段）以限制安培"
+            },
             "1.0.3": {
                 "en": "Adapter crash fixed an other bugfixes",
                 "de": "Adapterabsturz behoben und weitere Bugfixes",

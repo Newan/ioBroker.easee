@@ -17,6 +17,13 @@ const minPollTimeEnergy = 120;
 let roundCounter = 0;
 const arrCharger = [];
 
+//Variable für dynamicCircuitCurrentPX
+let timerDynamicCircuitCurrent;
+let dynamicCircuitCurrentP1 = 0;
+let dynamicCircuitCurrentP2 = 0;
+let dynamicCircuitCurrentP3 = 0;
+
+
 class Easee extends utils.Adapter {
 
     /**
@@ -126,6 +133,7 @@ class Easee extends utils.Adapter {
     onUnload(callback) {
         try {
             clearTimeout(adapterIntervals.readAllStates);
+            clearTimeout(adapterIntervals.updateDynamicCircuitCurrent);
             this.log.info('Adaptor easee cleaned up everything...');
             this.setStateAsync('info.connection', false, true);
             callback();
@@ -182,7 +190,7 @@ class Easee extends utils.Adapter {
                         this.setNewSessionToCharger(charger, tmpChargerSession);
                     }
                 } catch (err) {
-                    //geben die FEhlermeldng der API-funktion aus
+                    //geben die Fehlermeldng der API-funktion aus
                     this.log.error(err);
                 }
 
@@ -237,13 +245,33 @@ class Easee extends utils.Adapter {
                             this.log.debug('Get infos from site:');
                             this.log.debug(JSON.stringify(site));
 
-                            this.changeCircuitConfig(tmpControl[4], site.id, site.circuits[0].id, state.val);
-                            this.log.debug('DynamicCircuitCurrent Changes send to API');
+                            //setze die WErte für das Update
+                            switch(tmpControl[4]) {
+                                case 'dynamicCircuitCurrentP1':
+                                    dynamicCircuitCurrentP1 = state.val;
+                                    break;
+                                case 'dynamicCircuitCurrentP2':
+                                    dynamicCircuitCurrentP2 = state.val;
+                                    break;
+                                case 'dynamicCircuitCurrentP3':
+                                    dynamicCircuitCurrentP3 = state.val;
+                                    break;
+                            }
+
+                            //Warten mit dem Update 500ms um weitere Phasen zu setzen:
+                            if (adapterIntervals.updateDynamicCircuitCurrent != null) {
+                                clearTimeout(adapterIntervals.updateDynamicCircuitCurrent);
+                                adapterIntervals.updateDynamicCircuitCurrent = null;
+
+                            }
+                            adapterIntervals.updateDynamicCircuitCurrent = setTimeout( async () => {
+                                await this.changeCircuitConfig(site.id, site.circuits[0].id);
+                            }, 5000);
+
                         });
 
                     } else {
                         this.log.debug('update config to API: ' + id);
-                        this.log.warn(tmpControl[4]);
                         this.changeConfig(tmpControl[2], tmpControl[4], state.val);
                         this.log.debug('Changes send to API');
                     }
@@ -545,9 +573,13 @@ class Easee extends utils.Adapter {
     }
 
     //dynamicCircuitCurrentPX
-    async changeCircuitConfig(configkey, site_id, circuit_id, value) {
-        return await axios.post(apiUrl + '/api/sites/' + site_id + '/circuits/' + circuit_id + '/settings', {
-            [configkey]: value
+    async changeCircuitConfig(site_id, circuit_id) {
+
+        //Der Wert darf nur für 3 Fach Wwrte aktualisiert werden
+        await axios.post(apiUrl + '/api/sites/' + site_id + '/circuits/' + circuit_id + '/settings', {
+            'dynamicCircuitCurrentP1': dynamicCircuitCurrentP1,
+            'dynamicCircuitCurrentP2': dynamicCircuitCurrentP2,
+            'dynamicCircuitCurrentP3': dynamicCircuitCurrentP3
         },
         { headers: {'Authorization' : `Bearer ${accessToken}`}}
         ).then(response => {
@@ -557,6 +589,13 @@ class Easee extends utils.Adapter {
             this.log.error('Circuit update error');
             this.log.error(error);
         });
+
+        //setze Werte zurück
+        adapterIntervals.updateDynamicCircuitCurrent = null;
+        dynamicCircuitCurrentP1 = 0;
+        dynamicCircuitCurrentP2 = 0;
+        dynamicCircuitCurrentP3 = 0;
+
     }
 
 
