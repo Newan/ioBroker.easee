@@ -266,7 +266,7 @@ class Easee extends utils.Adapter {
                             }
                             adapterIntervals.updateDynamicCircuitCurrent = setTimeout( async () => {
                                 await this.changeCircuitConfig(site.id, site.circuits[0].id);
-                            }, 5000);
+                            }, 500);
 
                         });
 
