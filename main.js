@@ -49,7 +49,7 @@ class Easee extends utils.Adapter {
             .build();
 
         connection.on('ProductUpdate', data => {
-            //haben einen neuen Wert über SIgnalR erhalten
+            //haben einen neuen Wert über SignalR erhalten
             if(objEnum.getNameByEnum(data.id) == undefined) {
                 this.log.debug('New SignalR-ID, possible new Value: ' + data.id);
                 this.log.debug(JSON.stringify(data));
@@ -63,9 +63,9 @@ class Easee extends utils.Adapter {
 
         connection.start().then(() => {
             //for each charger subscribe SignalR
-            arrCharger.forEach(charger => {
-                connection.send('SubscribeWithCurrentState', 'EH530097', true).then(() => {
-                    this.log.info('Charger registrate in SignalR: ' + charger.id);
+            arrCharger.forEach(charger_id => {
+                connection.send('SubscribeWithCurrentState', charger_id, true).then(() => {
+                    this.log.info('Charger registrate in SignalR: ' + charger_id);
                 });
             });
         });
