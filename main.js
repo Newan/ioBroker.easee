@@ -50,13 +50,26 @@ class Easee extends utils.Adapter {
 
         connection.on('ProductUpdate', data => {
             //haben einen neuen Wert über SignalR erhalten
-            if(objEnum.getNameByEnum(data.id) == undefined) {
+            var data_name = objEnum.getNameByEnum(data.id);
+            if (data_name == undefined) {
                 this.log.debug('New SignalR-ID, possible new Value: ' + data.id);
                 this.log.debug(JSON.stringify(data));
             } else {
                 //Value is in ioBroker, update it
-                const tmpValueId = data.mid + objEnum.getNameByEnum(data.id);
+                const tmpValueId = data.mid + data_name;
                 this.log.info('New value over SignalR for: ' + tmpValueId + 'value: ' + data.value);
+                switch (data.dataType) {
+                    case 2:
+                        data.value = data.value == '1';
+                        break;
+                    case 3:
+                        data.value = parseFloat(data.value);
+                        break;
+                    case 4:
+                        data.value = parseInt(data.value);
+                        break;
+                    //case 6: JSON
+                }
                 this.setStateAsync(tmpValueId, { val: data.value, ack: true });
             }
         });
@@ -327,16 +340,29 @@ class Easee extends utils.Adapter {
         await this.setStateAsync(charger.id + '.status.wiFiRSSI', charger_states.wiFiRSSI, true);
         await this.setStateAsync(charger.id + '.status.chargerFirmware', charger_states.chargerFirmware, true);
         await this.setStateAsync(charger.id + '.status.latestFirmware', charger_states.latestFirmware, true);
+        await this.setStateAsync(charger.id + '.status.reasonForNoCurrent', charger_states.reasonForNoCurrent, true);
         await this.setStateAsync(charger.id + '.status.voltage', charger_states.voltage, true);
         await this.setStateAsync(charger.id + '.status.outputCurrent', charger_states.outputCurrent, true);
         await this.setStateAsync(charger.id + '.status.isOnline', charger_states.isOnline, true);
         await this.setStateAsync(charger.id + '.status.wiFiAPEnabled', charger_states.wiFiAPEnabled, true);
+        await this.setStateAsync(charger.id + '.status.ledMode', charger_states.ledMode, true);
+        await this.setStateAsync(charger.id + '.status.smartCharging', charger_states.smartCharging, true);
         await this.setStateAsync(charger.id + '.status.lifetimeEnergy', charger_states.lifetimeEnergy, true);
         await this.setStateAsync(charger.id + '.status.energyPerHour', charger_states.energyPerHour, true);
         await this.setStateAsync(charger.id + '.status.inCurrentT2', charger_states.inCurrentT2, true);
         await this.setStateAsync(charger.id + '.status.inCurrentT3', charger_states.inCurrentT3, true);
         await this.setStateAsync(charger.id + '.status.inCurrentT4', charger_states.inCurrentT4, true);
         await this.setStateAsync(charger.id + '.status.inCurrentT5', charger_states.inCurrentT5, true);
+        await this.setStateAsync(charger.id + '.status.inVoltageT1T2', charger_states.inVoltageT1T2, true);
+        await this.setStateAsync(charger.id + '.status.inVoltageT1T3', charger_states.inVoltageT1T3, true);
+        await this.setStateAsync(charger.id + '.status.inVoltageT1T4', charger_states.inVoltageT1T4, true);
+        await this.setStateAsync(charger.id + '.status.inVoltageT1T5', charger_states.inVoltageT1T5, true);
+        await this.setStateAsync(charger.id + '.status.inVoltageT2T3', charger_states.inVoltageT2T3, true);
+        await this.setStateAsync(charger.id + '.status.inVoltageT2T4', charger_states.inVoltageT2T4, true);
+        await this.setStateAsync(charger.id + '.status.inVoltageT2T5', charger_states.inVoltageT2T5, true);
+        await this.setStateAsync(charger.id + '.status.inVoltageT3T4', charger_states.inVoltageT3T4, true);
+        await this.setStateAsync(charger.id + '.status.inVoltageT3T5', charger_states.inVoltageT3T5, true);
+        await this.setStateAsync(charger.id + '.status.inVoltageT4T5', charger_states.inVoltageT4T5, true);
 
         //wert der config wird nur hier gesendet
         await this.setStateAsync(charger.id + '.config.dynamicChargerCurrent', { val: charger_states.dynamicChargerCurrent, ack: true });
@@ -352,6 +378,7 @@ class Easee extends utils.Adapter {
         await this.setStateAsync(charger.id + '.config.isEnabled',{ val: charger_config.isEnabled, ack: true } );
         await this.setStateAsync(charger.id + '.config.phaseMode', { val: charger_config.phaseMode, ack: true });
         await this.setStateAsync(charger.id + '.config.ledStripBrightness', { val: charger_config.ledStripBrightness, ack: true });
+        await this.setStateAsync(charger.id + '.config.smartButtonEnabled', { val: charger_config.smartButtonEnabled, ack: true });
         await this.setStateAsync(charger.id + '.config.wiFiSSID', { val: charger_config.wiFiSSID, ack: true });
         await this.setStateAsync(charger.id + '.config.maxChargerCurrent', { val: charger_config.maxChargerCurrent, ack: true });
 
@@ -775,6 +802,19 @@ class Easee extends utils.Adapter {
             native: {},
         });
 
+        //"reasonForNoCurrent": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.reasonForNoCurrent', {
+            type: 'state',
+            common: {
+                name: 'Reason for not offering current to the car',
+                type: 'number',
+                role: 'value',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
         //"voltage": 0,
         await this.setObjectNotExistsAsync(charger.id + '.status.voltage', {
             type: 'state',
@@ -853,6 +893,127 @@ class Easee extends utils.Adapter {
             native: {},
         });
 
+        //"inVoltageT1T2": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inVoltageT1T2', {
+            type: 'state',
+            common: {
+                name: 'Current Voltage for between inputs T1 and T2 [Volts]',
+                type: 'number',
+                role: 'value.voltage',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        //"inVoltageT1T3": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inVoltageT1T3', {
+            type: 'state',
+            common: {
+                name: 'Current Voltage for between inputs T1 and T3 [Volts]',
+                type: 'number',
+                role: 'value.voltage',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        //"inVoltageT1T4": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inVoltageT1T4', {
+            type: 'state',
+            common: {
+                name: 'Current Voltage for between inputs T1 and T4 [Volts]',
+                type: 'number',
+                role: 'value.voltage',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        //"inVoltageT1T5": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inVoltageT1T5', {
+            type: 'state',
+            common: {
+                name: 'Current Voltage for between inputs T1 and T5 [Volts]',
+                type: 'number',
+                role: 'value.voltage',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        //"inVoltageT2T3": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inVoltageT2T3', {
+            type: 'state',
+            common: {
+                name: 'Current Voltage for between inputs T2 and T3 [Volts]',
+                type: 'number',
+                role: 'value.voltage',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        //"inVoltageT2T4": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inVoltageT2T4', {
+            type: 'state',
+            common: {
+                name: 'Current Voltage for between inputs T2 and T4 [Volts]',
+                type: 'number',
+                role: 'value.voltage',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        //"inVoltageT2T5": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inVoltageT2T5', {
+            type: 'state',
+            common: {
+                name: 'Current Voltage for between inputs T2 and T5 [Volts]',
+                type: 'number',
+                role: 'value.voltage',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        //"inVoltageT3T4": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inVoltageT3T4', {
+            type: 'state',
+            common: {
+                name: 'Current Voltage for between inputs T3 and T4 [Volts]',
+                type: 'number',
+                role: 'value.voltage',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        //"inVoltageT3T5": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inVoltageT3T5', {
+            type: 'state',
+            common: {
+                name: 'Current Voltage for between inputs T3 and T5 [Volts]',
+                type: 'number',
+                role: 'value.voltage',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+        //"inVoltageT4T5": 0,
+        await this.setObjectNotExistsAsync(charger.id + '.status.inVoltageT4T5', {
+            type: 'state',
+            common: {
+                name: 'Current Voltage for between inputs T4 and T5 [Volts]',
+                type: 'number',
+                role: 'value.voltage',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
         //"isOnline": true,
         await this.setObjectNotExistsAsync(charger.id + '.status.isOnline', {
             type: 'state',
@@ -871,6 +1032,32 @@ class Easee extends utils.Adapter {
             type: 'state',
             common: {
                 name: 'True if WiFi Access Point is enabled, otherwise false',
+                type: 'boolean',
+                role: 'value',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+        //"ledMode": true,
+        await this.setObjectNotExistsAsync(charger.id + '.status.ledMode', {
+            type: 'state',
+            common: {
+                name: 'Charger LED mode',
+                type: 'number',
+                role: 'value',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+        //"smartCharging": true,
+        await this.setObjectNotExistsAsync(charger.id + '.status.smartCharging', {
+            type: 'state',
+            common: {
+                name: 'Smart charging state enabled by capacitive touch button',
                 type: 'boolean',
                 role: 'value',
                 read: true,
@@ -1165,6 +1352,20 @@ class Easee extends utils.Adapter {
         });
         this.subscribeStates(charger.id + '.config.ledStripBrightness');
 
+        //smartButtonEnabled
+        await this.setObjectNotExistsAsync(charger.id + '.config.smartButtonEnabled', {
+            type: 'state',
+            common: {
+                name: 'Smart Button Enabled/Disabled',
+                type: 'boolean',
+                role: 'indicator.state',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        this.subscribeStates(charger.id + '.config.smartButtonEnabled');
+
         //wiFiSSID
         await this.setObjectNotExistsAsync(charger.id + '.config.wiFiSSID', {
             type: 'state',
@@ -1193,7 +1394,4 @@ if (module.parent) {
     // otherwise start the instance directly
     new Easee();
 }
-
-
-
 
