@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "easee",
-        "version": "1.0.4",
+        "version": "1.0.5",
         "news": {
+            "1.0.5": {
+                "en": "marwin79 - More Features supported and convert values to expected datatypes",
+                "de": "marwin79 - Weitere unterstützte Funktionen und Konvertieren von Werten in erwartete Datentypen",
+                "ru": "marwin79 - Поддерживаются дополнительные функции и преобразование значений в ожидаемые типы данных",
+                "pt": "marwin79 - Mais recursos suportados e convertem valores em tipos de dados esperados",
+                "nl": "marwin79 - Meer ondersteunde functies en converteer waarden naar verwachte datatypes",
+                "fr": "marwin79 - Plus de fonctionnalités prises en charge et convertir les valeurs en types de données attendus",
+                "it": "marwin79 - Altre funzionalità supportate e converte i valori nei tipi di dati previsti",
+                "es": "marwin79: se admiten más funciones y se convierten los valores en los tipos de datos esperados",
+                "pl": "marwin79 - Więcej funkcji obsługiwanych i konwertowanie wartości na oczekiwane typy danych",
+                "zh-cn": "marwin79 - 支持更多功能并将值转换为预期的数据类型"
+            },
             "1.0.4": {
                 "en": "dynamicCircuitCurrentPX writeable (set all phases in 500ms) to limit ampere ",
                 "de": "dynamicCircuitCurrentPX beschreibbar (alle Phasen in 500ms einstellen) um Ampere zu begrenzen",

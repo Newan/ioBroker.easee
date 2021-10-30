@@ -18,7 +18,6 @@ let roundCounter = 0;
 const arrCharger = [];
 
 //Variable für dynamicCircuitCurrentPX
-let timerDynamicCircuitCurrent;
 let dynamicCircuitCurrentP1 = 0;
 let dynamicCircuitCurrentP2 = 0;
 let dynamicCircuitCurrentP3 = 0;
@@ -261,13 +260,13 @@ class Easee extends utils.Adapter {
                             //setze die WErte für das Update
                             switch(tmpControl[4]) {
                                 case 'dynamicCircuitCurrentP1':
-                                    dynamicCircuitCurrentP1 = state.val;
+                                    dynamicCircuitCurrentP1 = Number(state.val);
                                     break;
                                 case 'dynamicCircuitCurrentP2':
-                                    dynamicCircuitCurrentP2 = state.val;
+                                    dynamicCircuitCurrentP2 = Number(state.val);
                                     break;
                                 case 'dynamicCircuitCurrentP3':
-                                    dynamicCircuitCurrentP3 = state.val;
+                                    dynamicCircuitCurrentP3 = Number(state.val);
                                     break;
                             }
 
