@@ -49,7 +49,7 @@ class Easee extends utils.Adapter {
 
         connection.on('ProductUpdate', data => {
             //haben einen neuen Wert über SignalR erhalten
-            var data_name = objEnum.getNameByEnum(data.id);
+            const data_name = objEnum.getNameByEnum(data.id);
             if (data_name == undefined) {
                 this.log.debug('New SignalR-ID, possible new Value: ' + data.id);
                 this.log.debug(JSON.stringify(data));
@@ -201,9 +201,12 @@ class Easee extends utils.Adapter {
                         //etzen die Objekte
                         this.setNewSessionToCharger(charger, tmpChargerSession);
                     }
-                } catch (err) {
-                    //geben die Fehlermeldng der API-funktion aus
-                    this.log.error(err);
+                } catch (error) {
+                    if (typeof error === 'string') {
+                        this.log.error(error);
+                    } else if (error instanceof Error) {
+                        this.log.error(error.message);
+                    }
                 }
 
             });
@@ -345,7 +348,6 @@ class Easee extends utils.Adapter {
         await this.setStateAsync(charger.id + '.status.isOnline', charger_states.isOnline, true);
         await this.setStateAsync(charger.id + '.status.wiFiAPEnabled', charger_states.wiFiAPEnabled, true);
         await this.setStateAsync(charger.id + '.status.ledMode', charger_states.ledMode, true);
-        await this.setStateAsync(charger.id + '.status.smartCharging', charger_states.smartCharging, true);
         await this.setStateAsync(charger.id + '.status.lifetimeEnergy', charger_states.lifetimeEnergy, true);
         await this.setStateAsync(charger.id + '.status.energyPerHour', charger_states.energyPerHour, true);
         await this.setStateAsync(charger.id + '.status.inCurrentT2', charger_states.inCurrentT2, true);
@@ -368,9 +370,8 @@ class Easee extends utils.Adapter {
         await this.setStateAsync(charger.id + '.config.dynamicCircuitCurrentP1', { val: charger_states.dynamicCircuitCurrentP1, ack: true });
         await this.setStateAsync(charger.id + '.config.dynamicCircuitCurrentP2', { val: charger_states.dynamicCircuitCurrentP2, ack: true });
         await this.setStateAsync(charger.id + '.config.dynamicCircuitCurrentP3', { val: charger_states.dynamicCircuitCurrentP3, ack: true });
-
+        await this.setStateAsync(charger.id + '.config.smartCharging', charger_states.smartCharging, true);
     }
-
 
     //Setzen alle Status für Config
     async setConfigStatus(charger, charger_config) {
@@ -385,8 +386,6 @@ class Easee extends utils.Adapter {
         await this.setStateAsync(charger.id + '.config.circuitMaxCurrentP1', { val: charger_config.circuitMaxCurrentP1, ack: true });
         await this.setStateAsync(charger.id + '.config.circuitMaxCurrentP2', { val: charger_config.circuitMaxCurrentP3, ack: true });
         await this.setStateAsync(charger.id + '.config.circuitMaxCurrentP3', { val: charger_config.circuitMaxCurrentP3, ack: true });
-
-
     }
 
     /*************************************************************************
@@ -413,7 +412,11 @@ class Easee extends utils.Adapter {
             return true;
         } catch (error) {
             this.log.error('Api login error - check Username and password');
-            this.log.debug(error.message);
+            if (typeof error === 'string') {
+                this.log.error(error);
+            } else if (error instanceof Error) {
+                this.log.error(error.message);
+            }
             await this.setStateAsync('info.connection', false, true);
             return false;
         }
@@ -1052,19 +1055,6 @@ class Easee extends utils.Adapter {
             native: {},
         });
 
-        //"smartCharging": true,
-        await this.setObjectNotExistsAsync(charger.id + '.status.smartCharging', {
-            type: 'state',
-            common: {
-                name: 'Smart charging state enabled by capacitive touch button',
-                type: 'boolean',
-                role: 'value',
-                read: true,
-                write: false,
-            },
-            native: {},
-        });
-
         //"lifetimeEnergy": 0,
         await this.setObjectNotExistsAsync(charger.id + '.status.lifetimeEnergy', {
             type: 'state',
@@ -1351,6 +1341,20 @@ class Easee extends utils.Adapter {
         });
         this.subscribeStates(charger.id + '.config.ledStripBrightness');
 
+        //"smartCharging": true,
+        await this.setObjectNotExistsAsync(charger.id + '.config.smartCharging', {
+            type: 'state',
+            common: {
+                name: 'Smart charging state enabled by capacitive touch button',
+                type: 'boolean',
+                role: 'value',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        this.subscribeStates(charger.id + '.config.smartCharging');
+
         //smartButtonEnabled
         await this.setObjectNotExistsAsync(charger.id + '.config.smartButtonEnabled', {
             type: 'state',
@@ -1363,7 +1367,6 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
-        this.subscribeStates(charger.id + '.config.smartButtonEnabled');
 
         //wiFiSSID
         await this.setObjectNotExistsAsync(charger.id + '.config.wiFiSSID', {
@@ -1378,6 +1381,7 @@ class Easee extends utils.Adapter {
             native: {},
         });
         this.subscribeStates(charger.id + '.config.wiFiSSID');
+
 
     }
 }

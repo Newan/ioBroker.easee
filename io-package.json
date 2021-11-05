@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "easee",
-        "version": "1.0.5",
+        "version": "1.0.6",
         "news": {
+            "1.0.6": {
+                "en": "Changed that smart charging is editable",
+                "de": "Geändert, dass Smart Charging bearbeitet werden kann",
+                "ru": "Изменено, что умная зарядка доступна для редактирования",
+                "pt": "Alterado que o carregamento inteligente é editável",
+                "nl": "Gewijzigd dat slim opladen bewerkbaar is",
+                "fr": "Changé que la charge intelligente est modifiable",
+                "it": "Modificato che la ricarica intelligente è modificabile",
+                "es": "Se modificó que la carga inteligente es editable",
+                "pl": "Zmieniono, że inteligentne ładowanie można edytować",
+                "zh-cn": "更改智能充电可编辑"
+            },
             "1.0.5": {
                 "en": "marwin79 - More Features supported and convert values to expected datatypes",
                 "de": "marwin79 - Weitere unterstützte Funktionen und Konvertieren von Werten in erwartete Datentypen",
