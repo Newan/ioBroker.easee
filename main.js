@@ -109,7 +109,6 @@ class Easee extends utils.Adapter {
             this.log.error('No password set');
         } else {
             this.log.debug('Api login started');
-            this.log.debug('Password is:' + this.config.client_secret);
             const login = await this.login(this.config.username, this.config.client_secret);
             if (login) {
                 //Erstes Objekt erstellen
