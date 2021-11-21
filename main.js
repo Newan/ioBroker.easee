@@ -8,10 +8,8 @@ const objEnum = require('./lib/enum.js');
 
 //Eigene Variablen
 const apiUrl = 'https://api.easee.cloud';
+const apiUrl2 = 'https://api.easee.cloud/api/';
 const adapterIntervals = {}; //halten von allen Intervallen
-let accessToken = '';
-let refreshToken = '';
-let expireTime = Date.now();
 let polltime = 30;
 const minPollTimeEnergy = 120;
 let roundCounter = 0;
@@ -21,7 +19,6 @@ const arrCharger = [];
 let dynamicCircuitCurrentP1 = 0;
 let dynamicCircuitCurrentP2 = 0;
 let dynamicCircuitCurrentP3 = 0;
-
 
 class Easee extends utils.Adapter {
 
@@ -33,6 +30,10 @@ class Easee extends utils.Adapter {
             ...options,
             name: 'easee',
         });
+
+        this.accessToken = 'invalidTokenInitial';
+        this.accessTokenExpiry = 0;
+
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
         this.on('unload', this.onUnload.bind(this));
@@ -43,7 +44,12 @@ class Easee extends utils.Adapter {
      */
     startSignal(){
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl('https://api.easee.cloud/hubs/chargers', { accessTokenFactory: () => accessToken })
+            .withUrl('https://api.easee.cloud/hubs/chargers', {
+                accessTokenFactory: () => {
+                    this.log.debug('signalR.HubConnectionBuilder');
+                    return this.getAccessToken();
+                }
+            })
             .withAutomaticReconnect()
             .build();
 
@@ -86,6 +92,11 @@ class Easee extends utils.Adapter {
             this.log.error('SignalR Verbindung beendet!!!- restart');
             this.startSignal();
         });
+
+        connection.onreconnecting(error => {
+            console.assert(connection.state === signalR.HubConnectionState.Reconnecting);
+            this.log.error(`Connection lost due to error "${error}". Reconnecting.`);
+        });
     }
 
 
@@ -105,37 +116,27 @@ class Easee extends utils.Adapter {
         // Testen ob der Login funktioniert
         if (this.config.username == '' || this.config.username == '+49') {
             this.log.error('No username set');
+            return;
         } else if (this.config.client_secret == '') {
             this.log.error('No password set');
-        } else {
-            this.log.debug('Api login started');
-            this.log.debug('Password is:' + this.config.client_secret);
-            const login = await this.login(this.config.username, this.config.client_secret);
-            if (login) {
-                //Erstes Objekt erstellen
-                await this.setObjectNotExistsAsync('lastUpdate', {
-                    type: 'state',
-                    common: {
-                        name: 'lastUpdate',
-                        type: 'string',
-                        role: 'indicator',
-                        read: true,
-                        write: false,
-                    },
-                    native: {},
-                });
+            return;
+        }
+        this.log.debug('Api login started');
+        const accessToken = await this.getAccessToken(true);
+        if (accessToken == 'invalidTokenInitial' || accessToken == '') {
+            this.log.error('Login failed!');
+            return;
+        }
 
-                //reset all to start
-                this.arrCharger = [];
+        //reset all to start
+        this.arrCharger = [];
 
-                // starten den Statuszyklus der API neu
-                await this.readAllStates();
+        // starten den Statuszyklus der API neu
+        await this.readAllStates();
 
-                if (this.config.signalR) {
-                    this.log.info('Starting SignalR');
-                    this.startSignal();
-                }
-            }
+        if (this.config.signalR) {
+            this.log.info('Starting SignalR');
+            this.startSignal();
         }
     }
 
@@ -157,12 +158,6 @@ class Easee extends utils.Adapter {
 
     /*****************************************************************************************/
     async readAllStates() {
-        if(expireTime <= Date.now()) {
-            //Token ist expired!
-            this.log.info('Token has expired - refresh');
-            await this.refreshToken();
-        }
-
         this.log.debug('read new states from the API');
 
         //Lesen alle Charger aus
@@ -391,230 +386,170 @@ class Easee extends utils.Adapter {
      * //Todo auslagern in eigene Datei ?
      **************************************************************************/
 
-    //Get Token from API
-    async login(username, password) {
+    async getAccessToken(login = false, renew = false) {
 
-        try {
-            const response = await axios.post(apiUrl + '/api/accounts/token', {
-                userName: username,
-                password: password
-            });
+        if (login) {
+            try {
+                const response = await axios.post(apiUrl + '/api/accounts/token', {
+                    userName: this.config.username,
+                    password: this.config.client_secret
+                });
 
-            this.log.info('Easee Api Login successful');
+                this.log.info('Easee Api Login successful');
 
-            accessToken = response.data.accessToken;
-            refreshToken = response.data.refreshToken;
-            expireTime = Date.now() + (response.data.expiresIn - (polltime * 2)) * 1000;
-            this.log.debug(JSON.stringify(response.data));
-            await this.setStateAsync('info.connection', true, true);
-            return true;
-        } catch (error) {
-            this.log.error('Api login error - check Username and password');
-            if (typeof error === 'string') {
-                this.log.error(error);
-            } else if (error instanceof Error) {
-                this.log.error(error.message);
+                this.accessToken = response.data.accessToken;
+                this.refreshToken = response.data.refreshToken;
+                this.accessTokenExpiry = Date.now() + (response.data.expiresIn / 2) * 1000;
+                this.log.debug(JSON.stringify(response.data));
+                this.setStateAsync('info.connection', true, true);
+            } catch (error) {
+                this.log.error('Api login error - check Username and password');
+                if (typeof error === 'string') {
+                    this.log.error(error);
+                } else if (error instanceof Error) {
+                    this.log.error(error.message);
+                }
+                this.accessToken = '';
+                await this.setStateAsync('info.connection', false, true);
             }
-            await this.setStateAsync('info.connection', false, true);
-            return false;
         }
+
+        if (this.accessTokenExpiry <= Date.now() || renew) {
+            try {
+                const response = await axios.post(apiUrl + '/api/accounts/refresh_token', {
+                    accessToken: this.accessToken,
+                    refreshToken: this.refreshToken
+                });
+                this.log.info('RefreshToken successful');
+                this.accessToken = response.data.accessToken;
+                this.refreshToken = response.data.refreshToken;
+                this.accessTokenExpiry = Date.now() + (response.data.expiresIn / 2) * 1000;
+
+                this.log.debug(JSON.stringify(response.data));
+            } catch (error) {
+                this.log.error('RefreshToken error');
+                this.log.error(error);
+            }
+        }
+
+        return this.accessToken;
+    }
+    /* XXX
+
+    apiGetRequest
+
+    apiPostRequest
+
+    apiRequest
+        getToken
+        if failed (depend on error code) force_renew/re-login/retry
+        if failed -> fail
+    */
+
+    async apiRequest(apiPath, postData) {
+        const accessToken = await this.getAccessToken();
+        let response = {};
+        try {
+            if (!postData) {
+                // GET request
+                response = await axios.get(apiUrl2 + apiPath,
+                    {
+                        headers: { 'Authorization': `Bearer ${accessToken}` }
+                    });
+            } else {
+                // POST request
+                this.log.debug(`POST DATA: ${JSON.stringify(postData)}`);
+                response = await axios.post(apiUrl2 + apiPath, postData,
+                    {
+                        headers: { 'Authorization': `Bearer ${accessToken}` }
+                    });
+            }
+            this.log.info(`apiGetRequest successful: ${apiPath}`);
+            this.log.debug(JSON.stringify(response.data));
+        } catch (error) {
+            this.log.error(`apiGetRequest error: ${apiPath}`);
+            this.log.error(error);
+        }
+        return response.data;
     }
 
-    //GET net Token from API
-    async refreshToken() {
-        return await axios.post(apiUrl + '/api/accounts/refresh_token', {
-            accessToken: accessToken,
-            refreshToken: refreshToken
-        }).then(response => {
-            this.log.info('RefreshToken successful');
-            accessToken = response.data.accessToken;
-            refreshToken = response.data.refreshToken;
-            expireTime = Date.now() + (response.data.expiresIn - (polltime * 2)) * 1000;
-
-            this.log.debug(JSON.stringify(response.data));
-        }).catch((error) => {
-            this.log.error('RefreshToken error');
-            this.log.error(error);
-        });
+    async apiGetRequest(apiPath) {
+        return await this.apiRequest(apiPath);
+    }
+    async apiPostRequest(apiPath, postData) {
+        return await this.apiRequest(apiPath, postData);
     }
 
     //Lese alle Charger aus
     async getAllCharger(){
-        return await axios.get(apiUrl + '/api/chargers' ,
-            { headers: {'Authorization' : `Bearer ${accessToken}`}
-            }).then(response => {
-            this.log.debug('Chargers ausgelesen');
-            this.log.debug(JSON.stringify(response.data));
-            return response.data;
-        }).catch((error) => {
-            this.log.error(error);
-        });
+        this.log.debug('Chargers ausgelesen');
+        return await this.apiGetRequest('chargers');
     }
 
     // Lese den Charger aus
     async getChargerState(charger_id){
-        return await axios.get(apiUrl + '/api/chargers/' + charger_id +'/state',
-            { headers: {'Authorization' : `Bearer ${accessToken}`}
-            }).then(response => {
-            this.log.debug('Charger status ausgelesen mit id: ' + charger_id);
-            this.log.debug(JSON.stringify(response.data));
-            return response.data;
-        }).catch((error) => {
-            this.log.error(error);
-            throw new Error('Easee API error on charger state - stop refresh');
-        });
+        return await this.apiGetRequest('chargers/' + charger_id +'/state');
     }
 
     async getChargerConfig(charger_id){
-        return await axios.get(apiUrl + '/api/chargers/' + charger_id +'/config',
-            { headers: {'Authorization' : `Bearer ${accessToken}`}
-            }).then(response => {
-            this.log.debug('Charger config ausgelesen mit id: ' + charger_id);
-            this.log.debug(JSON.stringify(response.data));
-            return response.data;
-        }).catch((error) => {
-            this.log.error(error);
-            throw new Error('Easee API error on charger config - stop refresh');
-        });
+        return await this.apiGetRequest('chargers/' + charger_id +'/config');
     }
 
     async getChargerSite(charger_id){
-        return await axios.get(apiUrl + '/api/chargers/' + charger_id +'/site',
-            { headers: {'Authorization' : `Bearer ${accessToken}`}
-            }).then(response => {
-            this.log.debug('Charger site ausgelesen mit id: ' + charger_id);
-            this.log.debug(JSON.stringify(response.data));
-            return response.data;
-        }).catch((error) => {
-            this.log.error(error);
-            throw new Error('Easee API error on charger site - stop refresh');
-        });
+        return await this.apiGetRequest('chargers/' + charger_id +'/site');
     }
 
     async getChargerSession(charger_id){
-        return await axios.get(apiUrl + '/api/sessions/charger/' + charger_id +'/monthly',
-            { headers: {'Authorization' : `Bearer ${accessToken}`}
-            }).then(response => {
-            this.log.debug('Charger session ausgelesen mit id: ' + charger_id);
-            this.log.debug(JSON.stringify(response.data));
-            return response.data;
-        }).catch((error) => {
-            this.log.error(error);
-            throw new Error('Easee API error on charger session - stop refresh');
-        });
+        return await this.apiGetRequest('sessions/charger/' + charger_id +'/monthly');
     }
 
-    async startCharging(id) {
-        return await axios.post(apiUrl + '/api/chargers/' + id + '/commands/start_charging', {},
-            { headers: {'Authorization' : `Bearer ${accessToken}`}}
-        ).then(response => {
-            this.log.info('Start charging successful');
-            this.log.debug(JSON.stringify(response.data));
-        }).catch((error) => {
-            this.log.error('Start charging error');
-            this.log.error(error);
-        });
+    async startCharging(charger_id) {
+        return await this.apiGetRequest('chargers/' + charger_id +'/commands/start_charging');
     }
 
-    async stopCharging(id) {
-        return await axios.post(apiUrl + '/api/chargers/' + id + '/commands/stop_charging', {},
-            { headers: {'Authorization' : `Bearer ${accessToken}`}}
-        ).then(response => {
-            this.log.info('Stop charging successful');
-            this.log.debug(JSON.stringify(response.data));
-        }).catch((error) => {
-            this.log.error('Stop charging error');
-            this.log.error(error);
-        });
+    async stopCharging(charger_id) {
+        return await this.apiGetRequest('chargers/' + charger_id +'/commands/stop_charging');
     }
 
-    async pauseCharging(id) {
-        return await axios.post(apiUrl + '/api/chargers/' + id + '/commands/pause_charging', {},
-            { headers: {'Authorization' : `Bearer ${accessToken}`}}
-        ).then(response => {
-            this.log.info('Pause charging successful');
-            this.log.debug(JSON.stringify(response.data));
-        }).catch((error) => {
-            this.log.error('Pause charging error');
-            this.log.error(error);
-        });
+    async pauseCharging(charger_id) {
+        return await this.apiGetRequest('chargers/' + charger_id +'/commands/pause_charging');
     }
 
-    async resumeCharging(id) {
-        return await axios.post(apiUrl + '/api/chargers/' + id + '/commands/resume_charging', {},
-            { headers: {'Authorization' : `Bearer ${accessToken}`}}
-        ).then(response => {
-            this.log.info('Resume charging successful');
-            this.log.debug(JSON.stringify(response.data));
-        }).catch((error) => {
-            this.log.error('Resume charging error');
-            this.log.error(error);
-        });
+    async resumeCharging(charger_id) {
+        return await this.apiGetRequest('chargers/' + charger_id +'/commands/resume_charging');
     }
 
-    async rebootCharging(id) {
-        return await axios.post(apiUrl + '/api/chargers/' + id + '/commands/reboot', {},
-            { headers: {'Authorization' : `Bearer ${accessToken}`}}
-        ).then(response => {
-            this.log.info('Reboot charging successful');
-            this.log.debug(JSON.stringify(response.data));
-        }).catch((error) => {
-            this.log.error('Reboot charging error');
-            this.log.error(error);
-        });
+    async rebootCharging(charger_id) {
+        return await this.apiGetRequest('chargers/' + charger_id +'/commands/reboot');
     }
 
 
-    async changeConfig(id, configvalue, value) {
-        this.log.debug(JSON.stringify( {
+    async changeConfig(charger_id, configvalue, value) {
+        this.log.debug('changeConfig');
+        return await this.apiPostRequest('chargers/' + charger_id + '/settings', {
             [configvalue]: value
-        }));
-        return await axios.post(apiUrl + '/api/chargers/' + id + '/settings', {
-            [configvalue]: value
-        },
-        { headers: {'Authorization' : `Bearer ${accessToken}`}}
-        ).then(response => {
-            this.log.info('Config update successful');
-            this.log.debug(JSON.stringify(response.data));
-        }).catch((error) => {
-            this.log.error('Config update error');
-            this.log.error(error);
         });
     }
 
     //circuitMaxCurrentPX
     async changeMaxCircuitConfig(site_id, circuit_id, value) {
-        return await axios.post(apiUrl + '/api/sites/' + site_id + '/circuits/' + circuit_id + '/settings', {
+        this.log.debug('changeMaxCircuitConfig');
+        await this.apiPostRequest('sites/' + site_id + '/circuits/' + circuit_id + '/settings', {
             'maxCircuitCurrentP1': value,
             'maxCircuitCurrentP2': value,
             'maxCircuitCurrentP3': value,
-        },
-        { headers: {'Authorization' : `Bearer ${accessToken}`}}
-        ).then(response => {
-            this.log.info('CircuitMax update successful');
-            this.log.debug(JSON.stringify(response.data));
-        }).catch((error) => {
-            this.log.error('CircuitMax update error');
-            this.log.error(error);
         });
     }
 
     //dynamicCircuitCurrentPX
     async changeCircuitConfig(site_id, circuit_id) {
+        this.log.debug('changeCircuitConfig');
 
         //Der Wert darf nur für 3 Fach Wwrte aktualisiert werden
-        await axios.post(apiUrl + '/api/sites/' + site_id + '/circuits/' + circuit_id + '/settings', {
+        await this.apiPostRequest('sites/' + site_id + '/circuits/' + circuit_id + '/settings', {
             'dynamicCircuitCurrentP1': dynamicCircuitCurrentP1,
             'dynamicCircuitCurrentP2': dynamicCircuitCurrentP2,
             'dynamicCircuitCurrentP3': dynamicCircuitCurrentP3
-        },
-        { headers: {'Authorization' : `Bearer ${accessToken}`}}
-        ).then(response => {
-            this.log.info('Circuit update successful');
-            this.log.debug(JSON.stringify(response.data));
-        }).catch((error) => {
-            this.log.error('Circuit update error');
-            this.log.error(error);
         });
 
         //setze Werte zurück
@@ -631,7 +566,7 @@ class Easee extends utils.Adapter {
     ***********************************************************************/
 
     async setAllStatusObjects(charger) {
-        //Legen die Steurungsbutton für jeden Charger an
+        //Legen die Steuerungsbutton für jeden Charger an
         await this.setObjectNotExistsAsync(charger.id + '.control.start', {
             type: 'state',
             common: {
@@ -1365,6 +1300,7 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
+        this.subscribeStates(charger.id + '.config.smartButtonEnabled');
 
         //wiFiSSID
         await this.setObjectNotExistsAsync(charger.id + '.config.wiFiSSID', {
@@ -1395,4 +1331,3 @@ if (module.parent) {
     // otherwise start the instance directly
     new Easee();
 }
-

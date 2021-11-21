@@ -258,6 +258,18 @@
     "objects": [],
     "instanceObjects": [
         {
+            "_id": "lastUpdate",
+            "type": "state",
+            "common": {
+                "name": "lastUpdate",
+                "type": "string",
+                "role": "indicator",
+                "read": true,
+                "write": false,
+            },
+            "native": {}
+        },
+        {
             "_id": "info",
             "type": "channel",
             "common": {
