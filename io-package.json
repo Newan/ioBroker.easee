@@ -265,7 +265,7 @@
                 "type": "string",
                 "role": "indicator",
                 "read": true,
-                "write": false,
+                "write": false
             },
             "native": {}
         },
