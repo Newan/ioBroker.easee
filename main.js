@@ -56,7 +56,7 @@ class Easee extends utils.Adapter {
             } else {
                 //Value is in ioBroker, update it
                 const tmpValueId = data.mid + data_name;
-                this.log.info('New value over SignalR for: ' + tmpValueId + ', value: ' + data.value);
+                this.log.debug('New value over SignalR for: ' + tmpValueId + ', value: ' + data.value);
                 switch (data.dataType) {
                     case 2:
                         data.value = data.value == '1';
