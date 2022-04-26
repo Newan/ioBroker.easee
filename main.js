@@ -1365,6 +1365,7 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
+        this.subscribeStates(charger.id + '.config.smartButtonEnabled');
 
         //wiFiSSID
         await this.setObjectNotExistsAsync(charger.id + '.config.wiFiSSID', {
