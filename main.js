@@ -56,7 +56,7 @@ class Easee extends utils.Adapter {
             } else {
                 //Value is in ioBroker, update it
                 const tmpValueId = data.mid + data_name;
-                this.log.info('New value over SignalR for: ' + tmpValueId + 'value: ' + data.value);
+                this.log.debug('New value over SignalR for: ' + tmpValueId + ', value: ' + data.value);
                 switch (data.dataType) {
                     case 2:
                         data.value = data.value == '1';
@@ -158,7 +158,7 @@ class Easee extends utils.Adapter {
     async readAllStates() {
         if(expireTime <= Date.now()) {
             //Token ist expired!
-            this.log.info('Token is Expired - refresh');
+            this.log.info('Token has expired - refresh');
             await this.refreshToken();
         }
 
@@ -178,7 +178,7 @@ class Easee extends utils.Adapter {
                     arrCharger.push(charger.id);
                 }
 
-                this.log.debug('Charger gefunden');
+                this.log.debug('Charger found');
                 this.log.debug(JSON.stringify(charger));
                 try {
 
@@ -246,11 +246,9 @@ class Easee extends utils.Adapter {
                             this.log.debug('Update circuitMaxCurrent to: ' + state.val);
                             this.log.debug('Get infos from site:');
                             this.log.debug(JSON.stringify(site));
-                            this.log.debug('Get infos from site:');
-                            this.log.debug(JSON.stringify(site));
 
                             this.changeMaxCircuitConfig(site.id, site.circuits[0].id, state.val);
-                            this.log.debug('Changes send to API');
+                            this.log.debug('Changes sent to API');
                         });
                     } else if (tmpControl[4] == 'dynamicCircuitCurrentP1' || tmpControl[4] == 'dynamicCircuitCurrentP2' || tmpControl[4] == 'dynamicCircuitCurrentP3') {
 
@@ -287,7 +285,7 @@ class Easee extends utils.Adapter {
                     } else {
                         this.log.debug('update config to API: ' + id);
                         this.changeConfig(tmpControl[2], tmpControl[4], state.val);
-                        this.log.debug('Changes send to API');
+                        this.log.debug('Changes sent to API');
                     }
                 }
             } else {
@@ -396,7 +394,7 @@ class Easee extends utils.Adapter {
     async login(username, password) {
 
         try {
-            const response = await axios.post(apiUrl + '/api/accounts/token', {
+            const response = await axios.post(apiUrl + '/api/accounts/login', {
                 userName: username,
                 password: password
             });
@@ -1366,6 +1364,7 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
+        this.subscribeStates(charger.id + '.config.smartButtonEnabled');
 
         //wiFiSSID
         await this.setObjectNotExistsAsync(charger.id + '.config.wiFiSSID', {
