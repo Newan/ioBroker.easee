@@ -395,7 +395,7 @@ class Easee extends utils.Adapter {
     async login(username, password) {
 
         try {
-            const response = await axios.post(apiUrl + '/api/accounts/token', {
+            const response = await axios.post(apiUrl + '/api/accounts/login', {
                 userName: username,
                 password: password
             });
