@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "easee",
-        "version": "1.0.6",
+        "version": "1.0.7",
         "news": {
+            "1.0.7": {
+                "en": "Changed login URL",
+                "de": "Änderung der Login-URL",
+                "ru": "Изменить URL входа",
+                "pt": "URL de login alterado",
+                "nl": "Veranderde login URL",
+                "fr": "Changement d'URL de connexion",
+                "it": "URL di login modificato",
+                "es": "URL de inicio de sesión cambiado",
+                "pl": "Zmienił login URL",
+                "zh-cn": "变化的伐木"
+            },            
             "1.0.6": {
                 "en": "Changed that smart charging is editable",
                 "de": "Geändert, dass Smart Charging bearbeitet werden kann",
