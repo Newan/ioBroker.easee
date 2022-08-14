@@ -227,7 +227,7 @@
         },
         "desc": {
             "en": "Communicates with the Easee Wallbox API",
-            "de": "Kommuiziert mit der Easee Wallbox API"
+            "de": "Kommuniziert mit der Easee Wallbox API"
         },
         "authors": [
             "Newan <info@newan.de>"
