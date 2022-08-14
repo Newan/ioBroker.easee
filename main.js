@@ -601,7 +601,7 @@ class Easee extends utils.Adapter {
     //dynamicCircuitCurrentPX
     async changeCircuitConfig(site_id, circuit_id) {
 
-        //Der Wert darf nur für 3 Fach Wwrte aktualisiert werden
+        //Der Wert darf nur für 3 Fach Werte aktualisiert werden
         await axios.post(apiUrl + '/api/sites/' + site_id + '/circuits/' + circuit_id + '/settings', {
             'dynamicCircuitCurrentP1': dynamicCircuitCurrentP1,
             'dynamicCircuitCurrentP2': dynamicCircuitCurrentP2,
