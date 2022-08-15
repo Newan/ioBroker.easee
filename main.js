@@ -41,7 +41,7 @@ class Easee extends utils.Adapter {
     /**
      * SignalR
      */
-    startSignal(){
+    startSignal() {
         const connection = new signalR.HubConnectionBuilder()
             .withUrl('https://api.easee.cloud/hubs/chargers', { accessTokenFactory: () => accessToken })
             .withAutomaticReconnect()
@@ -166,7 +166,7 @@ class Easee extends utils.Adapter {
 
         //Lesen alle Charger aus
         const tmpAllChargers = await this.getAllCharger();
-        if (tmpAllChargers != undefined)  {
+        if (tmpAllChargers != undefined) {
             tmpAllChargers.forEach(async charger => {
                 //Prüfen ob wir das Object kennen
                 if (!arrCharger.includes(charger.id)) {
@@ -194,7 +194,7 @@ class Easee extends utils.Adapter {
                     await this.setConfigStatus(charger, tmpChargerConfig);
 
                     //setzen und erechnen der Energiedaten, aber gebremste
-                    if(roundCounter > (minPollTimeEnergy/polltime)) {
+                    if (roundCounter > (minPollTimeEnergy/polltime)) {
                         //lesen der Energiedaten
                         const tmpChargerSession = await this.getChargerSession(charger.id);
                         //etzen die Objekte
@@ -242,7 +242,7 @@ class Easee extends utils.Adapter {
                     if (tmpControl[4] == 'circuitMaxCurrentP1' || tmpControl[4] == 'circuitMaxCurrentP2' || tmpControl[4] == 'circuitMaxCurrentP3') {
 
                         //Load site for Charger
-                        this.getChargerSite(tmpControl[2]).then( (site) => {
+                        this.getChargerSite(tmpControl[2]).then((site) => {
                             this.log.debug('Update circuitMaxCurrent to: ' + state.val);
                             this.log.debug('Get infos from site:');
                             this.log.debug(JSON.stringify(site));
@@ -252,13 +252,13 @@ class Easee extends utils.Adapter {
                         });
                     } else if (tmpControl[4] == 'dynamicCircuitCurrentP1' || tmpControl[4] == 'dynamicCircuitCurrentP2' || tmpControl[4] == 'dynamicCircuitCurrentP3') {
 
-                        this.getChargerSite(tmpControl[2]).then( (site) => {
+                        this.getChargerSite(tmpControl[2]).then((site) => {
                             this.log.debug('Update dynamicCircuitCurrent to: ' + state.val);
                             this.log.debug('Get infos from site:');
                             this.log.debug(JSON.stringify(site));
 
                             //setze die WErte für das Update
-                            switch(tmpControl[4]) {
+                            switch (tmpControl[4]) {
                                 case 'dynamicCircuitCurrentP1':
                                     dynamicCircuitCurrentP1 = Number(state.val);
                                     break;
@@ -372,7 +372,7 @@ class Easee extends utils.Adapter {
 
     //Setzen alle Status für Config
     async setConfigStatus(charger, charger_config) {
-        await this.setStateAsync(charger.id + '.config.isEnabled',{ val: charger_config.isEnabled, ack: true } );
+        await this.setStateAsync(charger.id + '.config.isEnabled', { val: charger_config.isEnabled, ack: true } );
         await this.setStateAsync(charger.id + '.config.phaseMode', { val: charger_config.phaseMode, ack: true });
         await this.setStateAsync(charger.id + '.config.ledStripBrightness', { val: charger_config.ledStripBrightness, ack: true });
         await this.setStateAsync(charger.id + '.config.smartButtonEnabled', { val: charger_config.smartButtonEnabled, ack: true });
@@ -601,7 +601,7 @@ class Easee extends utils.Adapter {
     //dynamicCircuitCurrentPX
     async changeCircuitConfig(site_id, circuit_id) {
 
-        //Der Wert darf nur für 3 Fach Wwrte aktualisiert werden
+        //Der Wert darf nur für 3 Fach Werte aktualisiert werden
         await axios.post(apiUrl + '/api/sites/' + site_id + '/circuits/' + circuit_id + '/settings', {
             'dynamicCircuitCurrentP1': dynamicCircuitCurrentP1,
             'dynamicCircuitCurrentP2': dynamicCircuitCurrentP2,
@@ -630,7 +630,7 @@ class Easee extends utils.Adapter {
     ***********************************************************************/
 
     async setAllStatusObjects(charger) {
-        //Legen die Steurungsbutton für jeden Charger an
+        //Legen die Steuerungsbutton für jeden Charger an
         await this.setObjectNotExistsAsync(charger.id + '.control.start', {
             type: 'state',
             common: {
@@ -1096,7 +1096,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.status.TempMax', {
             type: 'state',
             common: {
-                name:'SignaleR only: Maximum temperature for all sensors [Celsius]',
+                name: 'SignaleR only: Maximum temperature for all sensors [Celsius]',
                 type: 'number',
                 role: 'value.temperature.max',
                 read: true,
@@ -1114,7 +1114,7 @@ class Easee extends utils.Adapter {
         charger_session.forEach(async session => {
 
             //für jeden Monat errechnen wir das?
-            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalEnergyUsage', {
+            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month + '.totalEnergyUsage', {
                 type: 'state',
                 common: {
                     name: 'totalEnergyUsage',
@@ -1125,9 +1125,9 @@ class Easee extends utils.Adapter {
                 },
                 native: {},
             });
-            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalEnergyUsage', session.totalEnergyUsage, true);
+            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month + '.totalEnergyUsage', session.totalEnergyUsage, true);
 
-            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalCost', {
+            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month + '.totalCost', {
                 type: 'state',
                 common: {
                     name: 'totalCost',
@@ -1138,9 +1138,9 @@ class Easee extends utils.Adapter {
                 },
                 native: {},
             });
-            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.totalCost', session.totalCost, true);
+            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month + '.totalCost', session.totalCost, true);
 
-            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.currencyId', {
+            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month + '.currencyId', {
                 type: 'state',
                 common: {
                     name: 'currencyId',
@@ -1151,7 +1151,7 @@ class Easee extends utils.Adapter {
                 },
                 native: {},
             });
-            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month+ '.currencyId', session.currencyId, true);
+            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month + '.currencyId', session.currencyId, true);
 
             await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.total_year', {
                 type: 'state',
@@ -1249,7 +1249,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.config.dynamicCircuitCurrentP1', {
             type: 'state',
             common: {
-                name:'Dynamically set circuit maximum current for phase 1 [Amperes]',
+                name: 'Dynamically set circuit maximum current for phase 1 [Amperes]',
                 type: 'number',
                 role: 'value.current',
                 read: true,
@@ -1262,7 +1262,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.config.dynamicCircuitCurrentP2', {
             type: 'state',
             common: {
-                name:'Dynamically set circuit maximum current for phase 2 [Amperes]',
+                name: 'Dynamically set circuit maximum current for phase 2 [Amperes]',
                 type: 'number',
                 role: 'value.current',
                 read: true,
@@ -1275,7 +1275,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.config.dynamicCircuitCurrentP3', {
             type: 'state',
             common: {
-                name:'Dynamically set circuit maximum current for phase 3 [Amperes]',
+                name: 'Dynamically set circuit maximum current for phase 3 [Amperes]',
                 type: 'number',
                 role: 'value.current',
                 read: true,
@@ -1288,7 +1288,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.config.circuitMaxCurrentP1', {
             type: 'state',
             common: {
-                name:'Set circuit maximum current [Amperes]',
+                name: 'Set circuit maximum current [Amperes]',
                 type: 'number',
                 role: 'value.current',
                 read: true,
@@ -1301,7 +1301,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.config.circuitMaxCurrentP2', {
             type: 'state',
             common: {
-                name:'Set circuit maximum current [Amperes]',
+                name: 'Set circuit maximum current [Amperes]',
                 type: 'number',
                 role: 'value.current',
                 read: true,
@@ -1314,7 +1314,7 @@ class Easee extends utils.Adapter {
         await this.setObjectNotExistsAsync(charger.id + '.config.circuitMaxCurrentP3', {
             type: 'state',
             common: {
-                name:'Set circuit maximum current [Amperes]',
+                name: 'Set circuit maximum current [Amperes]',
                 type: 'number',
                 role: 'value.current',
                 read: true,
