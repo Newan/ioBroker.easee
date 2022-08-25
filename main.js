@@ -729,7 +729,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Cable lock state',
                 type: 'boolean',
-                role: 'value.lock',
+                role: 'sensor.lock',
                 read: true,
                 write: false,
             },
@@ -755,9 +755,10 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Total power [kW]',
                 type: 'number',
-                role: 'value',
+                role: 'value.power',
                 read: true,
                 write: false,
+                unit: "kW"
             },
             native: {},
         });
@@ -771,6 +772,7 @@ class Easee extends utils.Adapter {
                 role: 'value',
                 read: true,
                 write: false,
+                unit: "dBm"
             },
             native: {},
         });
@@ -781,7 +783,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Modem firmware version',
                 type: 'number',
-                role: 'value',
+                role: 'info.firmware',
                 read: true,
                 write: false,
             },
@@ -794,7 +796,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Latest Modem firmware version',
                 type: 'number',
-                role: 'value',
+                role: 'info.firmware',
                 read: true,
                 write: false,
             },
@@ -823,6 +825,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
+                unit: "V"
             },
             native: {},
         });
@@ -836,6 +839,7 @@ class Easee extends utils.Adapter {
                 role: 'value.current',
                 read: true,
                 write: false,
+                unit: "A"
             },
             native: {},
         });
@@ -849,6 +853,7 @@ class Easee extends utils.Adapter {
                 role: 'value.current',
                 read: true,
                 write: false,
+                unit: "A"
             },
             native: {},
         });
@@ -862,6 +867,7 @@ class Easee extends utils.Adapter {
                 role: 'value.current',
                 read: true,
                 write: false,
+                unit: "A"
             },
             native: {},
         });
@@ -875,6 +881,7 @@ class Easee extends utils.Adapter {
                 role: 'value.current',
                 read: true,
                 write: false,
+                unit: "A"
             },
             native: {},
         });
@@ -888,6 +895,7 @@ class Easee extends utils.Adapter {
                 role: 'value.current',
                 read: true,
                 write: false,
+                unit: "A"
             },
             native: {},
         });
@@ -901,6 +909,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
+                unit: "V"
             },
             native: {},
         });
@@ -913,6 +922,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
+                unit: "V"
             },
             native: {},
         });
@@ -925,6 +935,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
+                unit: "V"
             },
             native: {},
         });
@@ -937,6 +948,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
+                unit: "V"
             },
             native: {},
         });
@@ -949,6 +961,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
+                unit: "V"
             },
             native: {},
         });
@@ -961,6 +974,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
+                unit: "V"
             },
             native: {},
         });
@@ -973,6 +987,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
+                unit: "V"
             },
             native: {},
         });
@@ -985,6 +1000,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
+                unit: "V"
             },
             native: {},
         });
@@ -997,6 +1013,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
+                unit: "V"
             },
             native: {},
         });
@@ -1009,6 +1026,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
+                unit: "V"
             },
             native: {},
         });
@@ -1032,7 +1050,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'True if WiFi Access Point is enabled, otherwise false',
                 type: 'boolean',
-                role: 'value',
+                role: 'indicator',
                 read: true,
                 write: false,
             },
@@ -1058,9 +1076,10 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Accumulated energy in the lifetime of the charger [kWh]',
                 type: 'number',
-                role: 'value',
+                role: 'value.power.consumption',
                 read: true,
                 write: false,
+                unit: "kWh"
             },
             native: {},
         });
@@ -1071,9 +1090,10 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Accumulated energy per hour [kWh]',
                 type: 'number',
-                role: 'value',
+                role: 'value.power.consumption',
                 read: true,
                 write: false,
+                unit: "kWh"
             },
             native: {},
         });
@@ -1084,9 +1104,10 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Accumulated energy per hour [kWh]',
                 type: 'number',
-                role: 'value',
+                role: 'value.power.consumption',
                 read: true,
                 write: false,
+                unit: "kWh"
             },
             native: {},
         });
@@ -1195,7 +1216,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Set true to enable charger, false disables charger',
                 type: 'boolean',
-                role: 'value',
+                role: 'switch.enabled',
                 read: true,
                 write: false,
             },
@@ -1209,7 +1230,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Phase mode on this charger. 1-Locked to 1-Phase, 2-Auto, 3-Locked to 3-phase(only Home)',
                 type: 'number',
-                role: 'value',
+                role: 'level',
                 read: true,
                 write: true,
             },
@@ -1223,9 +1244,10 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Max current this charger is allowed to offer to car (A)',
                 type: 'number',
-                role: 'value.current',
+                role: 'level.current',
                 read: true,
                 write: true,
+                unit: "A"
             },
             native: {},
         });
@@ -1238,9 +1260,10 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Dynamic max current this charger is allowed to offer to car (A)',
                 type: 'number',
-                role: 'value.current',
+                role: 'level.current',
                 read: true,
                 write: true,
+                unit: "A"
             },
             native: {},
         });
@@ -1251,9 +1274,10 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Dynamically set circuit maximum current for phase 1 [Amperes]',
                 type: 'number',
-                role: 'value.current',
+                role: 'level.current',
                 read: true,
                 write: true,
+                unit: "A"
             },
             native: {},
         });
@@ -1264,9 +1288,10 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Dynamically set circuit maximum current for phase 2 [Amperes]',
                 type: 'number',
-                role: 'value.current',
+                role: 'level.current',
                 read: true,
                 write: true,
+                unit: "A"
             },
             native: {},
         });
@@ -1277,9 +1302,10 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Dynamically set circuit maximum current for phase 3 [Amperes]',
                 type: 'number',
-                role: 'value.current',
+                role: 'level.current',
                 read: true,
                 write: true,
+                unit: "A"
             },
             native: {},
         });
@@ -1290,9 +1316,10 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Set circuit maximum current [Amperes]',
                 type: 'number',
-                role: 'value.current',
+                role: 'level.current',
                 read: true,
                 write: true,
+                unit: "A"
             },
             native: {},
         });
@@ -1303,9 +1330,10 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Set circuit maximum current [Amperes]',
                 type: 'number',
-                role: 'value.current',
+                role: 'level.current',
                 read: true,
                 write: true,
+                unit: "A"
             },
             native: {},
         });
@@ -1316,9 +1344,10 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Set circuit maximum current [Amperes]',
                 type: 'number',
-                role: 'value.current',
+                role: 'level.current',
                 read: true,
                 write: true,
+                unit: "A"
             },
             native: {},
         });
@@ -1330,7 +1359,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'LED strip brightness, 0-100%',
                 type: 'number',
-                role: 'value.brightness',
+                role: 'level.brightness',
                 read: true,
                 write: true,
             },
@@ -1344,7 +1373,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Smart charging state enabled by capacitive touch button',
                 type: 'boolean',
-                role: 'value',
+                role: 'switch.enable',
                 read: true,
                 write: true,
             },
@@ -1358,7 +1387,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'Smart Button Enabled/Disabled',
                 type: 'boolean',
-                role: 'indicator.state',
+                role: 'switch.enable',
                 read: true,
                 write: true,
             },
@@ -1372,7 +1401,7 @@ class Easee extends utils.Adapter {
             common: {
                 name: 'WiFi SSID name',
                 type: 'string',
-                role: 'value',
+                role: 'text',
                 read: true,
                 write: true,
             },
@@ -1395,4 +1424,3 @@ if (module.parent) {
     // otherwise start the instance directly
     new Easee();
 }
-
