@@ -338,7 +338,6 @@ class Easee extends utils.Adapter {
         await this.setStateAsync(charger.id + '.status.totalPower', charger_states.totalPower, true);
         await this.setStateAsync(charger.id + '.status.wiFiRSSI', charger_states.wiFiRSSI, true);
         await this.setStateAsync(charger.id + '.status.chargerFirmware', charger_states.chargerFirmware, true);
-        await this.setStateAsync(charger.id + '.status.latestFirmware', charger_states.latestFirmware, true);
         await this.setStateAsync(charger.id + '.status.reasonForNoCurrent', charger_states.reasonForNoCurrent, true);
         await this.setStateAsync(charger.id + '.status.voltage', charger_states.voltage, true);
         await this.setStateAsync(charger.id + '.status.outputCurrent', charger_states.outputCurrent, true);
@@ -790,19 +789,6 @@ class Easee extends utils.Adapter {
             native: {},
         });
 
-        //"latestFirmware": 0,
-        await this.setObjectNotExistsAsync(charger.id + '.status.latestFirmware', {
-            type: 'state',
-            common: {
-                name: 'Latest Modem firmware version',
-                type: 'number',
-                role: 'info.firmware',
-                read: true,
-                write: false,
-            },
-            native: {},
-        });
-
         //"reasonForNoCurrent": 0,
         await this.setObjectNotExistsAsync(charger.id + '.status.reasonForNoCurrent', {
             type: 'state',
@@ -1160,19 +1146,6 @@ class Easee extends utils.Adapter {
                 native: {},
             });
             await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month + '.totalCost', session.totalCost, true);
-
-            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month + '.currencyId', {
-                type: 'state',
-                common: {
-                    name: 'currencyId',
-                    type: 'string',
-                    role: 'value',
-                    read: true,
-                    write: false,
-                },
-                native: {},
-            });
-            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month + '.currencyId', session.currencyId, true);
 
             await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.total_year', {
                 type: 'state',
