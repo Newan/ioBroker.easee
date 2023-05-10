@@ -43,7 +43,7 @@ class Easee extends utils.Adapter {
      */
     startSignal() {
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl('https://api.easee.cloud/hubs/chargers', { accessTokenFactory: () => accessToken })
+            .withUrl('https://streams.easee.com/hubs/chargers', { accessTokenFactory: () => accessToken })
             .withAutomaticReconnect()
             .build();
 
@@ -757,7 +757,7 @@ class Easee extends utils.Adapter {
                 role: 'value.power',
                 read: true,
                 write: false,
-                unit: "kW"
+                unit: 'kW'
             },
             native: {},
         });
@@ -771,7 +771,7 @@ class Easee extends utils.Adapter {
                 role: 'value',
                 read: true,
                 write: false,
-                unit: "dBm"
+                unit: 'dBm'
             },
             native: {},
         });
@@ -811,7 +811,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
-                unit: "V"
+                unit: 'V'
             },
             native: {},
         });
@@ -825,7 +825,7 @@ class Easee extends utils.Adapter {
                 role: 'value.current',
                 read: true,
                 write: false,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
@@ -839,7 +839,7 @@ class Easee extends utils.Adapter {
                 role: 'value.current',
                 read: true,
                 write: false,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
@@ -853,7 +853,7 @@ class Easee extends utils.Adapter {
                 role: 'value.current',
                 read: true,
                 write: false,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
@@ -867,7 +867,7 @@ class Easee extends utils.Adapter {
                 role: 'value.current',
                 read: true,
                 write: false,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
@@ -881,7 +881,7 @@ class Easee extends utils.Adapter {
                 role: 'value.current',
                 read: true,
                 write: false,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
@@ -895,7 +895,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
-                unit: "V"
+                unit: 'V'
             },
             native: {},
         });
@@ -908,7 +908,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
-                unit: "V"
+                unit: 'V'
             },
             native: {},
         });
@@ -921,7 +921,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
-                unit: "V"
+                unit: 'V'
             },
             native: {},
         });
@@ -934,7 +934,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
-                unit: "V"
+                unit: 'V'
             },
             native: {},
         });
@@ -947,7 +947,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
-                unit: "V"
+                unit: 'V'
             },
             native: {},
         });
@@ -960,7 +960,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
-                unit: "V"
+                unit: 'V'
             },
             native: {},
         });
@@ -973,7 +973,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
-                unit: "V"
+                unit: 'V'
             },
             native: {},
         });
@@ -986,7 +986,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
-                unit: "V"
+                unit: 'V'
             },
             native: {},
         });
@@ -999,7 +999,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
-                unit: "V"
+                unit: 'V'
             },
             native: {},
         });
@@ -1012,7 +1012,7 @@ class Easee extends utils.Adapter {
                 role: 'value.voltage',
                 read: true,
                 write: false,
-                unit: "V"
+                unit: 'V'
             },
             native: {},
         });
@@ -1065,7 +1065,7 @@ class Easee extends utils.Adapter {
                 role: 'value.power.consumption',
                 read: true,
                 write: false,
-                unit: "kWh"
+                unit: 'kWh'
             },
             native: {},
         });
@@ -1079,7 +1079,7 @@ class Easee extends utils.Adapter {
                 role: 'value.power.consumption',
                 read: true,
                 write: false,
-                unit: "kWh"
+                unit: 'kWh'
             },
             native: {},
         });
@@ -1093,7 +1093,7 @@ class Easee extends utils.Adapter {
                 role: 'value.power.consumption',
                 read: true,
                 write: false,
-                unit: "kWh"
+                unit: 'kWh'
             },
             native: {},
         });
@@ -1220,7 +1220,7 @@ class Easee extends utils.Adapter {
                 role: 'level.current',
                 read: true,
                 write: true,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
@@ -1236,7 +1236,7 @@ class Easee extends utils.Adapter {
                 role: 'level.current',
                 read: true,
                 write: true,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
@@ -1250,7 +1250,7 @@ class Easee extends utils.Adapter {
                 role: 'level.current',
                 read: true,
                 write: true,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
@@ -1264,7 +1264,7 @@ class Easee extends utils.Adapter {
                 role: 'level.current',
                 read: true,
                 write: true,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
@@ -1278,7 +1278,7 @@ class Easee extends utils.Adapter {
                 role: 'level.current',
                 read: true,
                 write: true,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
@@ -1292,7 +1292,7 @@ class Easee extends utils.Adapter {
                 role: 'level.current',
                 read: true,
                 write: true,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
@@ -1306,7 +1306,7 @@ class Easee extends utils.Adapter {
                 role: 'level.current',
                 read: true,
                 write: true,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
@@ -1320,7 +1320,7 @@ class Easee extends utils.Adapter {
                 role: 'level.current',
                 read: true,
                 write: true,
-                unit: "A"
+                unit: 'A'
             },
             native: {},
         });
