@@ -29,7 +29,15 @@ chargerOpMode =
 
 dynamicCircuitCurrentPX -> All phases must be set within 500ms (script) otherwise the phase will be set to 0.    
 
+
 ## Changelog
+<!--
+  Placeholder for the next version (at the beginning of the line):
+  ### **WORK IN PROGRESS**
+-->
+### **WORK IN PROGRESS**
+* (Newan)  small fixes
+
 ### 1.0.7
 * (Newan) Changed login URL
 

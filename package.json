@@ -21,7 +21,6 @@
     "axios": "^1.3.5"
   },
   "devDependencies": {
-    "@types/node": "^18.15.11",
     "@alcalzone/release-script": "^3.5.9",
     "@alcalzone/release-script-plugin-iobroker": "^3.5.9",
     "@iobroker/testing": "^4.1.0",
@@ -29,6 +28,7 @@
     "@types/chai-as-promised": "^7.1.5",
     "@types/gulp": "^4.0.8",
     "@types/mocha": "^10.0.1",
+    "@types/node": "^18.15.11",
     "@types/proxyquire": "^1.3.28",
     "@types/sinon": "^10.0.13",
     "@types/sinon-chai": "^3.2.9",
@@ -51,10 +51,7 @@
     "test": "npm run test:js && npm run test:package",
     "check": "tsc --noEmit -p tsconfig.check.json",
     "lint": "eslint",
-    "release": "release-script",
-    "release-patch": "release-script patch --yes --no-update-lockfile",
-    "release-minor": "release-script minor --yes --no-update-lockfile",
-    "release-major": "release-script major --yes --no-update-lockfile"    
+    "release": "release-script"
   },
   "bugs": {
     "url": "https://github.com/Newan/ioBroker.easee/issues"
