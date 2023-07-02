@@ -174,7 +174,7 @@ class Easee extends utils.Adapter {
                     await this.setAllStatusObjects(charger);
                     await this.setAllConfigObjects(charger);
 
-                    //meken uns den charger
+                    //merken uns den charger
                     arrCharger.push(charger.id);
                 }
 
