@@ -35,7 +35,7 @@ dynamicCircuitCurrentPX -> All phases must be set within 500ms (script) otherwis
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.0.8 (2023-07-02)
 * (Newan)  small fixes
 
 ### 1.0.7
@@ -48,7 +48,7 @@ dynamicCircuitCurrentPX -> All phases must be set within 500ms (script) otherwis
 * (marwin79) More Features supported and convert values to expected datatypes
 
 ### 1.0.4
-* (Newan) dynamicCircuitCurrentPX writeable (set all Phases in 500ms) to limit ampere 
+* (Newan) dynamicCircuitCurrentPX writeable (set all Phases in 500ms) to limit ampere
 
 ### 1.0.3
 * (Newan) Adapter crash fixed an other bugfixes
@@ -58,7 +58,6 @@ dynamicCircuitCurrentPX -> All phases must be set within 500ms (script) otherwis
 
 ### 1.0.0
 * (Newan) Stable Version with SignalR
-
 
 ## Donation
 [![](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=L55UBQJKJEUJL)
