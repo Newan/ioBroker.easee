@@ -257,7 +257,7 @@ class Easee extends utils.Adapter {
                             this.log.debug('Get infos from site:');
                             this.log.debug(JSON.stringify(site));
 
-                            //setze die WErte für das Update
+                            //Setze die Werte für das Update
                             switch (tmpControl[4]) {
                                 case 'dynamicCircuitCurrentP1':
                                     dynamicCircuitCurrentP1 = Number(state.val);
@@ -284,7 +284,12 @@ class Easee extends utils.Adapter {
 
                     } else {
                         this.log.debug('update config to API: ' + id);
-                        this.changeConfig(tmpControl[2], tmpControl[4], state.val);
+                        if (tmpControl[4] == 'isEnabled') {
+                            this.changeConfig(tmpControl[2], 'enabled', state.val);
+                        } else {
+                            this.changeConfig(tmpControl[2], tmpControl[4], state.val);
+
+                        }
                         this.log.debug('Changes sent to API');
                     }
                 }
@@ -1191,7 +1196,7 @@ class Easee extends utils.Adapter {
                 type: 'boolean',
                 role: 'switch.enabled',
                 read: true,
-                write: false,
+                write: true,
             },
             native: {},
         });
