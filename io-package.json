@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "easee",
-        "version": "1.0.7",
+        "version": "1.0.8",
         "news": {
+            "1.0.8": {
+                "en": "smal fixes",
+                "de": "smal fixes",
+                "ru": "smal исправления",
+                "pt": "correções de smal",
+                "nl": "smal fixes",
+                "fr": "smal corrige",
+                "it": "correzioni smal",
+                "es": "smal fixes",
+                "pl": "smalaty",
+                "uk": "smal застібки",
+                "zh-cn": "偷窃"
+            },
             "1.0.7": {
                 "en": "Changed login URL",
                 "de": "Änderung der Login-URL",
