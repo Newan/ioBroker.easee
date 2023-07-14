@@ -407,7 +407,7 @@ class Easee extends utils.Adapter {
 
             accessToken = response.data.accessToken;
             refreshToken = response.data.refreshToken;
-            expireTime = Date.now() + (response.data.expiresIn - (polltime * 2)) * 1000;
+            expireTime = Date.now() + (response.data.expiresIn - 500);
             this.log.debug(JSON.stringify(response.data));
             await this.setStateAsync('info.connection', true, true);
             return true;
@@ -428,16 +428,17 @@ class Easee extends utils.Adapter {
         return await axios.post(apiUrl + '/api/accounts/refresh_token', {
             accessToken: accessToken,
             refreshToken: refreshToken
-        }).then(response => {
+        }).then(async response => {
             this.log.info('RefreshToken successful');
             accessToken = response.data.accessToken;
             refreshToken = response.data.refreshToken;
-            expireTime = Date.now() + (response.data.expiresIn - (polltime * 2)) * 1000;
-
+            expireTime = Date.now() + (response.data.expiresIn - 500);
+            await this.setStateAsync('info.connection', true, true);
             this.log.debug(JSON.stringify(response.data));
-        }).catch((error) => {
+        }).catch(async (error) => {
             this.log.error('RefreshToken error');
             this.log.error(error);
+            await this.setStateAsync('info.connection', false, true);
         });
     }
 
