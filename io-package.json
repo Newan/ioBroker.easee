@@ -278,7 +278,8 @@
         "username": "+49",
         "client_secret": "",
         "polltime": 30,
-        "signalR": false
+        "signalR": false,
+        "logtype": false
     },
     "objects": [],
     "instanceObjects": [
