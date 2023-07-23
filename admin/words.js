@@ -98,5 +98,9 @@ systemDictionary = {
         'es': "Si le gusta el adaptador y desea apoyar el desarrollo posterior, puede agradecerme con una donación en <a href='https://www.paypal.com/donate?hosted_button_id=AAFQ3WMM46LT8' target='_blank'>PayPal</a>. También puede enviarme solicitudes de funciones para futuras versiones del adaptador.",
         'pl': "Jeśli podoba Ci się adapter i chcesz wesprzeć dalszy rozwój, możesz mi podziękować darowizną w ramach <a href='https://www.paypal.com/donate?hosted_button_id=AAFQ3WMM46LT8' target='_blank'>PayPal</a>. Zapraszam również do przesyłania mi próśb o funkcje dotyczące przyszłych wersji adaptera.",
         'zh-cn': "如果您喜欢适配器并希望支持进一步的开发，可以在<a href='https://www.paypal.com/donate?hosted_button_id=AAFQ3WMM46LT8' target='_blank'>PayPal</a>下捐款以表示感谢。也欢迎您向我发送有关适配器将来版本的功能请求。"
+    },
+    'detailed logging': {
+        'en': 'detailed logging',
+        'de': 'detailiertes Logging',
     }
 };
