@@ -7,7 +7,7 @@ const signalR = require('@microsoft/signalr');
 const objEnum = require('./lib/enum.js');
 
 //Eigene Variablen
-const apiUrl = 'https://api.easee.cloud';
+const apiUrl = 'https://api.easee.com';
 const adapterIntervals = {}; //halten von allen Intervallen
 let accessToken = '';
 let refreshToken = '';
