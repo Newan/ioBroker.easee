@@ -10,6 +10,7 @@
     "polltime": "polltime",
     "Poll interval in seconds": "Poll interval in seconds",
     "Use SignalR": "Use SignalR",
-    "detailed info logging": "detailed info logging"
+    "detailed info logging": "detailed info logging",
+    "provide additional logging in info area": "provide additional logging in info area"
 
 }

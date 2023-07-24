@@ -4,18 +4,11 @@
     "items":{
         "_options": {
             "type": "panel",
-            "label": "Donations",
             "items": {
-                "_Divider1": {
-                    "newLine": true,
-                    "type": "divider",
-                    "height": 15,
-                    "color": "primary"
-                },
                 "_Headline1": {
                     "newLine": true,
                     "type": "header",
-                    "size": 1,
+                    "size": 2,
                     "text": "Donate"
                 },
                 "_Donate": {
@@ -34,16 +27,10 @@
                     "label": "If you like the adapter and want to support the further development, you can thank me with a donation under PayPal. You are also welcome to send me feature requests for future versions of the adapter.",
                     "href": "https://www.paypal.com/donate?hosted_button_id=AAFQ3WMM46LT8"
                 },
-                "_Divider2": {
-                    "newLine": true,
-                    "type": "divider",
-                    "height": 15,
-                    "color": "primary"
-                },
                 "_Headline2": {
                     "newLine": true,
                     "type": "header",
-                    "size": 1,
+                    "size": 2,
                     "text": "Account Settings"
                 },
                 "username": {
@@ -63,16 +50,10 @@
                     "label": "Password",
                     "help": "password of Easee cloud"
                 },
-                "_Divider3": {
-                    "newLine": true,
-                    "type": "divider",
-                    "height": 15,
-                    "color": "primary"
-                },
                 "_Headline3": {
                     "newLine": true,
                     "type": "header",
-                    "size": 1,
+                    "size": 2,
                     "text": "API settings"
                 },
                 "polltime": {
@@ -88,16 +69,15 @@
                     "sm": 6,
                     "md": 3,
                     "lg": 3,
-                    "label": "option1",
-                    "help": "Use SignalR"
+                    "label": "Use SignalR"
                 },
                 "logtype": {
                     "type": "checkbox",
                     "sm": 6,
                     "md": 3,
                     "lg": 3,
-                    "label": "logtype",
-                    "help": "detailed info logging"
+                    "label": "detailed info logging",
+                    "help": "provide additional logging in info area"
                 }
             }
         }
