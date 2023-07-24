@@ -1,0 +1,15 @@
+{
+    "Donate": "Donner",
+    "Account settings": "Paramètres du compte",
+    "Username": "Nom d'utilisateur",
+    "username to access Easee cloud": "nom d'utilisateur pour accéder au cloud Easee",
+    "Password": "Mot de passe",
+    "password of Easee cloud": "mot de passe du cloud Easee",
+    "If you like the adapter and want to support the further development, you can thank me with a donation under PayPal. You are also welcome to send me feature requests for future versions of the adapter.": "Si vous aimez l'adaptateur et souhaitez soutenir le développement ultérieur, vous pouvez me remercier en faisant un don via PayPal. Vous pouvez également m'envoyer des demandes de fonctionnalités pour les futures versions de l'adaptateur.",
+    "API settings": "Paramètres de l'API",
+    "polltime": "heure du sondage",
+    "Poll interval in seconds": "Intervalle d'interrogation en secondes",
+    "Use SignalR": "Utiliser SignalR",
+    "detailed info logging": "journalisation des informations détaillées",
+    "provide additional logging in info area": "fournir une connexion supplémentaire dans la zone d'informations"
+}

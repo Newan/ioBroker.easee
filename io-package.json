@@ -26,8 +26,9 @@
                 "it": "URL di login modificato",
                 "es": "URL de inicio de sesión cambiado",
                 "pl": "Zmienił login URL",
-                "zh-cn": "变化的伐木"
-            },            
+                "zh-cn": "变化的伐木",
+                "uk": "Змінено URL для входу"
+            },
             "1.0.6": {
                 "en": "Changed that smart charging is editable",
                 "de": "Geändert, dass Smart Charging bearbeitet werden kann",
@@ -38,7 +39,8 @@
                 "it": "Modificato che la ricarica intelligente è modificabile",
                 "es": "Se modificó que la carga inteligente es editable",
                 "pl": "Zmieniono, że inteligentne ładowanie można edytować",
-                "zh-cn": "更改智能充电可编辑"
+                "zh-cn": "更改智能充电可编辑",
+                "uk": "Змінено, що розумну зарядку можна редагувати"
             },
             "1.0.5": {
                 "en": "marwin79 - More Features supported and convert values to expected datatypes",
@@ -50,7 +52,8 @@
                 "it": "marwin79 - Altre funzionalità supportate e converte i valori nei tipi di dati previsti",
                 "es": "marwin79: se admiten más funciones y se convierten los valores en los tipos de datos esperados",
                 "pl": "marwin79 - Więcej funkcji obsługiwanych i konwertowanie wartości na oczekiwane typy danych",
-                "zh-cn": "marwin79 - 支持更多功能并将值转换为预期的数据类型"
+                "zh-cn": "marwin79 - 支持更多功能并将值转换为预期的数据类型",
+                "uk": "marwin79 — підтримується більше функцій і перетворює значення на очікувані типи даних"
             },
             "1.0.4": {
                 "en": "dynamicCircuitCurrentPX writeable (set all phases in 500ms) to limit ampere ",
@@ -62,7 +65,8 @@
                 "it": "dynamicCircuitCurrentPX scrivibile (imposta tutte le fasi in 500 ms) per limitare l'ampere",
                 "es": "dynamicCircuitCurrentPX escribible (establezca todas las fases en 500ms) para limitar los amperios",
                 "pl": "Możliwość zapisu dynamicCircuitCurrentPX (ustaw wszystkie fazy na 500 ms), aby ograniczyć ampery",
-                "zh-cn": "dynamicCircuitCurrentPX 可写（在 500 毫秒内设置所有阶段）以限制安培"
+                "zh-cn": "dynamicCircuitCurrentPX 可写（在 500 毫秒内设置所有阶段）以限制安培",
+                "uk": "dynamicCircuitCurrentPX для запису (встановлення всіх фаз через 500 мс) для обмеження струму"
             },
             "1.0.3": {
                 "en": "Adapter crash fixed an other bugfixes",
@@ -74,7 +78,8 @@
                 "it": "Il crash dell'adattatore ha risolto un altro bugfix",
                 "es": "La falla del adaptador corrigió otras correcciones de errores",
                 "pl": "Awaria adaptera naprawiono inne poprawki błędów",
-                "zh-cn": "适配器崩溃修复了其他错误修复"
+                "zh-cn": "适配器崩溃修复了其他错误修复",
+                "uk": "Збій адаптера виправлено інші виправлення"
             },
             "1.0.2": {
                 "en": "bugfix for the new stable version",
@@ -86,7 +91,8 @@
                 "it": "bugfix per la nuova versione stabile",
                 "es": "corrección de errores para la nueva versión estable",
                 "pl": "poprawka dla nowej stabilnej wersji",
-                "zh-cn": "新的稳定版本的错误修正"
+                "zh-cn": "新的稳定版本的错误修正",
+                "uk": "виправлення помилок для нової стабільної версії"
             },
             "1.0.1": {
                 "en": "Add circuitMaxCurrentPX to limit current ampere",
@@ -98,7 +104,8 @@
                 "it": "Aggiungi circuitMaxCurrentPX per limitare gli ampere di corrente",
                 "es": "Agregue circuitMaxCurrentPX para limitar el amperio actual",
                 "pl": "Dodaj circuitMaxCurrentPX, aby ograniczyć prąd w amperach",
-                "zh-cn": "添加circuitMaxCurrentPX以限制电流"
+                "zh-cn": "添加circuitMaxCurrentPX以限制电流",
+                "uk": "Додайте circuitMaxCurrentPX, щоб обмежити силу струму"
             },
             "1.0.0": {
                 "en": "Add SignalR support",
@@ -110,7 +117,8 @@
                 "it": "Aggiungi il supporto SignalR",
                 "es": "Agregar compatibilidad con SignalR",
                 "pl": "Dodaj obsługę SignalR",
-                "zh-cn": "添加SignalR支持"
+                "zh-cn": "添加SignalR支持",
+                "uk": "Додайте підтримку SignalR"
             },
             "0.1.4": {
                 "en": "Add new objects",
@@ -122,7 +130,8 @@
                 "it": "Aggiungi nuovi oggetti",
                 "es": "Agregar nuevos objetos",
                 "pl": "Dodaj nowe obiekty",
-                "zh-cn": "添加新对象"
+                "zh-cn": "添加新对象",
+                "uk": "Додати нові об'єкти"
             },
             "0.1.3": {
                 "en": "Add #2 max Ampere changeable",
@@ -134,7 +143,8 @@
                 "it": "Aggiungi # 2 Ampere max modificabile",
                 "es": "Agregue el amperio máximo n. ° 2 cambiable",
                 "pl": "Dodaj # 2 max Amper do zmiany",
-                "zh-cn": "增加＃2最大安培可变"
+                "zh-cn": "增加＃2最大安培可变",
+                "uk": "Додайте #2 максимальну змінну силу струму"
             },
             "0.1.2": {
                 "en": "Object reconstruction",
@@ -146,7 +156,8 @@
                 "it": "Ricostruzione di oggetti",
                 "es": "Reconstrucción de objetos",
                 "pl": "Rekonstrukcja obiektu",
-                "zh-cn": "对象重建"
+                "zh-cn": "对象重建",
+                "uk": "Реконструкція об'єкта"
             },
             "0.1.1": {
                 "en": "Password encrypt + bugfix for the stable version",
@@ -158,7 +169,8 @@
                 "it": "Crittografia password + correzione bug per la versione stabile",
                 "es": "Cifrado de contraseña + corrección de errores para la versión estable",
                 "pl": "Szyfrowanie hasła + poprawka błędu dla stabilnej wersji",
-                "zh-cn": "稳定版本的密码加密+错误修正"
+                "zh-cn": "稳定版本的密码加密+错误修正",
+                "uk": "Шифрування пароля + виправлення помилок для стабільної версії"
             },
             "0.1.0": {
                 "en": "Preparation for the first stable version",
@@ -170,7 +182,8 @@
                 "it": "Preparazione per la prima versione stabile",
                 "es": "Preparación para la primera versión estable",
                 "pl": "Przygotowanie do pierwszej stabilnej wersji",
-                "zh-cn": "准备第一个稳定版本"
+                "zh-cn": "准备第一个稳定版本",
+                "uk": "Підготовка до першої стабільної версії"
             },
             "0.0.5": {
                 "en": "add energy used value",
@@ -182,7 +195,8 @@
                 "it": "aggiungere valore all'energia utilizzata",
                 "es": "agregar valor de energía utilizada",
                 "pl": "dodać wartość zużytej energii",
-                "zh-cn": "增加能源使用价值"
+                "zh-cn": "增加能源使用价值",
+                "uk": "додати вартість використаної енергії"
             },
             "0.0.4": {
                 "en": "fixed config writeable. Reboot Charger add",
@@ -194,7 +208,8 @@
                 "it": "configurazione fissa scrivibile. Riavvia caricatore aggiungi",
                 "es": "configuración fija escribible. Reboot Charger añadir",
                 "pl": "naprawiono zapisywalną konfigurację. Zrestartuj ładowarkę dodaj",
-                "zh-cn": "固定配置可写。重新启动Charger添加"
+                "zh-cn": "固定配置可写。重新启动Charger添加",
+                "uk": "фіксована конфігурація, доступна для запису. Reboot Charger add"
             },
             "0.0.3": {
                 "en": "Add config writeable",
@@ -206,7 +221,8 @@
                 "it": "Aggiungi configurazione scrivibile",
                 "es": "Agregar configuración de escritura",
                 "pl": "Dodaj zapisywalną konfigurację",
-                "zh-cn": "添加可写的配置"
+                "zh-cn": "添加可写的配置",
+                "uk": "Додайте доступ до конфігурації"
             },
             "0.0.2": {
                 "en": "Add config values",
@@ -218,7 +234,8 @@
                 "it": "Aggiungi valori di configurazione",
                 "es": "Agregar valores de configuración",
                 "pl": "Dodaj wartości konfiguracyjne",
-                "zh-cn": "添加配置值"
+                "zh-cn": "添加配置值",
+                "uk": "Додайте значення конфігурації"
             },
             "0.0.1": {
                 "en": "initial release",
@@ -230,17 +247,36 @@
                 "it": "Versione iniziale",
                 "es": "Versión inicial",
                 "pl": "Pierwsze wydanie",
-                "zh-cn": "初始发行"
-            }            
+                "zh-cn": "初始发行",
+                "uk": "початковий випуск"
+            }
         },
         "title": "Easee Wallbox API",
         "titleLang": {
             "en": "Easee Wallbox API",
-            "de": "Easee Wallbox API"
+            "de": "Easee Wallbox API",
+            "ru": "API-интерфейс Easy Wallbox",
+            "pt": "API Easee Wallbox",
+            "nl": "Easee Wallbox-API",
+            "fr": "API Easee Wallbox",
+            "it": "Facilita l'API Wallbox",
+            "es": "Easee Wallbox API",
+            "pl": "Easee Wallbox API",
+            "uk": "Easee Wallbox API",
+            "zh-cn": "Easee Wallbox API"
         },
         "desc": {
             "en": "Communicates with the Easee Wallbox API",
-            "de": "Kommuniziert mit der Easee Wallbox API"
+            "de": "Kommuniziert mit der Easee Wallbox API",
+            "ru": "Взаимодействует с API Easee Wallbox",
+            "pt": "Comunica-se com a API Easee Wallbox",
+            "nl": "Communiceert met de Easee Wallbox API",
+            "fr": "Communique avec l'API Easee Wallbox",
+            "it": "Comunica con l'API Easee Wallbox",
+            "es": "Se comunica con la API Easee Wallbox",
+            "pl": "Komunikuje się z API Easee Wallbox",
+            "uk": "Зв’язується з Easee Wallbox API",
+            "zh-cn": "与 Easee Wallbox API 通信"
         },
         "authors": [
             "Newan <info@newan.de>"
@@ -271,17 +307,17 @@
     "adminUI": {
         "config": "json"
     },
-    "globalDependencies":[
+    "globalDependencies": [
         {
             "admin": ">=5.1.28"
         }
     ],
     "protectedNative": [
         "client_secret"
-      ],
+    ],
     "encryptedNative": [
         "client_secret"
-      ],    
+    ],
     "native": {
         "username": "+49",
         "client_secret": "",
@@ -298,18 +334,19 @@
                 "name": "Information"
             },
             "native": {}
-        },        
-        {
-        "_id": "info.connection",
-        "type": "state",
-        "common": {
-            "role": "indicator.connected",
-            "name": "If communication with easee works",
-            "type": "boolean",
-            "read": true,
-            "write": false,
-            "def": false
         },
-        "native": {}
-    }]
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "If communication with easee works",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
 }

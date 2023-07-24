@@ -1,6 +1,5 @@
 {
     "i18n": true,
-    "type": "tabs",
     "items":{
         "_options": {
             "type": "panel",
@@ -10,7 +9,7 @@
                     "type": "header",
                     "size": 2,
                     "text": "Donate"
-                },
+                },                
                 "_Donate": {
                     "type": "staticImage",
                     "sm": 3,
