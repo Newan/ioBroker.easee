@@ -11,7 +11,7 @@
                     "sm": 3,
                     "md": 2,
                     "lg": 1,
-                    "href": "https://www.paypal.com/donate",
+                    "href": "https://www.paypal.com/donate?hosted_button_id=AAFQ3WMM46LT8",
                     "src": "https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif"
                 },
                 "_DonationText": {
@@ -21,28 +21,31 @@
                     "lg": 11,
                     "label": "If you like the adapter and want to support the further development, you can thank me with a donation under PayPal. You are also welcome to send me feature requests for future versions of the adapter.",
                     "href": "https://www.paypal.com/donate?hosted_button_id=AAFQ3WMM46LT8"
+                },
+                "AccountSettings": {
+                    "newLine": true,
+                    "type": "divider",
+                    "height": 10,
+                    "color": "primary"
+                },
+                "username": {
+                    "newLine": true,
+                    "type": "text",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "Username",
+                    "help": "username to access Easee cloud"
+                },
+                "client_secret": {
+                    "type": "password",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "Password",
+                    "help": "password of Easee cloud"
                 }
-            },
-            "AccountSettings": {
-                "newLine": true,
-                "type": "panel"
-            },
-            "username": {
-                "newLine": true,
-                "type": "text",
-                "sm": 12,
-                "md": 6,
-                "lg": 6,
-                "label": "Username",
-                "help": "username to access Easee cloud"
-            },
-            "client_secret": {
-                "type": "password",
-                "sm": 12,
-                "md": 6,
-                "lg": 6,
-                "label": "Password",
-                "help": "password of Easee cloud"
+        
             },
             "ApiSettings": {
                 "newLine": true,
