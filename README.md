@@ -35,6 +35,12 @@ dynamicCircuitCurrentPX -> All phases must be set within 500ms (script) otherwis
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* (walburgf)  changed API URL from api.easee.cloud to api.easee.com
+* (walburgf)  created addition parameter in admin config to reduce/steer logging information for user
+* (walburgf)  modified internationalization to use jsonConfig.json. this needs at least ioBroker.admin version 5
+* (walburgf)  added dependency to admin v5.1.28
+
 ### 1.0.8 (2023-07-02)
 * (Newan)  small fixes
 

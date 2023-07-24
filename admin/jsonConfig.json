@@ -1,0 +1,42 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items":{
+        "_options": {
+            "type": "panel",
+            "label": "Account settings",
+            "items": {
+                "_Donate": {
+                    "type": "staticImage",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "href": "https://www.paypal.com/donate",
+                    "src": "https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif"
+                },
+                "username": {
+                    "newLine": true,
+                    "type": "text",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "Username",
+                    "help": "username to access Easee cloud"
+                },
+                "client_secret": {
+                    "type": "text",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "Password",
+                    "help": "password of Easee cloud"
+                },
+            }
+        }
+
+
+
+    }
+
+
+}
