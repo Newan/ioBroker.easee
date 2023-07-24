@@ -24,7 +24,7 @@
                     "help": "username to access Easee cloud"
                 },
                 "client_secret": {
-                    "type": "text",
+                    "type": "password",
                     "sm": 12,
                     "md": 6,
                     "lg": 6,
