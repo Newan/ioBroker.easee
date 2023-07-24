@@ -1,15 +1,19 @@
 {
-    "Donate": "Пожертвуйте",
-    "Account settings": "Налаштування аккаунта",
-    "Username": "Ім'я користувача",
-    "username to access Easee cloud": "ім’я користувача для доступу до хмари Easee",
-    "Password": "Пароль",
-    "password of Easee cloud": "пароль хмари Easee",
-    "If you like the adapter and want to support the further development, you can thank me with a donation under PayPal. You are also welcome to send me feature requests for future versions of the adapter.": "Якщо вам подобається адаптер і ви хочете підтримати подальший розвиток, ви можете віддячити мені пожертвою через PayPal. Ви також можете надсилати мені запити щодо функцій для майбутніх версій адаптера.",
     "API settings": "Налаштування API",
-    "polltime": "час опитування",
+    "Account settings": "Налаштування аккаунта",
+    "Api settings": "",
+    "Donate": "Пожертвуйте",
+    "If you like the adapter and want to support the further development, you can thank me with a donation under PayPal. You are also welcome to send me feature requests for future versions of the adapter.": "Якщо вам подобається адаптер і ви хочете підтримати подальший розвиток, ви можете віддячити мені пожертвою через PayPal. Ви також можете надсилати мені запити щодо функцій для майбутніх версій адаптера.",
+    "Password": "Пароль",
     "Poll interval in seconds": "Інтервал опитування в секундах",
     "Use SignalR": "Використовуйте SignalR",
+    "Username": "Ім'я користувача",
     "detailed info logging": "детальна реєстрація інформації",
-    "provide additional logging in info area": "забезпечити додаткову реєстрацію в інформаційній області"
+    "detailed logging": "",
+    "donate_desc": "",
+    "easee adapter settings": "",
+    "password of Easee cloud": "пароль хмари Easee",
+    "polltime": "час опитування",
+    "provide additional logging in info area": "забезпечити додаткову реєстрацію в інформаційній області",
+    "username to access Easee cloud": "ім’я користувача для доступу до хмари Easee"
 }
