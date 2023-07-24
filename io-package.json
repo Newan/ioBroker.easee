@@ -262,14 +262,14 @@
         "connectionType": "cloud",
         "dataSource": "poll",
         "materialize": true,
-        "adminUI": {
-            "config": "json"
-        },
         "dependencies": [
             {
                 "js-controller": ">=3.1.0"
             }
         ]
+    },
+    "adminUI": {
+        "config": "json"
     },
     "globalDependencies":[
         {
