@@ -35,7 +35,7 @@ dynamicCircuitCurrentPX -> All phases must be set within 500ms (script) otherwis
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.0.10 (2023-07-27)
 * (Newan) fix version number
 
 ### 1.0.9 (2023-07-27)
