@@ -1,8 +1,34 @@
 {
     "common": {
         "name": "easee",
-        "version": "1.0.8",
+        "version": "1.0.10",
         "news": {
+            "1.0.10": {
+                "en": "fix version number",
+                "de": "versionsnummer geändert",
+                "ru": "исправить номер версии",
+                "pt": "corrigir o número da versão",
+                "nl": "vertaling:",
+                "fr": "correction du numéro de version",
+                "it": "numero di versione fix",
+                "es": "número de versión",
+                "pl": "wersja poprawna",
+                "uk": "фіксувати номер версії",
+                "zh-cn": "fix"
+            },            
+            "1.0.9": {
+                "en": "many changed by walburgf",
+                "de": "viele geändert von walburgf",
+                "ru": "много изменено walburgf",
+                "pt": "muitos mudou por walburgf",
+                "nl": "veel veranderd door walburg",
+                "fr": "beaucoup changés par walburgf",
+                "it": "molti cambiato da walburgf",
+                "es": "muchos cambiaron por walburgf",
+                "pl": "wielu z nich zmieniało się na walburgf",
+                "uk": "багато змінено walburgf",
+                "zh-cn": "倒数的改变"
+            },
             "1.0.8": {
                 "en": "smal fixes",
                 "de": "smal fixes",
