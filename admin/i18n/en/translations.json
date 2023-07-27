@@ -1,0 +1,19 @@
+{
+    "API settings": "API settings",
+    "Account settings": "Account settings",
+    "Api settings": "Api settings",
+    "Donate": "Donate",
+    "If you like the adapter and want to support the further development, you can thank me with a donation under PayPal. You are also welcome to send me feature requests for future versions of the adapter.": "If you like the adapter and want to support the further development, you can thank me with a donation under PayPal. You are also welcome to send me feature requests for future versions of the adapter.",
+    "Password": "Password",
+    "Poll interval in seconds": "Poll interval in seconds",
+    "Use SignalR": "Use SignalR",
+    "Username": "Username",
+    "detailed info logging": "detailed info logging",
+    "detailed logging": "detailed logging",
+    "donate_desc": "If you like the adapter and want to support the further development, you can thank me with a donation under <a href='https://www.paypal.com/donate?hosted_button_id=AAFQ3WMM46LT8' target='_blank'>PayPal</a>. You are also welcome to send me feature requests for future versions of the adapter.",
+    "easee adapter settings": "Adapter settings for easee",
+    "password of Easee cloud": "password of Easee cloud",
+    "polltime": "polltime",
+    "provide additional logging in info area": "provide additional logging in info area",
+    "username to access Easee cloud": "username to access Easee cloud"
+}

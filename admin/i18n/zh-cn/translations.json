@@ -1,0 +1,19 @@
+{
+    "API settings": "API设置",
+    "Account settings": "帐号设定",
+    "Api settings": "api设置",
+    "Donate": "捐",
+    "If you like the adapter and want to support the further development, you can thank me with a donation under PayPal. You are also welcome to send me feature requests for future versions of the adapter.": "如果您喜欢该适配器并希望支持进一步的开发，您可以通过 PayPal 捐款来感谢我。也欢迎您向我发送有关适配器未来版本的功能请求。",
+    "Password": "密码",
+    "Poll interval in seconds": "轮询间隔（以秒为单位）",
+    "Use SignalR": "使用 SignalR",
+    "Username": "用户名",
+    "detailed info logging": "详细信息记录",
+    "detailed logging": "",
+    "donate_desc": "如果您喜欢适配器并希望支持进一步的开发，可以在<a href='https://www.paypal.com/donate?hosted_button_id=AAFQ3WMM46LT8' target='_blank'>PayPal</a>下捐款以表示感谢。也欢迎您向我发送有关适配器将来版本的功能请求。",
+    "easee adapter settings": "easee的适配器设置",
+    "password of Easee cloud": "易视云密码",
+    "polltime": "轮询时间",
+    "provide additional logging in info area": "在信息区域提供额外的日志记录",
+    "username to access Easee cloud": "访问易视云的用户名"
+}

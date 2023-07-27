@@ -7,12 +7,13 @@ const signalR = require('@microsoft/signalr');
 const objEnum = require('./lib/enum.js');
 
 //Eigene Variablen
-const apiUrl = 'https://api.easee.cloud';
+const apiUrl = 'https://api.easee.com';
 const adapterIntervals = {}; //halten von allen Intervallen
 let accessToken = '';
 let refreshToken = '';
 let expireTime = Date.now();
 let polltime = 30;
+let logtype = false;
 const minPollTimeEnergy = 120;
 let roundCounter = 0;
 const arrCharger = [];
@@ -102,6 +103,7 @@ class Easee extends utils.Adapter {
         } else {
             polltime = this.config.polltime;
         }
+        logtype = this.config.logtype;
         // Testen ob der Login funktioniert
         if (this.config.username == '' || this.config.username == '+49') {
             this.log.error('No username set');
@@ -158,7 +160,7 @@ class Easee extends utils.Adapter {
     async readAllStates() {
         if(expireTime <= Date.now()) {
             //Token ist expired!
-            this.log.info('Token has expired - refresh');
+            if (logtype) this.log.info('Token has expired - refresh');
             await this.refreshToken();
         }
 
@@ -429,7 +431,7 @@ class Easee extends utils.Adapter {
             accessToken: accessToken,
             refreshToken: refreshToken
         }).then(async response => {
-            this.log.info('RefreshToken successful');
+            if (logtype) this.log.info('RefreshToken successful');
             accessToken = response.data.accessToken;
             refreshToken = response.data.refreshToken;
             expireTime = Date.now() + (response.data.expiresIn - 500);
