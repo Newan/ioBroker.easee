@@ -39,7 +39,7 @@ jobs:
                   node-version: ${{ matrix.node-version }}
 
             - name: Install Dependencies
-              run: npm install
+              run: npm install --fix
               #run: npm ci
 
             - name: Lint source code
