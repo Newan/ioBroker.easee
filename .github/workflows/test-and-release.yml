@@ -1,5 +1,4 @@
 name: Test and Release
-
 # Run this job on all pushes and pull requests
 # as well as tags with a semantic version
 on:
@@ -73,8 +72,14 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
 
+            - name: NPM package-lock
+              run: npm i --package-lock-only
+
             - name: Install Dependencies
               run: npm ci
+
+            - name: Lint source code
+              run: npm run lint --fix
 
             - name: Run unit tests
               run: npm run test:unit
