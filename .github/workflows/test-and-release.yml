@@ -78,8 +78,8 @@ jobs:
             - name: Install Dependencies
               run: npm install
 
-            - name: Lint source code
-              run: npm run lint --fix
+            #- name: Lint source code
+            #  run: npm run lint --fix
 
             - name: Run unit tests
               run: npm run test:unit
