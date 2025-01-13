@@ -16,7 +16,7 @@
     "url": "https://github.com/Newan/ioBroker.easee"
   },
   "engines": {
-    "node": ">= 18"
+    "node": ">= 20"
   },
   "dependencies": {
     "@iobroker/adapter-core": "^3.2.3",
@@ -32,7 +32,6 @@
     "@iobroker/testing": "^5.0.0",
     "@types/chai": "^4.3.4",
     "@types/chai-as-promised": "^8.0.1",
-    "@types/gulp": "^4.0.17",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.5",
     "@types/proxyquire": "^1.3.31",
