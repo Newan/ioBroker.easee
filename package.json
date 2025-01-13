@@ -16,7 +16,7 @@
     "url": "https://github.com/Newan/ioBroker.easee"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.6.8",
+    "@iobroker/adapter-core": "^3.2.3",
     "@microsoft/signalr": "^8.0.7",
     "axios": "^1.7.9",
     "minimatch": "^10.0.1"
