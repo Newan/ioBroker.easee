@@ -37,10 +37,12 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
+            
+            - name: NPM fix
+              run: npm audit fix --force
 
             - name: Install Dependencies
-              run: npm install --fix
-              #run: npm ci --fix
+              run: npm ci
 
             - name: Lint source code
               run: npm run lint --fix
