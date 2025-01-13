@@ -13,6 +13,11 @@ on:
             - 'v[0-9]+.[0-9]+.[0-9]+-**'
     pull_request: {}
 
+# Cancel previous PR/branch runs when a new commit is pushed
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
     # Performs quick checks before the expensive test runs
     check-and-lint:
@@ -22,7 +27,7 @@ jobs:
 
         strategy:
             matrix:
-                node-version: [18.x]
+                node-version: [18.x, 20.x, 22.x]
 
         steps:
             - name: Checkout code
@@ -34,7 +39,8 @@ jobs:
                   node-version: ${{ matrix.node-version }}
 
             - name: Install Dependencies
-              run: npm ci
+              run: npm install
+              #run: npm ci
 
             - name: Lint source code
               run: npm run lint
