@@ -15,6 +15,9 @@
     "type": "git",
     "url": "https://github.com/Newan/ioBroker.easee"
   },
+  "engines": {
+    "node": ">= 18"
+  },
   "dependencies": {
     "@iobroker/adapter-core": "^3.2.3",
     "@microsoft/signalr": "^8.0.7",
@@ -45,6 +48,16 @@
     "typescript": "^5.7.3"
   },
   "main": "main.js",
+  "files": [
+    "admin{,/!(src)/**}/!(tsconfig|tsconfig.*|.eslintrc).{json,json5}",
+    "admin{,/!(src)/**}/*.{html,css,png,svg,jpg,js}",
+    "lib/",
+    "io-package.json",
+    "LICENSE",
+    "main.js",
+    "package.json",
+    "README.md"
+  ],
   "scripts": {
     "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
     "test:package": "mocha test/package --exit",
