@@ -27,7 +27,7 @@ jobs:
 
         strategy:
             matrix:
-                node-version: [18.x, 20.x, 22.x]
+                node-version: [20.x, 22.x]
 
         steps:
             - name: Checkout code
@@ -48,7 +48,7 @@ jobs:
               run: npm ci
 
             - name: Lint source code
-              run: npm run lint --fix
+              run: npm run lint
             - name: Test package files
               run: npm run test:package
 
@@ -61,7 +61,7 @@ jobs:
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
-                node-version: [18.x, 20.x, 22.x]
+                node-version: [20.x, 22.x]
                 os: [ubuntu-latest, windows-latest, macos-latest]
 
         steps:
@@ -74,7 +74,7 @@ jobs:
                   node-version: ${{ matrix.node-version }}
 
             - name: Install Dependencies
-              run: npm install --fix
+              run: npm ci
 
             - name: Run unit tests
               run: npm run test:unit
