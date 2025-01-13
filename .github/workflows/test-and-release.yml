@@ -27,7 +27,7 @@ jobs:
 
     steps:
       - name: Install
-        run: npm i --package-lock-only
+        run: npm install
       
       - uses: ioBroker/testing-action-check@v1
         with:
