@@ -63,7 +63,10 @@
         "keywords": [
             "wallbox easee"
         ],
-        "license": "MIT",
+        "licenseInformation": {
+          "type": "free",
+          "license": "MIT"
+        },
         "platform": "Javascript/Node.js",
         "main": "main.js",
         "icon": "easee.png",
@@ -71,6 +74,7 @@
         "extIcon": "https://raw.githubusercontent.com/Newan/ioBroker.easee/master/admin/easee.png",
         "readme": "https://github.com/Newan/ioBroker.easee/blob/master/README.md",
         "loglevel": "info",
+        "tier": 3,
         "mode": "daemon",
         "type": "vehicle",
         "compact": true,
@@ -79,7 +83,7 @@
         "materialize": true,
         "dependencies": [
             {
-                "js-controller": ">=3.1.0"
+                "js-controller": ">=5.0.19"
             }
         ]
     },
