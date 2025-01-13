@@ -42,7 +42,7 @@ jobs:
               run: npm i --package-lock-only
             
             - name: NPM fix
-              run: npm audit fix --force
+              run: npm audit fix
 
             - name: Install Dependencies
               run: npm ci
