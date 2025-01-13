@@ -37,6 +37,9 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.node-version }}
+
+            - name: NPM package-lock
+              run: npm i --package-lock-only
             
             - name: NPM fix
               run: npm audit fix --force
