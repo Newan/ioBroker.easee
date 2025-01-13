@@ -33,5 +33,5 @@
     "license": "MIT License",
     "ci": "gh-actions",
     "dependabot": "no",
-    "creatorVersion": "1.31.0"
+    "creatorVersion": "1.33.0"
 }
