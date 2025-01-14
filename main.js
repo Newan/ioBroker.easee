@@ -48,16 +48,16 @@ class Easee extends utils.Adapter {
       //haben einen neuen Wert über SignalR erhalten
       const data_name = objEnum.getNameByEnum(data.id);
       if (data_name == undefined) {
-        this.log.debug(`New SignalR-ID, possible new Value: ` + data.id);
+        this.log.debug(`New SignalR-ID, possible new Value: ${data.id}`);
         this.log.debug(JSON.stringify(data));
       } else {
         //Value is in ioBroker, update it
         const tmpValueId = data.mid + data_name;
         this.log.debug(
-            `New value over SignalR for: `
-            + tmpValueId
-            + `, value: `
-            + data.value,
+          `New value over SignalR for: ` +
+          tmpValueId +
+          `, value: ` +
+          data.value,
         );
         switch (data.dataType) {
           case 2:
@@ -71,19 +71,19 @@ class Easee extends utils.Adapter {
             break;
           //case 6: JSON
         }
-          this.setStateAsync(tmpValueId, { val: data.value, ack: true });
+        this.setStateAsync(tmpValueId, { val: data.value, ack: true });
       }
     });
 
     connection.start().then(() => {
       //for each charger subscribe SignalR
-      arrCharger.forEach(charger_id => {
+      arrCharger.forEach((charger_id) => {
         connection
           .send(`SubscribeWithCurrentState`, charger_id, true)
           .then(() => {
-            this.log.info(`Charger registrate in SignalR: ` + charger_id);
+            this.log.info(`Charger registrate in SignalR: ${charger_id}`);
           });
-        });
+      });
     });
     connection.onclose(() => {
       this.log.error("SignalR Verbindung beendet!!!- restart");
