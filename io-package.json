@@ -30,7 +30,6 @@
                 "zh-cn": "倒数的改变"
             }
         },
-        "title": "Easee Wallbox API",
         "titleLang": {
             "en": "Easee Wallbox API",
             "de": "Easee Wallbox API",
@@ -61,14 +60,15 @@
             "Newan <info@newan.de>"
         ],
         "keywords": [
-            "wallbox easee"
+            "wallbox",
+            "easee",
+            "ioBroker"
         ],
         "licenseInformation": {
           "type": "free",
           "license": "MIT"
         },
         "platform": "Javascript/Node.js",
-        "main": "main.js",
         "icon": "easee.png",
         "enabled": true,
         "extIcon": "https://raw.githubusercontent.com/Newan/ioBroker.easee/master/admin/easee.png",
@@ -80,7 +80,6 @@
         "compact": true,
         "connectionType": "cloud",
         "dataSource": "poll",
-        "materialize": true,
         "dependencies": [
             {
                 "js-controller": ">=5.0.19"
