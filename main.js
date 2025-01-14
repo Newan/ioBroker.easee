@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
-const utils = require('@iobroker/adapter-core');
+const utils = require("@iobroker/adapter-core");
 
-const axios = require('axios').default;
-const signalR = require('@microsoft/signalr');
-const objEnum = require('./lib/enum.js');
+const axios = require("axios").default;
+const signalR = require("@microsoft/signalr");
+const objEnum = require("./lib/enum.js");
 
 //Eigene Variablen
-const apiUrl = 'https://api.easee.com';
+const apiUrl = "https://api.easee.com";
 const adapterIntervals = {}; //halten von allen Intervallen
-let accessToken = '';
-let refreshToken = '';
+let accessToken = "";
+let refreshToken = "";
 let expireTime = Date.now();
 let polltime = 30;
 let logtype = false;
@@ -23,56 +23,50 @@ let dynamicCircuitCurrentP1 = 0;
 let dynamicCircuitCurrentP2 = 0;
 let dynamicCircuitCurrentP3 = 0;
 
-
 class Easee extends utils.Adapter {
-
-    /**
-     * @param {Partial<utils.AdapterOptions>} [options={}]
-     */
-    constructor(options) {
-        super({
-            ...options,
-            name: 'easee',
-        });
-        this.on('ready', this.onReady.bind(this));
-        this.on('stateChange', this.onStateChange.bind(this));
-        this.on('unload', this.onUnload.bind(this));
-    }
-
+  constructor(options) {
+    super({
+        ...options,
+        name: "easee",
+    });
+    this.on("ready", this.onReady.bind(this));
+    this.on("stateChange", this.onStateChange.bind(this));
+    this.on("unload", this.onUnload.bind(this));
+  }
     /**
      * SignalR
      */
-    startSignal() {
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl('https://streams.easee.com/hubs/chargers', { accessTokenFactory: () => accessToken })
-            .withAutomaticReconnect()
-            .build();
+  startSignal() {
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl('https://streams.easee.com/hubs/chargers', { accessTokenFactory: () => accessToken })
+        .withAutomaticReconnect()
+        .build();
 
-        connection.on('ProductUpdate', data => {
-            //haben einen neuen Wert über SignalR erhalten
-            const data_name = objEnum.getNameByEnum(data.id);
-            if (data_name == undefined) {
-                this.log.debug('New SignalR-ID, possible new Value: ' + data.id);
-                this.log.debug(JSON.stringify(data));
-            } else {
-                //Value is in ioBroker, update it
-                const tmpValueId = data.mid + data_name;
-                this.log.debug('New value over SignalR for: ' + tmpValueId + ', value: ' + data.value);
-                switch (data.dataType) {
-                    case 2:
-                        data.value = data.value == '1';
-                        break;
-                    case 3:
-                        data.value = parseFloat(data.value);
-                        break;
-                    case 4:
-                        data.value = parseInt(data.value);
-                        break;
-                    //case 6: JSON
-                }
-                this.setStateAsync(tmpValueId, { val: data.value, ack: true });
-            }
-        });
+    connection.on('ProductUpdate', data => {
+      //haben einen neuen Wert über SignalR erhalten
+      const data_name = objEnum.getNameByEnum(data.id);
+      if (data_name == undefined) {
+        this.log.debug('New SignalR-ID, possible new Value: ' + data.id);
+            this.log.debug(JSON.stringify(data));
+      } else {
+      //Value is in ioBroker, update it
+        const tmpValueId = data.mid + data_name;
+        this.log.debug('New value over SignalR for: ' + tmpValueId + ', value: ' + data.value);
+        switch (data.dataType) {
+          case 2:
+            data.value = data.value == '1';
+            break;
+          case 3:
+            data.value = parseFloat(data.value);
+            break;
+          case 4:
+            data.value = parseInt(data.value);
+            break;
+          //case 6: JSON
+        }
+          this.setStateAsync(tmpValueId, { val: data.value, ack: true });
+      }
+    });
 
         connection.start().then(() => {
             //for each charger subscribe SignalR
