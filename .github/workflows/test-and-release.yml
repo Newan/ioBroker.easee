@@ -40,7 +40,7 @@ jobs:
             #  run: npm audit fix --force
 
             - name: Run ESLint
-              run: npx eslint . --fix
+              run: npx eslint
               
             - name: Test package files
               run: npm run test:package
