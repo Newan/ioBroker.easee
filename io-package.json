@@ -80,18 +80,18 @@
         "compact": true,
         "connectionType": "cloud",
         "dataSource": "poll",
+        "adminUI": {
+          "config": "json"
+        },
         "dependencies": [
             {
                 "js-controller": ">=5.0.19"
             }
         ]
     },
-    "adminUI": {
-        "config": "materialize"
-    },
     "globalDependencies": [
         {
-            "admin": ">=5.1.28"
+            "admin": ">=6.0.0"
         }
     ],
     "protectedNative": [
