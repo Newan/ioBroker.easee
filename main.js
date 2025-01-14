@@ -1376,18 +1376,13 @@ class Easee extends utils.Adapter {
             native: {},
         });
         this.subscribeStates(charger.id + ".config.wiFiSSID");
-
-
     }
 }
 
 // @ts-ignore parent is a valid property on module
 if (module.parent) {
-    // Export the constructor in compact mode
-    /**
-     * @param {Partial<utils.AdapterOptions>} [options={}]
-     */
-    module.exports = (options) => new Easee(options);
+  // Export the constructor in compact mode
+  module.exports = (options) => new Easee(options);
 } else {
     // otherwise start the instance directly
     new Easee();
