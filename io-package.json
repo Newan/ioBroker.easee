@@ -87,7 +87,7 @@
         ]
     },
     "adminUI": {
-        "config": "json"
+        "config": "materialize"
     },
     "globalDependencies": [
         {
