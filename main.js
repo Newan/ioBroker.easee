@@ -1365,15 +1365,15 @@ class Easee extends utils.Adapter {
 
         //wiFiSSID
         await this.setObjectNotExistsAsync(charger.id + '.config.wiFiSSID', {
-            type: 'state',
-            common: {
-                name: 'WiFi SSID name',
-                type: 'string',
-                role: 'text',
-                read: true,
-                write: true,
-            },
-            native: {},
+          type: 'state',
+          common: {
+            name: 'WiFi SSID name',
+            type: 'string',
+            role: 'text',
+            read: true,
+            write: true,
+          },
+          native: {},
         });
         this.subscribeStates(charger.id + '.config.wiFiSSID');
     }
@@ -1383,6 +1383,6 @@ if (module.parent) {
   // Export the constructor in compact mode
   module.exports = (options) => new Easee(options);
 } else {
-    // otherwise start the instance directly
-    new Easee();
+  // otherwise start the instance directly
+  new Easee();
 }
