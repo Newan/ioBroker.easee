@@ -39,8 +39,8 @@ class Easee extends utils.Adapter {
   startSignal() {
     const connection = new signalR.HubConnectionBuilder()
       .withUrl("https://streams.easee.com/hubs/chargers", {
-        accessTokenFactory: () => accessToken
-        })
+        accessTokenFactory: () => accessToken,
+      })
       .withAutomaticReconnect()
       .build();
 
@@ -51,9 +51,14 @@ class Easee extends utils.Adapter {
         this.log.debug(`New SignalR-ID, possible new Value: ` + data.id);
         this.log.debug(JSON.stringify(data));
       } else {
-      //Value is in ioBroker, update it
+        //Value is in ioBroker, update it
         const tmpValueId = data.mid + data_name;
-        this.log.debug(`New value over SignalR for: ` + tmpValueId + `, value: ` + data.value);
+        this.log.debug(
+          'New value over SignalR for: `
+           + tmpValueId +
+            `, value: `
+            + data.value,
+        );
         switch (data.dataType) {
           case 2:
             data.value = data.value == "1";
@@ -73,22 +78,22 @@ class Easee extends utils.Adapter {
     connection.start().then(() => {
       //for each charger subscribe SignalR
       arrCharger.forEach(charger_id => {
-        connection.send(`SubscribeWithCurrentState`, charger_id, true).then(() => {
-          this.log.info(`Charger registrate in SignalR: ` + charger_id);
-            });
+        connection
+          .send(`SubscribeWithCurrentState`, charger_id, true)
+          .then(() => {
+            this.log.info(`Charger registrate in SignalR: ` + charger_id);
+          });
         });
     });
-
     connection.onclose(() => {
       this.log.error("SignalR Verbindung beendet!!!- restart");
       this.startSignal();
     });
   }
 
-
 /**
-* Starten den Adapter
-*/
+ * Starten den Adapter
+ */
   async onReady() {
     //initial Status melden
     await this.setStateAsync("info.connection", false, true);
@@ -101,7 +106,7 @@ class Easee extends utils.Adapter {
       }
       logtype = this.config.logtype;
       // Testen ob der Login funktioniert
-      if (this.config.username == '' || this.config.username == '+49') {
+      if (this.config.username == "" || this.config.username == "+49") {
         this.log.error("No username set");
       } else if (this.config.client_secret == "") {
         this.log.error("No password set");
