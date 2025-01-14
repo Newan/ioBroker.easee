@@ -148,7 +148,7 @@ class Easee extends utils.Adapter {
       this.log.info("Adapter easee cleaned up everything...");
       this.setStateAsync("info.connection", false, true);
       callback();
-    } catch (error) {
+    } catch () {
       callback();
     }
   }
