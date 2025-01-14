@@ -26,28 +26,28 @@ let dynamicCircuitCurrentP3 = 0;
 class Easee extends utils.Adapter {
   constructor(options) {
     super({
-        ...options,
-        name: "easee",
+      ...options,
+      name: "easee",
     });
     this.on("ready", this.onReady.bind(this));
     this.on("stateChange", this.onStateChange.bind(this));
     this.on("unload", this.onUnload.bind(this));
   }
-    /**
-     * SignalR
-     */
+  /**
+  * SignalR
+  */
   startSignal() {
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("https://streams.easee.com/hubs/chargers", { accessTokenFactory: () => accessToken })
-        .withAutomaticReconnect()
-        .build();
+      .withUrl("https://streams.easee.com/hubs/chargers", { accessTokenFactory: () => accessToken })
+      .withAutomaticReconnect()
+      .build();
 
-    connection.on('ProductUpdate', data => {
+    connection.on("ProductUpdate", data => {
       //haben einen neuen Wert über SignalR erhalten
       const data_name = objEnum.getNameByEnum(data.id);
       if (data_name == undefined) {
         this.log.debug(`New SignalR-ID, possible new Value: ` + data.id);
-            this.log.debug(JSON.stringify(data));
+          this.log.debug(JSON.stringify(data));
       } else {
       //Value is in ioBroker, update it
         const tmpValueId = data.mid + data_name;
@@ -68,14 +68,14 @@ class Easee extends utils.Adapter {
       }
     });
 
-        connection.start().then(() => {
-            //for each charger subscribe SignalR
-            arrCharger.forEach(charger_id => {
-                connection.send(`SubscribeWithCurrentState`, charger_id, true).then(() => {
-                    this.log.info(`Charger registrate in SignalR: ` + charger_id);
-                });
+    connection.start().then(() => {
+      //for each charger subscribe SignalR
+      arrCharger.forEach(charger_id => {
+        connection.send(`SubscribeWithCurrentState`, charger_id, true).then(() => {
+          this.log.info(`Charger registrate in SignalR: ` + charger_id);
             });
         });
+    });
 
         connection.onclose(() => {
             this.log.error('SignalR Verbindung beendet!!!- restart');
