@@ -77,48 +77,48 @@ class Easee extends utils.Adapter {
         });
     });
 
-        connection.onclose(() => {
-            this.log.error('SignalR Verbindung beendet!!!- restart');
-            this.startSignal();
-        });
-    }
+    connection.onclose(() => {
+      this.log.error("SignalR Verbindung beendet!!!- restart");
+      this.startSignal();
+    });
+  }
 
 
-    /**
-     * Starten den Adapter
-     */
-    async onReady() {
-        //initial Status melden
-        await this.setStateAsync('info.connection', false, true);
+/**
+* Starten den Adapter
+*/
+  async onReady() {
+    //initial Status melden
+    await this.setStateAsync('info.connection', false, true);
 
-        //Schauen ob die Polltime realistisch ist
-        if (this.config.polltime < 1) {
-            this.log.error('Interval in seconds to short -> got to default 30');
-        } else {
-            polltime = this.config.polltime;
-        }
-        logtype = this.config.logtype;
-        // Testen ob der Login funktioniert
-        if (this.config.username == '' || this.config.username == '+49') {
-            this.log.error('No username set');
-        } else if (this.config.client_secret == '') {
-            this.log.error('No password set');
-        } else {
-            this.log.debug('Api login started');
-            const login = await this.login(this.config.username, this.config.client_secret);
-            if (login) {
-                //Erstes Objekt erstellen
-                await this.setObjectNotExistsAsync('lastUpdate', {
-                    type: 'state',
-                    common: {
-                        name: 'lastUpdate',
-                        type: 'string',
-                        role: 'indicator',
-                        read: true,
-                        write: false,
-                    },
-                    native: {},
-                });
+    //Schauen ob die Polltime realistisch ist
+    if (this.config.polltime < 1) {
+      this.log.error('Interval in seconds to short -> got to default 30');
+      } else {
+        polltime = this.config.polltime;
+      }
+      logtype = this.config.logtype;
+      // Testen ob der Login funktioniert
+      if (this.config.username == '' || this.config.username == '+49') {
+        this.log.error('No username set');
+      } else if (this.config.client_secret == '') {
+        this.log.error('No password set');
+      } else {
+        this.log.debug('Api login started');
+        const login = await this.login(this.config.username, this.config.client_secret);
+        if (login) {
+          //Erstes Objekt erstellen
+          await this.setObjectNotExistsAsync('lastUpdate', {
+            type: 'state',
+            common: {
+              name: 'lastUpdate',
+                type: 'string',
+                role: 'indicator',
+                read: true,
+                write: false,
+                },
+              native: {},
+            });
 
                 //reset all to start
                 this.arrCharger = [];
