@@ -53,12 +53,7 @@ class Easee extends utils.Adapter {
       } else {
         //Value is in ioBroker, update it
         const tmpValueId = data.mid + data_name;
-        this.log.debug(`
-          New value over SignalR for: ` +
-            tmpValueId +
-            `, value: ` +
-            data.value,
-        );
+        this.log.debug(`New value over SignalR for: ${tmpValueId}, value: ${data.value}`);
         switch (data.dataType) {
           case 2:
             data.value = data.value == "1";
@@ -134,7 +129,7 @@ class Easee extends utils.Adapter {
                 await this.readAllStates();
 
                 if (this.config.signalR) {
-                    this.log.info('Starting SignalR');
+                    this.log.info("Starting SignalR");
                     this.startSignal();
                 }
             }
@@ -148,8 +143,8 @@ class Easee extends utils.Adapter {
         try {
             clearTimeout(adapterIntervals.readAllStates);
             clearTimeout(adapterIntervals.updateDynamicCircuitCurrent);
-            this.log.info('Adaptor easee cleaned up everything...');
-            this.setStateAsync('info.connection', false, true);
+            this.log.info("Adapter easee cleaned up everything...");
+            this.setStateAsync("info.connection", false, true);
             callback();
         } catch (e) {
             callback();
@@ -161,11 +156,11 @@ class Easee extends utils.Adapter {
     async readAllStates() {
         if(expireTime <= Date.now()) {
             //Token ist expired!
-            if (logtype) this.log.info('Token has expired - refresh');
+            if (logtype) this.log.info("Token has expired - refresh");
             await this.refreshToken();
         }
 
-        this.log.debug('read new states from the API');
+        this.log.debug("read new states from the API");
 
         //Lesen alle Charger aus
         const tmpAllChargers = await this.getAllCharger();
@@ -181,7 +176,7 @@ class Easee extends utils.Adapter {
                     arrCharger.push(charger.id);
                 }
 
-                this.log.debug('Charger found');
+                this.log.debug("Charger found");
                 this.log.debug(JSON.stringify(charger));
                 try {
 
@@ -204,7 +199,7 @@ class Easee extends utils.Adapter {
                         this.setNewSessionToCharger(charger, tmpChargerSession);
                     }
                 } catch (error) {
-                    if (typeof error === 'string') {
+                    if (typeof error === "string") {
                         this.log.error(error);
                     } else if (error instanceof Error) {
                         this.log.error(error.message);
@@ -213,19 +208,19 @@ class Easee extends utils.Adapter {
 
             });
         } else {
-            this.log.warn('No Chargers found!');
+            this.log.warn("No Chargers found!");
         }
 
         //Energiedaten dürfen nur einmal in der Minute aufgerufen werden, daher müssen wir das bremsen
         if(roundCounter > (minPollTimeEnergy/polltime)) {
-            this.log.debug('Hole Energiedaten: ' + roundCounter);
+            this.log.debug(`Hole Energiedaten: ${roundCounter}`);
             roundCounter = 0;
         }
         //Zählen die Runde!
         roundCounter = roundCounter + 1;
 
         //Melden das Update
-        await this.setStateAsync('lastUpdate', new Date().toLocaleTimeString(), true);
+        await this.setStateAsync("lastUpdate", new Date().toLocaleTimeString(), true);
         adapterIntervals.readAllStates = setTimeout(this.readAllStates.bind(this), polltime * 1000);
     }
 
