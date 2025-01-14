@@ -123,26 +123,24 @@ class Easee extends utils.Adapter {
             role: "indicator",
             read: true,
             write: false,
-            },
+          },
           native: {},
         });
 
-                //reset all to start
-                this.arrCharger = [];
-
-                // starten den Statuszyklus der API neu
-                await this.readAllStates();
-                if (this.config.signalR) {
-                    this.log.info("Starting SignalR");
-                    this.startSignal();
-                }
-            }
+        //reset all to start
+        this.arrCharger = [];
+                
+        // starten den Statuszyklus der API neu
+        await this.readAllStates();
+        if (this.config.signalR) {
+          this.log.info("Starting SignalR");
+          this.startSignal();
+          }
         }
     }
+  }
 
-    /**
-     * Clear all Timeouts and inform the Users
-     */
+    // Clear all Timeouts and inform users
     onUnload(callback) {
         try {
             clearTimeout(adapterIntervals.readAllStates);
@@ -228,9 +226,7 @@ class Easee extends utils.Adapter {
         adapterIntervals.readAllStates = setTimeout(this.readAllStates.bind(this), polltime * 1000);
     }
 
-    /**
-     * Is called if a subscribed state changes
-     */
+    //Is called if a subscribed state changes
     onStateChange(id, state) {
         if (state) {
             // The state was changed
