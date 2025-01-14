@@ -34,20 +34,22 @@ class Easee extends utils.Adapter {
     this.on("unload", this.onUnload.bind(this));
   }
   /**
-  * SignalR
-  */
+   * SignalR
+   */
   startSignal() {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://streams.easee.com/hubs/chargers", { accessTokenFactory: () => accessToken })
+      .withUrl("https://streams.easee.com/hubs/chargers", {
+        accessTokenFactory: () => accessToken
+        })
       .withAutomaticReconnect()
       .build();
 
-    connection.on("ProductUpdate", data => {
+    connection.on("ProductUpdate", (data) => {
       //haben einen neuen Wert über SignalR erhalten
       const data_name = objEnum.getNameByEnum(data.id);
       if (data_name == undefined) {
         this.log.debug(`New SignalR-ID, possible new Value: ` + data.id);
-          this.log.debug(JSON.stringify(data));
+        this.log.debug(JSON.stringify(data));
       } else {
       //Value is in ioBroker, update it
         const tmpValueId = data.mid + data_name;
