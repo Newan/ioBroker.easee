@@ -141,17 +141,22 @@ class Easee extends utils.Adapter {
   }
 
   // Clear all Timeouts and inform users
-  onUnload(callback) {
-    try {
-      clearTimeout(adapterIntervals.readAllStates);
-      clearTimeout(adapterIntervals.updateDynamicCircuitCurrent);
-      this.log.info("Adapter easee cleaned up everything...");
-      this.setStateAsync("info.connection", false, true);
+onUnload(callback) {
+  try {
+    clearTimeout(adapterIntervals.readAllStates);
+    clearTimeout(adapterIntervals.updateDynamicCircuitCurrent);
+    this.log.info("Adapter easee cleaned up everything...");
+    this.setStateAsync("info.connection", false, true).then(() => {
       callback();
-    } catch () {
+    }).catch((err) => {
+      this.log.error("Error setting state: " + err);
       callback();
-    }
+    });
+  } catch (error) {
+    this.log.error("Error during unload: " + error);
+    callback();
   }
+}
   /*****************************************************************************************/
   async readAllStates() {
     if (expireTime <= Date.now()) {
