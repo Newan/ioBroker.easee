@@ -36,6 +36,9 @@ jobs:
             - name: Install dependencies
               run: npm install
 
+            - name: Address issues
+              run: npm audit fix
+
             - name: Run ESLint
               run: npx eslint . --fix
               
