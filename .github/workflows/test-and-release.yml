@@ -36,8 +36,8 @@ jobs:
             - name: Install Dependencies
               run: npm ci
 
-            #- name: Lint source code
-            #  run: npm run lint --fix
+            - name: Lint source code
+              run: npm eslint --fix
               
             - name: Test package files
               run: npm run test:package
