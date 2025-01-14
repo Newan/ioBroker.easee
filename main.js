@@ -129,29 +129,29 @@ class Easee extends utils.Adapter {
 
         //reset all to start
         this.arrCharger = [];
-                
+
         // starten den Statuszyklus der API neu
         await this.readAllStates();
         if (this.config.signalR) {
           this.log.info("Starting SignalR");
           this.startSignal();
-          }
         }
+      }
     }
   }
 
-    // Clear all Timeouts and inform users
-    onUnload(callback) {
-        try {
-            clearTimeout(adapterIntervals.readAllStates);
-            clearTimeout(adapterIntervals.updateDynamicCircuitCurrent);
-            this.log.info("Adapter easee cleaned up everything...");
-            this.setStateAsync("info.connection", false, true);
-            callback();
-        } catch (e) {
-            callback();
-        }
-    }
+  // Clear all Timeouts and inform users
+  onUnload(callback) {
+      try {
+          clearTimeout(adapterIntervals.readAllStates);
+          clearTimeout(adapterIntervals.updateDynamicCircuitCurrent);
+          this.log.info("Adapter easee cleaned up everything...");
+          this.setStateAsync("info.connection", false, true);
+          callback();
+      } catch (e) {
+          callback();
+      }
+  }
 
 
     /*****************************************************************************************/
