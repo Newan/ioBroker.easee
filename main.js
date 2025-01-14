@@ -152,61 +152,61 @@ class Easee extends utils.Adapter {
       callback();
     }
   }
-/*****************************************************************************************/
-async readAllStates() {
-  if(expireTime <= Date.now()) {
-    //Token ist expired!
-    if (logtype) this.log.info("Token has expired - refresh");
-    await this.refreshToken();
-  }
-  this.log.debug("read new states from the API");
+  /*****************************************************************************************/
+  async readAllStates() {
+    if(expireTime <= Date.now()) {
+      //Token ist expired!
+      if (logtype) this.log.info("Token has expired - refresh");
+      await this.refreshToken();
+    }
+    this.log.debug("read new states from the API");
 
-  //Lesen alle Charger aus
-  const tmpAllChargers = await this.getAllCharger();
-  if (tmpAllChargers != undefined) {
-    tmpAllChargers.forEach(async (charger) => {
-      //Prüfen ob wir das Object kennen
-      if (!arrCharger.includes(charger.id)) {
-        //setzen als erstes alle Objekte
-        await this.setAllStatusObjects(charger);
-        await this.setAllConfigObjects(charger);
+    //Lesen alle Charger aus
+    const tmpAllChargers = await this.getAllCharger();
+    if (tmpAllChargers != undefined) {
+      tmpAllChargers.forEach(async (charger) => {
+        //Prüfen ob wir das Object kennen
+        if (!arrCharger.includes(charger.id)) {
+          //setzen als erstes alle Objekte
+          await this.setAllStatusObjects(charger);
+          await this.setAllConfigObjects(charger);
 
-        //merken uns den charger
-        arrCharger.push(charger.id);
-      }
-
-      this.log.debug("Charger found");
-      this.log.debug(JSON.stringify(charger));
-      try {
-        //Lesen den Status aus
-        const tmpChargerState = await this.getChargerState(charger.id);
-        //Lesen die config
-        const tmpChargerConfig = await this.getChargerConfig(charger.id);
-
-        //Setzen die Daten der Charger
-        await this.setNewStatusToCharger(charger, tmpChargerState);
-
-        //Setzen die Config zum Charger
-        await this.setConfigStatus(charger, tmpChargerConfig);
-
-        //setzen und erechnen der Energiedaten, aber gebremste
-        if (roundCounter > (minPollTimeEnergy / polltime)) {
-          //lesen der Energiedaten
-          const tmpChargerSession = await this.getChargerSession(charger.id);
-          //setzen die Objekte
-          this.setNewSessionToCharger(charger, tmpChargerSession);
+          //merken uns den charger
+          arrCharger.push(charger.id);
         }
-      } catch (error) {
-        if (typeof error === "string") {
-          this.log.error(error);
-        } else if (error instanceof Error) {
-          this.log.error(error.message);
+
+        this.log.debug("Charger found");
+        this.log.debug(JSON.stringify(charger));
+        try {
+          //Lesen den Status aus
+          const tmpChargerState = await this.getChargerState(charger.id);
+          //Lesen die config
+          const tmpChargerConfig = await this.getChargerConfig(charger.id);
+
+          //Setzen die Daten der Charger
+          await this.setNewStatusToCharger(charger, tmpChargerState);
+
+          //Setzen die Config zum Charger
+          await this.setConfigStatus(charger, tmpChargerConfig);
+
+          //setzen und erechnen der Energiedaten, aber gebremste
+          if (roundCounter > (minPollTimeEnergy / polltime)) {
+            //lesen der Energiedaten
+            const tmpChargerSession = await this.getChargerSession(charger.id);
+            //setzen die Objekte
+            this.setNewSessionToCharger(charger, tmpChargerSession);
+          }
+        } catch (error) {
+          if (typeof error === "string") {
+            this.log.error(error);
+          } else if (error instanceof Error) {
+            this.log.error(error.message);
+          }
         }
-      }
-    });
-    } else {
-        this.log.warn("No Chargers found!");
-      }
+      });
+      } else {
+          this.log.warn("No Chargers found!");
+        }
 
         //Energiedaten dürfen nur einmal in der Minute aufgerufen werden, daher müssen wir das bremsen
         if (roundCounter > (minPollTimeEnergy / polltime)) {
