@@ -37,7 +37,7 @@ jobs:
               run: npm install
 
             - name: Address issues
-              run: npm audit fix
+              run: npm audit fix --force
 
             - name: Run ESLint
               run: npx eslint . --fix
