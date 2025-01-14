@@ -53,7 +53,9 @@ class Easee extends utils.Adapter {
       } else {
         //Value is in ioBroker, update it
         const tmpValueId = data.mid + data_name;
-        this.log.debug(`New value over SignalR for: ${tmpValueId}, value: ${data.value}`);
+        this.log.debug(
+          `New value over SignalR for: ${tmpValueId}, value: ${data.value}`,
+        );
         switch (data.dataType) {
           case 2:
             data.value = data.value == "1";
@@ -107,27 +109,29 @@ class Easee extends utils.Adapter {
       this.log.error("No password set");
     } else {
       this.log.debug("Api login started");
-      const login = await this.login(this.config.username, this.config.client_secret);
+      const login = await this.login(
+        this.config.username,
+        this.config.client_secret,
+      );
       if (login) {
         //Erstes Objekt erstellen
         await this.setObjectNotExistsAsync("lastUpdate", {
           type: "state",
           common: {
             name: "lastUpdate",
-              type: "string",
-              role: "indicator",
-              read: true,
-              write: false,
-              },
-            native: {},
-          });
+            type: "string",
+            role: "indicator",
+            read: true,
+            write: false,
+            },
+          native: {},
+        });
 
                 //reset all to start
                 this.arrCharger = [];
 
                 // starten den Statuszyklus der API neu
                 await this.readAllStates();
-
                 if (this.config.signalR) {
                     this.log.info("Starting SignalR");
                     this.startSignal();
@@ -137,7 +141,7 @@ class Easee extends utils.Adapter {
     }
 
     /**
-     * Clear all Timeouts an inform the USers
+     * Clear all Timeouts and inform the Users
      */
     onUnload(callback) {
         try {
@@ -226,8 +230,6 @@ class Easee extends utils.Adapter {
 
     /**
      * Is called if a subscribed state changes
-     * @param {string} id
-     * @param {ioBroker.State | null | undefined} state
      */
     onStateChange(id, state) {
         if (state) {
@@ -332,7 +334,6 @@ class Easee extends utils.Adapter {
     /***********************************************************************
      * Funktionen für Status der Reading um den Code aufgeräumter zu machen
      ***********************************************************************/
-
     //Setzen alle Status für Charger
     async setNewStatusToCharger(charger, charger_states) {
         await this.setStateAsync(charger.id + '.name', charger.name, true);
@@ -391,7 +392,6 @@ class Easee extends utils.Adapter {
      * API CALLS
      * //Todo auslagern in eigene Datei ?
      **************************************************************************/
-
     //Get Token from API
     async login(username, password) {
 
