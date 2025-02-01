@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
-const utils = require('@iobroker/adapter-core');
+const utils = require("@iobroker/adapter-core");
 
-const axios = require('axios').default;
-const signalR = require('@microsoft/signalr');
-const objEnum = require('./lib/enum.js');
+const axios = require("axios").default;
+const signalR = require("@microsoft/signalr");
+const objEnum = require("./lib/enum.js");
 
 //Eigene Variablen
-const apiUrl = 'https://api.easee.com';
+const apiUrl = "https://api.easee.com";
 const adapterIntervals = {}; //halten von allen Intervallen
-let accessToken = '';
-let refreshToken = '';
+let accessToken = "";
+let refreshToken = "";
 let expireTime = Date.now();
 let polltime = 30;
 let logtype = false;
@@ -23,251 +23,247 @@ let dynamicCircuitCurrentP1 = 0;
 let dynamicCircuitCurrentP2 = 0;
 let dynamicCircuitCurrentP3 = 0;
 
-
 class Easee extends utils.Adapter {
+  constructor(options) {
+    super({
+      ...options,
+      name: "easee",
+    });
+    this.on("ready", this.onReady.bind(this));
+    this.on("stateChange", this.onStateChange.bind(this));
+    this.on("unload", this.onUnload.bind(this));
+  }
+  /**
+   * SignalR
+   */
+  startSignal() {
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl("https://streams.easee.com/hubs/chargers", {
+        accessTokenFactory: () => accessToken,
+      })
+      .withAutomaticReconnect()
+      .build();
 
-    /**
-     * @param {Partial<utils.AdapterOptions>} [options={}]
-     */
-    constructor(options) {
-        super({
-            ...options,
-            name: 'easee',
-        });
-        this.on('ready', this.onReady.bind(this));
-        this.on('stateChange', this.onStateChange.bind(this));
-        this.on('unload', this.onUnload.bind(this));
-    }
-
-    /**
-     * SignalR
-     */
-    startSignal() {
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl('https://streams.easee.com/hubs/chargers', { accessTokenFactory: () => accessToken })
-            .withAutomaticReconnect()
-            .build();
-
-        connection.on('ProductUpdate', data => {
-            //haben einen neuen Wert über SignalR erhalten
-            const data_name = objEnum.getNameByEnum(data.id);
-            if (data_name == undefined) {
-                this.log.debug('New SignalR-ID, possible new Value: ' + data.id);
-                this.log.debug(JSON.stringify(data));
-            } else {
-                //Value is in ioBroker, update it
-                const tmpValueId = data.mid + data_name;
-                this.log.debug('New value over SignalR for: ' + tmpValueId + ', value: ' + data.value);
-                switch (data.dataType) {
-                    case 2:
-                        data.value = data.value == '1';
-                        break;
-                    case 3:
-                        data.value = parseFloat(data.value);
-                        break;
-                    case 4:
-                        data.value = parseInt(data.value);
-                        break;
-                    //case 6: JSON
-                }
-                this.setStateAsync(tmpValueId, { val: data.value, ack: true });
-            }
-        });
-
-        connection.start().then(() => {
-            //for each charger subscribe SignalR
-            arrCharger.forEach(charger_id => {
-                connection.send('SubscribeWithCurrentState', charger_id, true).then(() => {
-                    this.log.info('Charger registrate in SignalR: ' + charger_id);
-                });
-            });
-        });
-
-        connection.onclose(() => {
-            this.log.error('SignalR Verbindung beendet!!!- restart');
-            this.startSignal();
-        });
-    }
-
-
-    /**
-     * Starten den Adapter
-     */
-    async onReady() {
-        //initial Status melden
-        await this.setStateAsync('info.connection', false, true);
-
-        //Schauen ob die Polltime realistisch ist
-        if (this.config.polltime < 1) {
-            this.log.error('Interval in seconds to short -> got to default 30');
-        } else {
-            polltime = this.config.polltime;
+    connection.on("ProductUpdate", (data) => {
+      //haben einen neuen Wert über SignalR erhalten
+      const data_name = objEnum.getNameByEnum(data.id);
+      if (data_name == undefined) {
+        this.log.debug(`New SignalR-ID, possible new Value: ${data.id}`);
+        this.log.debug(JSON.stringify(data));
+      } else {
+        //Value is in ioBroker, update it
+        const tmpValueId = data.mid + data_name;
+        this.log.debug(
+          `New value over SignalR for: ${tmpValueId}, value: ${data.value}`,
+        );
+        switch (data.dataType) {
+          case 2:
+            data.value = data.value == "1";
+            break;
+          case 3:
+            data.value = parseFloat(data.value);
+            break;
+          case 4:
+            data.value = parseInt(data.value);
+            break;
+          //case 6: JSON
         }
-        logtype = this.config.logtype;
-        // Testen ob der Login funktioniert
-        if (this.config.username == '' || this.config.username == '+49') {
-            this.log.error('No username set');
-        } else if (this.config.client_secret == '') {
-            this.log.error('No password set');
-        } else {
-            this.log.debug('Api login started');
-            const login = await this.login(this.config.username, this.config.client_secret);
-            if (login) {
-                //Erstes Objekt erstellen
-                await this.setObjectNotExistsAsync('lastUpdate', {
-                    type: 'state',
-                    common: {
-                        name: 'lastUpdate',
-                        type: 'string',
-                        role: 'indicator',
-                        read: true,
-                        write: false,
-                    },
-                    native: {},
-                });
+        this.setStateAsync(tmpValueId, { val: data.value, ack: true });
+      }
+    });
 
-                //reset all to start
-                this.arrCharger = [];
+    connection.start().then(() => {
+      //for each charger subscribe SignalR
+      arrCharger.forEach((charger_id) => {
+        connection
+          .send(`SubscribeWithCurrentState`, charger_id, true)
+          .then(() => {
+            this.log.info(`Charger registrate in SignalR: ${charger_id}`);
+          });
+      });
+    });
+    connection.onclose(() => {
+      this.log.error("SignalR Verbindung beendet!!!- restart");
+      this.startSignal();
+    });
+  }
 
-                // starten den Statuszyklus der API neu
-                await this.readAllStates();
+  /**
+   * Starten den Adapter
+   */
+  async onReady() {
+    //initial Status melden
+    await this.setStateAsync("info.connection", false, true);
 
-                if (this.config.signalR) {
-                    this.log.info('Starting SignalR');
-                    this.startSignal();
-                }
-            }
-        }
+    //Schauen ob die Polltime realistisch ist
+    if (this.config.polltime < 1) {
+      this.log.error("Interval in seconds to short -> go to default 30");
+    } else {
+      polltime = this.config.polltime;
     }
+    logtype = this.config.logtype;
+    // Testen ob der Login funktioniert
+    if (this.config.username == "" || this.config.username == "+49") {
+      this.log.error("No username set");
+    } else if (this.config.client_secret == "") {
+      this.log.error("No password set");
+    } else {
+      this.log.debug("Api login started");
+      const login = await this.login(
+        this.config.username,
+        this.config.client_secret,
+      );
+      if (login) {
+        //Erstes Objekt erstellen
+        await this.setObjectNotExistsAsync("lastUpdate", {
+          type: "state",
+          common: {
+            name: "lastUpdate",
+            type: "string",
+            role: "indicator",
+            read: true,
+            write: false,
+          },
+          native: {},
+        });
 
-    /**
-     * Clear all Timeouts an inform the USers
-     */
-    onUnload(callback) {
+        //reset all to start
+        this.arrCharger = [];
+
+        // starten den Statuszyklus der API neu
+        await this.readAllStates();
+        if (this.config.signalR) {
+          this.log.info("Starting SignalR");
+          this.startSignal();
+        }
+      }
+    }
+  }
+
+  // Clear all Timeouts and inform users
+onUnload(callback) {
+  try {
+    clearTimeout(adapterIntervals.readAllStates);
+    clearTimeout(adapterIntervals.updateDynamicCircuitCurrent);
+    this.log.info("Adapter easee cleaned up everything...");
+    this.setStateAsync("info.connection", false, true).then(() => {
+      callback();
+    }).catch((err) => {
+      this.log.error("Error setting state: " + err);
+      callback();
+    });
+  } catch (error) {
+    this.log.error("Error during unload: " + error);
+    callback();
+  }
+}
+  /*****************************************************************************************/
+  async readAllStates() {
+    if (expireTime <= Date.now()) {
+      //Token ist expired!
+      if (logtype) {
+        this.log.info("Token has expired - refresh");
+      }
+      await this.refreshToken();
+    }
+    this.log.debug("read new states from the API");
+
+    //Lesen alle Charger aus
+    const tmpAllChargers = await this.getAllCharger();
+    if (tmpAllChargers != undefined) {
+      tmpAllChargers.forEach(async (charger) => {
+        //Prüfen ob wir das Object kennen
+        if (!arrCharger.includes(charger.id)) {
+          //setzen als erstes alle Objekte
+          await this.setAllStatusObjects(charger);
+          await this.setAllConfigObjects(charger);
+
+          //merken uns den charger
+          arrCharger.push(charger.id);
+        }
+
+        this.log.debug("Charger found");
+        this.log.debug(JSON.stringify(charger));
         try {
-            clearTimeout(adapterIntervals.readAllStates);
-            clearTimeout(adapterIntervals.updateDynamicCircuitCurrent);
-            this.log.info('Adaptor easee cleaned up everything...');
-            this.setStateAsync('info.connection', false, true);
-            callback();
-        } catch (e) {
-            callback();
+          //Lesen den Status aus
+          const tmpChargerState = await this.getChargerState(charger.id);
+          //Lesen die config
+          const tmpChargerConfig = await this.getChargerConfig(charger.id);
+
+          //Setzen die Daten der Charger
+          await this.setNewStatusToCharger(charger, tmpChargerState);
+
+          //Setzen die Config zum Charger
+          await this.setConfigStatus(charger, tmpChargerConfig);
+
+          //setzen und erechnen der Energiedaten, aber gebremste
+          if (roundCounter > minPollTimeEnergy / polltime) {
+            //lesen der Energiedaten
+            const tmpChargerSession = await this.getChargerSession(charger.id);
+            //setzen die Objekte
+            this.setNewSessionToCharger(charger, tmpChargerSession);
+          }
+        } catch (error) {
+          if (typeof error === "string") {
+            this.log.error(error);
+          } else if (error instanceof Error) {
+            this.log.error(error.message);
+          }
         }
-    }
-
-
-    /*****************************************************************************************/
-    async readAllStates() {
-        if(expireTime <= Date.now()) {
-            //Token ist expired!
-            if (logtype) this.log.info('Token has expired - refresh');
-            await this.refreshToken();
-        }
-
-        this.log.debug('read new states from the API');
-
-        //Lesen alle Charger aus
-        const tmpAllChargers = await this.getAllCharger();
-        if (tmpAllChargers != undefined) {
-            tmpAllChargers.forEach(async charger => {
-                //Prüfen ob wir das Object kennen
-                if (!arrCharger.includes(charger.id)) {
-                    //setzen als erstes alle Objekte
-                    await this.setAllStatusObjects(charger);
-                    await this.setAllConfigObjects(charger);
-
-                    //merken uns den charger
-                    arrCharger.push(charger.id);
-                }
-
-                this.log.debug('Charger found');
-                this.log.debug(JSON.stringify(charger));
-                try {
-
-                    //Lesen den Status aus
-                    const tmpChargerState = await this.getChargerState(charger.id);
-                    //Lesen die config
-                    const tmpChargerConfig = await this.getChargerConfig(charger.id);
-
-                    //Setzen die Daten der Charger
-                    await this.setNewStatusToCharger(charger, tmpChargerState);
-
-                    //Setzen die Config zum Charger
-                    await this.setConfigStatus(charger, tmpChargerConfig);
-
-                    //setzen und erechnen der Energiedaten, aber gebremste
-                    if (roundCounter > (minPollTimeEnergy/polltime)) {
-                        //lesen der Energiedaten
-                        const tmpChargerSession = await this.getChargerSession(charger.id);
-                        //etzen die Objekte
-                        this.setNewSessionToCharger(charger, tmpChargerSession);
-                    }
-                } catch (error) {
-                    if (typeof error === 'string') {
-                        this.log.error(error);
-                    } else if (error instanceof Error) {
-                        this.log.error(error.message);
-                    }
-                }
-
-            });
-        } else {
-            this.log.warn('No Chargers found!');
+      });
+      } else {
+          this.log.warn("No Chargers found!");
         }
 
         //Energiedaten dürfen nur einmal in der Minute aufgerufen werden, daher müssen wir das bremsen
-        if(roundCounter > (minPollTimeEnergy/polltime)) {
-            this.log.debug('Hole Energiedaten: ' + roundCounter);
+        if (roundCounter > minPollTimeEnergy / polltime) {
+            this.log.debug(`Hole Energiedaten: ${roundCounter}`);
             roundCounter = 0;
         }
         //Zählen die Runde!
         roundCounter = roundCounter + 1;
 
         //Melden das Update
-        await this.setStateAsync('lastUpdate', new Date().toLocaleTimeString(), true);
+        await this.setStateAsync("lastUpdate", new Date().toLocaleTimeString(), true);
         adapterIntervals.readAllStates = setTimeout(this.readAllStates.bind(this), polltime * 1000);
     }
 
-    /**
-     * Is called if a subscribed state changes
-     * @param {string} id
-     * @param {ioBroker.State | null | undefined} state
-     */
+    //Is called if a subscribed state changes
     onStateChange(id, state) {
         if (state) {
             // The state was changed
             this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-            const tmpControl = id.split('.');
-            if (tmpControl[3] == 'config') {
+            const tmpControl = id.split(".");
+            if (tmpControl[3] == "config") {
                 // change config, wenn ack = false
                 if (!state.ack) {
-                    if (tmpControl[4] == 'circuitMaxCurrentP1' || tmpControl[4] == 'circuitMaxCurrentP2' || tmpControl[4] == 'circuitMaxCurrentP3') {
+                    if (tmpControl[4] == "circuitMaxCurrentP1" || tmpControl[4] == "circuitMaxCurrentP2" || tmpControl[4] == "circuitMaxCurrentP3") {
 
                         //Load site for Charger
                         this.getChargerSite(tmpControl[2]).then((site) => {
-                            this.log.debug('Update circuitMaxCurrent to: ' + state.val);
-                            this.log.debug('Get infos from site:');
+                            this.log.debug(`Update circuitMaxCurrent to: ${state.val}`);
+                            this.log.debug("Get infos from site:");
                             this.log.debug(JSON.stringify(site));
 
                             this.changeMaxCircuitConfig(site.id, site.circuits[0].id, state.val);
-                            this.log.debug('Changes sent to API');
+                            this.log.debug("Changes sent to API");
                         });
-                    } else if (tmpControl[4] == 'dynamicCircuitCurrentP1' || tmpControl[4] == 'dynamicCircuitCurrentP2' || tmpControl[4] == 'dynamicCircuitCurrentP3') {
+                    } else if (tmpControl[4] == "dynamicCircuitCurrentP1" || tmpControl[4] == "dynamicCircuitCurrentP2" || tmpControl[4] == "dynamicCircuitCurrentP3") {
 
                         this.getChargerSite(tmpControl[2]).then((site) => {
-                            this.log.debug('Update dynamicCircuitCurrent to: ' + state.val);
-                            this.log.debug('Get infos from site:');
+                            this.log.debug(`Update dynamicCircuitCurrent to: ${state.val}`);
+                            this.log.debug("Get infos from site:");
                             this.log.debug(JSON.stringify(site));
 
                             //Setze die Werte für das Update
                             switch (tmpControl[4]) {
-                                case 'dynamicCircuitCurrentP1':
+                                case "dynamicCircuitCurrentP1":
                                     dynamicCircuitCurrentP1 = Number(state.val);
                                     break;
-                                case 'dynamicCircuitCurrentP2':
+                                case "dynamicCircuitCurrentP2":
                                     dynamicCircuitCurrentP2 = Number(state.val);
                                     break;
-                                case 'dynamicCircuitCurrentP3':
+                                case "dynamicCircuitCurrentP3":
                                     dynamicCircuitCurrentP3 = Number(state.val);
                                     break;
                             }
@@ -285,46 +281,46 @@ class Easee extends utils.Adapter {
                         });
 
                     } else {
-                        this.log.debug('update config to API: ' + id);
-                        if (tmpControl[4] == 'isEnabled') {
-                            this.changeConfig(tmpControl[2], 'enabled', state.val);
+                        this.log.debug(`update config to API: ${id}`);
+                        if (tmpControl[4] == "isEnabled") {
+                            this.changeConfig(tmpControl[2], "enabled", state.val);
                         } else {
                             this.changeConfig(tmpControl[2], tmpControl[4], state.val);
 
                         }
-                        this.log.debug('Changes sent to API');
+                        this.log.debug("Changes sent to API");
                     }
                 }
             } else {
                 // control charger
                 switch (tmpControl[4]) {
-                    case 'start':
+                    case "start":
                         // Starten Ladevorgang
-                        this.log.info('Starting charging for Charger.id: ' + tmpControl[2]);
+                        this.log.info(`Starting charging for Charger.id: ${tmpControl[2]}`);
                         this.startCharging(tmpControl[2]);
                         break;
-                    case 'stop':
+                    case "stop":
                         //  Stopen Ladevorgang
-                        this.log.info('Stopping charging for Charger.id: ' + tmpControl[2]);
+                        this.log.info(`Stopping charging for Charger.id: ${tmpControl[2]}`);
                         this.stopCharging(tmpControl[2]);
                         break;
-                    case 'pause':
+                    case "pause":
                         //  Pausiere Ladevorgang
-                        this.log.info('Pause charging for Charger.id: ' + tmpControl[2]);
+                        this.log.info(`Pause charging for Charger.id: ${tmpControl[2]}`);
                         this.pauseCharging(tmpControl[2]);
                         break;
-                    case 'resume':
+                    case "resume":
                         //  Resume Ladevorgang
-                        this.log.info('Resume charging for Charger.id: ' + tmpControl[2]);
+                        this.log.info(`Resume charging for Charger.id: ${tmpControl[2]}`);
                         this.resumeCharging(tmpControl[2]);
                         break;
-                    case 'reboot':
+                    case "reboot":
                         //  Reboot Charger
-                        this.log.info('Reboot Charger.id: ' + tmpControl[2]);
+                        this.log.info(`Reboot Charger.id: ${tmpControl[2]}`);
                         this.rebootCharging(tmpControl[2]);
                         break;
                     default:
-                        this.log.error('No command for Control found for: ' + id);
+                        this.log.error(`No command for Control found for: ${id}`);
                 }
             }
         } else {
@@ -628,9 +624,7 @@ class Easee extends utils.Adapter {
         dynamicCircuitCurrentP1 = 0;
         dynamicCircuitCurrentP2 = 0;
         dynamicCircuitCurrentP3 = 0;
-
     }
-
 
     /***********************************************************************
      * Funktionen zum erstellen der Objekte der Reading
@@ -1119,8 +1113,6 @@ class Easee extends utils.Adapter {
             },
             native: {},
         });
-
-
     }
 
     /*************** Session Reading ****************/
@@ -1129,38 +1121,38 @@ class Easee extends utils.Adapter {
         charger_session.forEach(async session => {
 
             //für jeden Monat errechnen wir das?
-            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month + '.totalEnergyUsage', {
-                type: 'state',
+            await this.setObjectNotExistsAsync(charger.id + ".session." + session.year + "." + session.month + ".totalEnergyUsage", {
+                type: "state",
                 common: {
-                    name: 'totalEnergyUsage',
-                    type: 'number',
-                    role: 'value',
+                    name: "totalEnergyUsage",
+                    type: "number",
+                    role: "value",
                     read: true,
                     write: false,
                 },
                 native: {},
             });
-            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month + '.totalEnergyUsage', session.totalEnergyUsage, true);
+            await this.setStateAsync(charger.id + ".session." + session.year + "." + session.month + ".totalEnergyUsage", session.totalEnergyUsage, true);
 
-            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.' + session.month + '.totalCost', {
-                type: 'state',
+            await this.setObjectNotExistsAsync(charger.id + ".session." + session.year + "." + session.month + ".totalCost", {
+                type: "state",
                 common: {
-                    name: 'totalCost',
-                    type: 'number',
-                    role: 'value',
+                    name: "totalCost",
+                    type: "number",
+                    role: "value",
                     read: true,
                     write: false,
                 },
                 native: {},
             });
-            await this.setStateAsync(charger.id + '.session.' + session.year + '.' + session.month + '.totalCost', session.totalCost, true);
+            await this.setStateAsync(charger.id + ".session." + session.year + "." + session.month + ".totalCost", session.totalCost, true);
 
-            await this.setObjectNotExistsAsync(charger.id + '.session.' + session.year + '.total_year', {
-                type: 'state',
+            await this.setObjectNotExistsAsync(charger.id + ".session." + session.year + ".total_year", {
+                type: "state",
                 common: {
-                    name: 'total_year',
-                    type: 'number',
-                    role: 'value',
+                    name: "total_year",
+                    type: "number",
+                    role: "value",
                     read: true,
                     write: false,
                 },
@@ -1174,15 +1166,15 @@ class Easee extends utils.Adapter {
         let tmpYearCount = 0;
         charger_session.forEach(session => {
             //Jahreszähler umhängen
-            this.log.debug('set session year data');
+            this.log.debug("set session year data");
             if (tmpYear != session.year) {
                 //neues Jahr setzen alles zurück
-                this.setStateAsync(charger.id + '.session.' + session.year + '.total_year', session.totalEnergyUsage, true);
+                this.setStateAsync(charger.id + ".session." + session.year + ".total_year", session.totalEnergyUsage, true);
                 tmpYearCount = session.totalEnergyUsage;
                 tmpYear = session.year;
             } else {
                 tmpYearCount = tmpYearCount + session.totalEnergyUsage;
-                this.setStateAsync(charger.id + '.session.' + session.year + '.total_year', tmpYearCount, true);
+                this.setStateAsync(charger.id + ".session." + session.year + ".total_year", tmpYearCount, true);
             }
         });
 
@@ -1378,30 +1370,24 @@ class Easee extends utils.Adapter {
 
         //wiFiSSID
         await this.setObjectNotExistsAsync(charger.id + '.config.wiFiSSID', {
-            type: 'state',
-            common: {
-                name: 'WiFi SSID name',
-                type: 'string',
-                role: 'text',
-                read: true,
-                write: true,
-            },
-            native: {},
+          type: 'state',
+          common: {
+            name: 'WiFi SSID name',
+            type: 'string',
+            role: 'text',
+            read: true,
+            write: true,
+          },
+          native: {},
         });
         this.subscribeStates(charger.id + '.config.wiFiSSID');
-
-
     }
 }
 
-// @ts-ignore parent is a valid property on module
 if (module.parent) {
-    // Export the constructor in compact mode
-    /**
-     * @param {Partial<utils.AdapterOptions>} [options={}]
-     */
-    module.exports = (options) => new Easee(options);
+  // Export the constructor in compact mode
+  module.exports = (options) => new Easee(options);
 } else {
-    // otherwise start the instance directly
-    new Easee();
+  // otherwise start the instance directly
+  new Easee();
 }

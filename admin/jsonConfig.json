@@ -12,17 +12,21 @@
                 },                
                 "_Donate": {
                     "type": "staticImage",
-                    "sm": 3,
-                    "md": 2,
-                    "lg": 1,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "href": "https://www.paypal.com/donate?hosted_button_id=AAFQ3WMM46LT8",
                     "src": "https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif"
                 },
                 "_DonationText": {
                     "type": "staticLink",
-                    "sm": 9,
-                    "md": 10,
-                    "lg": 11,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "If you like the adapter and want to support the further development, you can thank me with a donation under PayPal. You are also welcome to send me feature requests for future versions of the adapter.",
                     "href": "https://www.paypal.com/donate?hosted_button_id=AAFQ3WMM46LT8"
                 },
@@ -35,17 +39,21 @@
                 "username": {
                     "newLine": true,
                     "type": "text",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "Username",
-                    "help": "username to access Easee cloud"
+                    "help": "Username to access Easee cloud"
                 },
                 "client_secret": {
                     "type": "password",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "Password",
                     "help": "password of Easee cloud"
                 },
@@ -57,24 +65,32 @@
                 },
                 "polltime": {
                     "type": "number",
+                    "min": 360,
+                    "max": 86400,
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "polltime",
                     "help": "Poll interval in seconds"
                 },
                 "signalR": {
                     "type": "checkbox",
-                    "sm": 6,
-                    "md": 3,
-                    "lg": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "Use SignalR"
                 },
                 "logtype": {
                     "type": "checkbox",
-                    "sm": 6,
-                    "md": 3,
-                    "lg": 3,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "detailed info logging",
                     "help": "provide additional logging in info area"
                 }
