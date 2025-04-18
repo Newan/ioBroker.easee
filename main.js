@@ -405,7 +405,7 @@ onUnload(callback) {
 
             accessToken = response.data.accessToken;
             refreshToken = response.data.refreshToken;
-            expireTime = Date.now() + (response.data.expiresIn - 500);
+            expireTime = Date.now() + (response.data.expiresIn - 500) * 1000;
             this.log.debug(JSON.stringify(response.data));
             await this.setStateAsync('info.connection', true, true);
             return true;
@@ -430,7 +430,7 @@ onUnload(callback) {
             if (logtype) this.log.info('RefreshToken successful');
             accessToken = response.data.accessToken;
             refreshToken = response.data.refreshToken;
-            expireTime = Date.now() + (response.data.expiresIn - 500);
+            expireTime = Date.now() + (response.data.expiresIn - 500) * 1000;
             await this.setStateAsync('info.connection', true, true);
             this.log.debug(JSON.stringify(response.data));
         }).catch(async (error) => {
@@ -1164,9 +1164,9 @@ onUnload(callback) {
 
         let tmpYear = 1970;
         let tmpYearCount = 0;
+        //Jahreszähler umhängen
+        this.log.debug("set session year data");
         charger_session.forEach(session => {
-            //Jahreszähler umhängen
-            this.log.debug("set session year data");
             if (tmpYear != session.year) {
                 //neues Jahr setzen alles zurück
                 this.setStateAsync(charger.id + ".session." + session.year + ".total_year", session.totalEnergyUsage, true);
