@@ -68,6 +68,8 @@ dynamicCircuitCurrentPX -> All phases must be set within 500ms (script) otherwis
 ### 1.0.0
 * (Newan) Stable Version with SignalR
 
+[Older changelogs can be found there](CHANGELOG_OLD.md)
+
 ## Donation
 [![](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=L55UBQJKJEUJL)
 
