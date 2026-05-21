@@ -1,134 +1,134 @@
 {
-    "common": {
-        "name": "easee",
-        "version": "1.0.10",
-        "news": {
-            "1.0.10": {
-                "en": "fix version number",
-                "de": "versionsnummer geändert",
-                "ru": "исправить номер версии",
-                "pt": "corrigir o número da versão",
-                "nl": "vertaling:",
-                "fr": "correction du numéro de version",
-                "it": "numero di versione fix",
-                "es": "número de versión",
-                "pl": "wersja poprawna",
-                "uk": "фіксувати номер версії",
-                "zh-cn": "fix"
-            },            
-            "1.0.9": {
-                "en": "many changed by walburgf",
-                "de": "viele geändert von walburgf",
-                "ru": "много изменено walburgf",
-                "pt": "muitos mudou por walburgf",
-                "nl": "veel veranderd door walburg",
-                "fr": "beaucoup changés par walburgf",
-                "it": "molti cambiato da walburgf",
-                "es": "muchos cambiaron por walburgf",
-                "pl": "wielu z nich zmieniało się na walburgf",
-                "uk": "багато змінено walburgf",
-                "zh-cn": "倒数的改变"
-            }
-        },
-        "titleLang": {
-            "en": "Easee Wallbox API",
-            "de": "Easee Wallbox API",
-            "ru": "API-интерфейс Easy Wallbox",
-            "pt": "API Easee Wallbox",
-            "nl": "Easee Wallbox-API",
-            "fr": "API Easee Wallbox",
-            "it": "Facilita l'API Wallbox",
-            "es": "Easee Wallbox API",
-            "pl": "Easee Wallbox API",
-            "uk": "Easee Wallbox API",
-            "zh-cn": "Easee Wallbox API"
-        },
-        "desc": {
-            "en": "Communicates with the Easee Wallbox API",
-            "de": "Kommuniziert mit der Easee Wallbox API",
-            "ru": "Взаимодействует с API Easee Wallbox",
-            "pt": "Comunica-se com a API Easee Wallbox",
-            "nl": "Communiceert met de Easee Wallbox API",
-            "fr": "Communique avec l'API Easee Wallbox",
-            "it": "Comunica con l'API Easee Wallbox",
-            "es": "Se comunica con la API Easee Wallbox",
-            "pl": "Komunikuje się z API Easee Wallbox",
-            "uk": "Зв’язується з Easee Wallbox API",
-            "zh-cn": "与 Easee Wallbox API 通信"
-        },
-        "authors": [
-            "Newan <info@newan.de>"
-        ],
-        "keywords": [
-            "wallbox",
-            "easee",
-            "ioBroker"
-        ],
-        "licenseInformation": {
-          "type": "free",
-          "license": "MIT"
-        },
-        "platform": "Javascript/Node.js",
-        "icon": "easee.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/Newan/ioBroker.easee/master/admin/easee.png",
-        "readme": "https://github.com/Newan/ioBroker.easee/blob/master/README.md",
-        "loglevel": "info",
-        "tier": 3,
-        "mode": "daemon",
-        "type": "vehicle",
-        "compact": true,
-        "connectionType": "cloud",
-        "dataSource": "poll",
-        "adminUI": {
-          "config": "json"
-        },
-        "dependencies": [
-            {
-                "js-controller": ">=5.0.19"
-            }
-        ]
+  "common": {
+    "name": "easee",
+    "version": "1.0.10",
+    "news": {
+      "1.0.10": {
+        "en": "fix version number",
+        "de": "versionsnummer geändert",
+        "ru": "исправить номер версии",
+        "pt": "corrigir o número da versão",
+        "nl": "vertaling:",
+        "fr": "correction du numéro de version",
+        "it": "numero di versione fix",
+        "es": "número de versión",
+        "pl": "wersja poprawna",
+        "uk": "фіксувати номер версії",
+        "zh-cn": "fix"
+      },
+      "1.0.9": {
+        "en": "many changed by walburgf",
+        "de": "viele geändert von walburgf",
+        "ru": "много изменено walburgf",
+        "pt": "muitos mudou por walburgf",
+        "nl": "veel veranderd door walburg",
+        "fr": "beaucoup changés par walburgf",
+        "it": "molti cambiato da walburgf",
+        "es": "muchos cambiaron por walburgf",
+        "pl": "wielu z nich zmieniało się na walburgf",
+        "uk": "багато змінено walburgf",
+        "zh-cn": "倒数的改变"
+      }
     },
-    "globalDependencies": [
-        {
-            "admin": ">=6.0.0"
-        }
-    ],
-    "protectedNative": [
-        "client_secret"
-    ],
-    "encryptedNative": [
-        "client_secret"
-    ],
-    "native": {
-        "username": "+49",
-        "client_secret": "",
-        "polltime": 30,
-        "signalR": false,
-        "logtype": false
+    "titleLang": {
+      "en": "Easee Wallbox API",
+      "de": "Easee Wallbox API",
+      "ru": "API-интерфейс Easy Wallbox",
+      "pt": "API Easee Wallbox",
+      "nl": "Easee Wallbox-API",
+      "fr": "API Easee Wallbox",
+      "it": "Facilita l'API Wallbox",
+      "es": "Easee Wallbox API",
+      "pl": "Easee Wallbox API",
+      "uk": "Easee Wallbox API",
+      "zh-cn": "Easee Wallbox API"
     },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "If communication with easee works",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        }
+    "desc": {
+      "en": "Communicates with the Easee Wallbox API",
+      "de": "Kommuniziert mit der Easee Wallbox API",
+      "ru": "Взаимодействует с API Easee Wallbox",
+      "pt": "Comunica-se com a API Easee Wallbox",
+      "nl": "Communiceert met de Easee Wallbox API",
+      "fr": "Communique avec l'API Easee Wallbox",
+      "it": "Comunica con l'API Easee Wallbox",
+      "es": "Se comunica con la API Easee Wallbox",
+      "pl": "Komunikuje się z API Easee Wallbox",
+      "uk": "Зв’язується з Easee Wallbox API",
+      "zh-cn": "与 Easee Wallbox API 通信"
+    },
+    "authors": [
+      "Newan <info@newan.de>"
+    ],
+    "keywords": [
+      "wallbox",
+      "easee",
+      "ioBroker"
+    ],
+    "licenseInformation": {
+      "type": "free",
+      "license": "MIT"
+    },
+    "platform": "Javascript/Node.js",
+    "icon": "easee.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/Newan/ioBroker.easee/master/admin/easee.png",
+    "readme": "https://github.com/Newan/ioBroker.easee/blob/master/README.md",
+    "loglevel": "info",
+    "tier": 3,
+    "mode": "daemon",
+    "type": "vehicle",
+    "compact": true,
+    "connectionType": "cloud",
+    "dataSource": "poll",
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=6.0.11"
+      }
     ]
+  },
+  "globalDependencies": [
+    {
+      "admin": ">=6.0.0"
+    }
+  ],
+  "protectedNative": [
+    "client_secret"
+  ],
+  "encryptedNative": [
+    "client_secret"
+  ],
+  "native": {
+    "username": "+49",
+    "client_secret": "",
+    "polltime": 30,
+    "signalR": false,
+    "logtype": false
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "If communication with easee works",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
 }
