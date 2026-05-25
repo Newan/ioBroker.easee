@@ -103,8 +103,8 @@
     "native": {
         "username": "+49",
         "client_secret": "",
-        "polltime": 30,
-        "signalR": false,
+        "polltime": 300,
+        "signalR": true,
         "logtype": false
     },
     "objects": [],

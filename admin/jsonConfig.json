@@ -65,15 +65,15 @@
                 },
                 "polltime": {
                     "type": "number",
-                    "min": 360,
-                    "max": 86400,
+                    "min": 30,
+                    "max": 3600,
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
                     "lg": 4,
                     "xl": 4,
                     "label": "polltime",
-                    "help": "Poll interval in seconds"
+                    "help": "Poll interval in seconds. With SignalR enabled, 300-600s is enough since live updates arrive via WebSocket push."
                 },
                 "signalR": {
                     "type": "checkbox",
