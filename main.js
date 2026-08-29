@@ -189,12 +189,14 @@ onUnload(callback) {
           const tmpChargerState = await this.getChargerState(charger.id);
           //Lesen die config
           const tmpChargerConfig = await this.getChargerConfig(charger.id);
+          //Lesen den am Standort hinterlegten Ladepreis
+          const tmpChargerSite = await this.getChargerSite(charger.id);
 
           //Setzen die Daten der Charger
           await this.setNewStatusToCharger(charger, tmpChargerState);
 
           //Setzen die Config zum Charger
-          await this.setConfigStatus(charger, tmpChargerConfig);
+          await this.setConfigStatus(charger, tmpChargerConfig, tmpChargerSite);
 
           //setzen und erechnen der Energiedaten, aber gebremste
           if (roundCounter > minPollTimeEnergy / polltime) {
@@ -280,6 +282,21 @@ onUnload(callback) {
 
                         });
 
+                    } else if (tmpControl[4] == "costPerKwhExcludeVat" || tmpControl[4] == "vat") {
+                        const value = Number(state.val);
+                        if (!Number.isFinite(value) || value < 0 || (tmpControl[4] == "vat" && value >= 100)) {
+                            this.log.error(`Invalid charging price value: ${state.val}`);
+                            return;
+                        }
+                        this.getChargerSite(tmpControl[2]).then(async (site) => {
+                            const netPrice = tmpControl[4] == "costPerKwhExcludeVat"
+                                ? value
+                                : Number(site.costPerKwhExcludeVat);
+                            const vat = tmpControl[4] == "vat" ? value : Number(site.vat);
+                            await this.changeChargingPrice(tmpControl[2], site, netPrice, vat);
+                        }).catch((error) => {
+                            this.log.error(`Charging price update error: ${error.message}`);
+                        });
                     } else {
                         this.log.debug(`update config to API: ${id}`);
                         if (tmpControl[4] == "isEnabled") {
@@ -373,13 +390,32 @@ onUnload(callback) {
     }
 
     //Setzen alle Status für Config
-    async setConfigStatus(charger, charger_config) {
+    async setConfigStatus(charger, charger_config, charger_site) {
         await this.setStateAsync(charger.id + '.config.isEnabled', { val: charger_config.isEnabled, ack: true } );
         await this.setStateAsync(charger.id + '.config.phaseMode', { val: charger_config.phaseMode, ack: true });
         await this.setStateAsync(charger.id + '.config.ledStripBrightness', { val: charger_config.ledStripBrightness, ack: true });
         await this.setStateAsync(charger.id + '.config.smartButtonEnabled', { val: charger_config.smartButtonEnabled, ack: true });
         await this.setStateAsync(charger.id + '.config.wiFiSSID', { val: charger_config.wiFiSSID, ack: true });
         await this.setStateAsync(charger.id + '.config.maxChargerCurrent', { val: charger_config.maxChargerCurrent, ack: true });
+
+        if (charger_site) {
+            if (typeof charger_site.costPerKWh === 'number') {
+                await this.setStateAsync(charger.id + '.config.costPerKWh', { val: charger_site.costPerKWh, ack: true });
+            }
+            if (typeof charger_site.costPerKwhExcludeVat === 'number') {
+                await this.setStateAsync(charger.id + '.config.costPerKwhExcludeVat', { val: charger_site.costPerKwhExcludeVat, ack: true });
+            }
+            if (typeof charger_site.vat === 'number') {
+                await this.setStateAsync(charger.id + '.config.vat', { val: charger_site.vat, ack: true });
+            }
+
+            const currencyUnit = typeof charger_site.currencyId === 'string' && charger_site.currencyId
+                ? `${charger_site.currencyId}/kWh`
+                : undefined;
+            await this.extendObjectAsync(charger.id + '.config.costPerKWh', { common: { unit: currencyUnit, write: false } });
+            await this.extendObjectAsync(charger.id + '.config.costPerKwhExcludeVat', { common: { unit: currencyUnit, write: true } });
+            await this.extendObjectAsync(charger.id + '.config.vat', { common: { unit: '%', write: true } });
+        }
 
         //Values for sites
         await this.setStateAsync(charger.id + '.config.circuitMaxCurrentP1', { val: charger_config.circuitMaxCurrentP1, ack: true });
@@ -504,6 +540,34 @@ onUnload(callback) {
             this.log.error(error);
             throw new Error('Easee API error on charger session - stop refresh');
         });
+    }
+
+    async changeChargingPrice(charger_id, site, netPrice, vat) {
+        if (!site || site.id === undefined) {
+            throw new Error(`No site data available for charger ${charger_id}`);
+        }
+
+        const currencyId = typeof site.currencyId === 'string' ? site.currencyId : '';
+        if (!currencyId) {
+            throw new Error(`No currency available for site ${site.id}`);
+        }
+
+        if (!Number.isFinite(netPrice) || netPrice < 0 || !Number.isFinite(vat) || vat < 0 || vat >= 100) {
+            throw new Error('Invalid net charging price or VAT');
+        }
+        const grossPrice = netPrice * (1 + vat / 100);
+        await axios.post(apiUrl + '/api/sites/' + site.id + '/price', {
+            currencyId,
+            costPerKWh: grossPrice,
+            vat,
+            costPerKwhExcludeVat: netPrice,
+        }, {
+            headers: {'Authorization' : `Bearer ${accessToken}`}
+        });
+        await this.setStateAsync(charger_id + '.config.costPerKwhExcludeVat', { val: netPrice, ack: true });
+        await this.setStateAsync(charger_id + '.config.vat', { val: vat, ack: true });
+        await this.setStateAsync(charger_id + '.config.costPerKWh', { val: grossPrice, ack: true });
+        this.log.info('Charging price update successful');
     }
 
     async startCharging(id) {
@@ -1182,6 +1246,46 @@ onUnload(callback) {
 
     /*************** Config Reading ****************/
     async setAllConfigObjects(charger) {
+
+        //costPerKWh
+        await this.setObjectNotExistsAsync(charger.id + '.config.costPerKWh', {
+            type: 'state',
+            common: {
+                name: 'Charging price including VAT per kWh',
+                type: 'number',
+                role: 'value.price',
+                read: true,
+                write: false,
+            },
+            native: {},
+        });
+
+        await this.setObjectNotExistsAsync(charger.id + '.config.costPerKwhExcludeVat', {
+            type: 'state',
+            common: {
+                name: 'Charging price excluding VAT per kWh',
+                type: 'number',
+                role: 'value.price',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+        this.subscribeStates(charger.id + '.config.costPerKwhExcludeVat');
+
+        await this.setObjectNotExistsAsync(charger.id + '.config.vat', {
+            type: 'state',
+            common: {
+                name: 'Value added tax for charging price',
+                type: 'number',
+                role: 'value.tax',
+                read: true,
+                write: true,
+                unit: '%',
+            },
+            native: {},
+        });
+        this.subscribeStates(charger.id + '.config.vat');
 
         //isEnabled
         await this.setObjectNotExistsAsync(charger.id + '.config.isEnabled', {
