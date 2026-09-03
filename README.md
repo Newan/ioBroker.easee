@@ -35,6 +35,9 @@ dynamicCircuitCurrentPX -> All phases must be set within 500ms (script) otherwis
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+### 1.0.11-beta.5
+* replace the removed charger state endpoint with the Observations API and prevent SignalR failures from terminating the adapter
+
 ### 1.0.10 (2023-07-27)
 * (Newan) fix version number
 

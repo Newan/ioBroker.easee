@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "easee",
-        "version": "1.0.10",
+        "version": "1.0.11-beta.5",
         "news": {
+            "1.0.11-beta.5": {
+                "en": "Use the Observations API for charger state and prevent SignalR errors from terminating the adapter",
+                "de": "Observations-API fuer Ladestatus verwenden und Adapter-Absturz bei SignalR-Fehlern verhindern"
+            },
             "1.0.10": {
                 "en": "fix version number",
                 "de": "versionsnummer geändert",

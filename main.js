@@ -5,6 +5,11 @@ const utils = require("@iobroker/adapter-core");
 const axios = require("axios").default;
 const signalR = require("@microsoft/signalr");
 const objEnum = require("./lib/enum.js");
+const AxiosSignalRHttpClient = require("./lib/signalr-http-client.js");
+const {
+  CHARGER_STATE_OBSERVATION_IDS,
+  observationsToChargerState,
+} = require("./lib/observations.js");
 
 //Eigene Variablen
 const apiUrl = "https://api.easee.com";
@@ -15,8 +20,13 @@ let expireTime = Date.now();
 let polltime = 30;
 let logtype = false;
 const minPollTimeEnergy = 120;
+const tokenRefreshMarginSeconds = 60;
 let roundCounter = 0;
 const arrCharger = [];
+
+function errorMessage(error) {
+  return error instanceof Error ? error.message : String(error);
+}
 
 //Variable für dynamicCircuitCurrentPX
 let dynamicCircuitCurrentP1 = 0;
@@ -32,17 +42,24 @@ class Easee extends utils.Adapter {
     this.on("ready", this.onReady.bind(this));
     this.on("stateChange", this.onStateChange.bind(this));
     this.on("unload", this.onUnload.bind(this));
+    this.signalRConnection = null;
+    this.unloading = false;
   }
   /**
    * SignalR
    */
-  startSignal() {
+  async startSignal() {
+    if (this.unloading || this.signalRConnection !== null) {
+      return;
+    }
     const connection = new signalR.HubConnectionBuilder()
       .withUrl("https://streams.easee.com/hubs/chargers", {
         accessTokenFactory: () => accessToken,
+        httpClient: new AxiosSignalRHttpClient(),
       })
       .withAutomaticReconnect()
       .build();
+    this.signalRConnection = connection;
 
     connection.on("ProductUpdate", (data) => {
       //haben einen neuen Wert über SignalR erhalten
@@ -68,24 +85,52 @@ class Easee extends utils.Adapter {
             break;
           //case 6: JSON
         }
-        this.setStateAsync(tmpValueId, { val: data.value, ack: true });
+        this.setStateAsync(tmpValueId, { val: data.value, ack: true }).catch(
+          (error) =>
+            this.log.warn(
+              `SignalR state update failed: ${errorMessage(error)}`,
+            ),
+        );
       }
     });
 
-    connection.start().then(() => {
-      //for each charger subscribe SignalR
-      arrCharger.forEach((charger_id) => {
-        connection
-          .send(`SubscribeWithCurrentState`, charger_id, true)
-          .then(() => {
-            this.log.info(`Charger registrate in SignalR: ${charger_id}`);
-          });
-      });
+    connection.onclose((error) => {
+      if (this.signalRConnection === connection) {
+        this.signalRConnection = null;
+      }
+      if (!this.unloading) {
+        this.log.warn(
+          `SignalR connection closed: ${errorMessage(error || "unknown reason")}`,
+        );
+        this.scheduleSignalRReconnect();
+      }
     });
-    connection.onclose(() => {
-      this.log.error("SignalR Verbindung beendet!!!- restart");
+
+    try {
+      await connection.start();
+      for (const charger_id of arrCharger) {
+        await connection.send("SubscribeWithCurrentState", charger_id, true);
+        this.log.info(`Charger registered in SignalR: ${charger_id}`);
+      }
+    } catch (error) {
+      if (this.signalRConnection === connection) {
+        this.signalRConnection = null;
+      }
+      this.log.warn(
+        `SignalR start failed; REST polling remains active: ${errorMessage(error)}`,
+      );
+      this.scheduleSignalRReconnect();
+    }
+  }
+
+  scheduleSignalRReconnect() {
+    if (this.unloading) {
+      return;
+    }
+    clearTimeout(adapterIntervals.signalRReconnect);
+    adapterIntervals.signalRReconnect = setTimeout(() => {
       this.startSignal();
-    });
+    }, 30000);
   }
 
   /**
@@ -128,7 +173,7 @@ class Easee extends utils.Adapter {
         });
 
         //reset all to start
-        this.arrCharger = [];
+        arrCharger.length = 0;
 
         // starten den Statuszyklus der API neu
         await this.readAllStates();
@@ -141,22 +186,25 @@ class Easee extends utils.Adapter {
   }
 
   // Clear all Timeouts and inform users
-onUnload(callback) {
-  try {
+  onUnload(callback) {
+    this.unloading = true;
     clearTimeout(adapterIntervals.readAllStates);
     clearTimeout(adapterIntervals.updateDynamicCircuitCurrent);
-    this.log.info("Adapter easee cleaned up everything...");
-    this.setStateAsync("info.connection", false, true).then(() => {
-      callback();
-    }).catch((err) => {
-      this.log.error("Error setting state: " + err);
-      callback();
-    });
-  } catch (error) {
-    this.log.error("Error during unload: " + error);
-    callback();
+    clearTimeout(adapterIntervals.signalRReconnect);
+    Promise.resolve(this.signalRConnection?.stop())
+      .catch((error) =>
+        this.log.warn(`Error stopping SignalR: ${errorMessage(error)}`),
+      )
+      .then(() => this.setStateAsync("info.connection", false, true))
+      .catch((error) =>
+        this.log.error(`Error during unload: ${errorMessage(error)}`),
+      )
+      .finally(() => {
+        this.signalRConnection = null;
+        this.log.info("Adapter easee cleaned up everything...");
+        callback();
+      });
   }
-}
   /*****************************************************************************************/
   async readAllStates() {
     if (expireTime <= Date.now()) {
@@ -171,7 +219,7 @@ onUnload(callback) {
     //Lesen alle Charger aus
     const tmpAllChargers = await this.getAllCharger();
     if (tmpAllChargers != undefined) {
-      tmpAllChargers.forEach(async (charger) => {
+      for (const charger of tmpAllChargers) {
         //Prüfen ob wir das Object kennen
         if (!arrCharger.includes(charger.id)) {
           //setzen als erstes alle Objekte
@@ -210,23 +258,30 @@ onUnload(callback) {
             this.log.error(error.message);
           }
         }
-      });
-      } else {
-          this.log.warn("No Chargers found!");
-        }
-
-        //Energiedaten dürfen nur einmal in der Minute aufgerufen werden, daher müssen wir das bremsen
-        if (roundCounter > minPollTimeEnergy / polltime) {
-            this.log.debug(`Hole Energiedaten: ${roundCounter}`);
-            roundCounter = 0;
-        }
-        //Zählen die Runde!
-        roundCounter = roundCounter + 1;
-
-        //Melden das Update
-        await this.setStateAsync("lastUpdate", new Date().toLocaleTimeString(), true);
-        adapterIntervals.readAllStates = setTimeout(this.readAllStates.bind(this), polltime * 1000);
+      }
+    } else {
+      this.log.warn("No Chargers found!");
     }
+
+    //Energiedaten dürfen nur einmal in der Minute aufgerufen werden, daher müssen wir das bremsen
+    if (roundCounter > minPollTimeEnergy / polltime) {
+      this.log.debug(`Hole Energiedaten: ${roundCounter}`);
+      roundCounter = 0;
+    }
+    //Zählen die Runde!
+    roundCounter = roundCounter + 1;
+
+    //Melden das Update
+    await this.setStateAsync(
+      "lastUpdate",
+      new Date().toLocaleTimeString(),
+      true,
+    );
+    adapterIntervals.readAllStates = setTimeout(
+      this.readAllStates.bind(this),
+      polltime * 1000,
+    );
+  }
 
     //Is called if a subscribed state changes
     onStateChange(id, state) {
@@ -405,14 +460,20 @@ onUnload(callback) {
 
             accessToken = response.data.accessToken;
             refreshToken = response.data.refreshToken;
-            expireTime = Date.now() + (response.data.expiresIn - 500);
-            this.log.debug(JSON.stringify(response.data));
+            expireTime =
+              Date.now() +
+              Math.max(
+                Number(response.data.expiresIn) - tokenRefreshMarginSeconds,
+                0,
+              ) *
+                1000;
+            this.log.debug('Easee access token received');
             await this.setStateAsync('info.connection', true, true);
             return true;
         } catch (error) {
             this.log.error('Api login error - check Username and password');
             if (typeof error === 'string') {
-                this.log.error(error);
+                this.log.error(errorMessage(error));
             } else if (error instanceof Error) {
                 this.log.error(error.message);
             }
@@ -430,12 +491,18 @@ onUnload(callback) {
             if (logtype) this.log.info('RefreshToken successful');
             accessToken = response.data.accessToken;
             refreshToken = response.data.refreshToken;
-            expireTime = Date.now() + (response.data.expiresIn - 500);
+            expireTime =
+              Date.now() +
+              Math.max(
+                Number(response.data.expiresIn) - tokenRefreshMarginSeconds,
+                0,
+              ) *
+                1000;
             await this.setStateAsync('info.connection', true, true);
-            this.log.debug(JSON.stringify(response.data));
+            this.log.debug('Easee access token refreshed');
         }).catch(async (error) => {
             this.log.error('RefreshToken error');
-            this.log.error(error);
+            this.log.error(errorMessage(error));
             await this.setStateAsync('info.connection', false, true);
         });
     }
@@ -449,21 +516,23 @@ onUnload(callback) {
             this.log.debug(JSON.stringify(response.data));
             return response.data;
         }).catch((error) => {
-            this.log.error(error);
+            this.log.error(errorMessage(error));
         });
     }
 
     // Lese den Charger aus
     async getChargerState(charger_id){
-        return await axios.get(apiUrl + '/api/chargers/' + charger_id +'/state',
-            { headers: {'Authorization' : `Bearer ${accessToken}`}
+        return await axios.get(apiUrl + '/state/' + charger_id + '/observations',
+            {
+                headers: {'Authorization' : `Bearer ${accessToken}`},
+                params: {ids: CHARGER_STATE_OBSERVATION_IDS.join(',')}
             }).then(response => {
-            this.log.debug('Charger status ausgelesen mit id: ' + charger_id);
+            this.log.debug('Charger observations ausgelesen mit id: ' + charger_id);
             this.log.debug(JSON.stringify(response.data));
-            return response.data;
+            return observationsToChargerState(response.data);
         }).catch((error) => {
-            this.log.error(error);
-            throw new Error('Easee API error on charger state - stop refresh');
+            this.log.error(errorMessage(error));
+            throw new Error('Easee API error on charger observations - stop refresh');
         });
     }
 
