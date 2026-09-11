@@ -1,8 +1,24 @@
 {
     "common": {
         "name": "easee",
-        "version": "1.0.10",
+        "version": "1.0.11-beta.8",
         "news": {
+            "1.0.11-beta.8": {
+                "en": "Add RFID Tags section in adapter settings to assign names to RFID chip tokens; the resolved name is written to the new state status.userIdTokenName",
+                "de": "Neuer Bereich \"RFID-Chips\" in den Adaptereinstellungen zur Namensvergabe für RFID-Chip-Tokens; der aufgelöste Name wird in den neuen State status.userIdTokenName geschrieben"
+            },
+            "1.0.11-beta.7": {
+                "en": "Read the ID token of a scanned RFID chip via SignalR into the new state status.userIdToken",
+                "de": "ID-Token eines gescannten RFID-Chips wird per SignalR in den neuen State status.userIdToken geschrieben"
+            },
+            "1.0.11-beta.6": {
+                "en": "API errors no longer stop polling permanently: failed requests are now retried automatically with exponential backoff",
+                "de": "API-Fehler stoppen das Polling nicht mehr dauerhaft: fehlgeschlagene Anfragen werden jetzt automatisch mit exponentiellem Backoff wiederholt"
+            },
+            "1.0.11-beta.5": {
+                "en": "Use the Observations API for charger state and prevent SignalR errors from terminating the adapter",
+                "de": "Observations-API fuer Ladestatus verwenden und Adapter-Absturz bei SignalR-Fehlern verhindern"
+            },
             "1.0.10": {
                 "en": "fix version number",
                 "de": "versionsnummer geändert",
@@ -105,7 +121,8 @@
         "client_secret": "",
         "polltime": 30,
         "signalR": false,
-        "logtype": false
+        "logtype": false,
+        "rfidTags": []
     },
     "objects": [],
     "instanceObjects": [

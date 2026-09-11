@@ -93,6 +93,37 @@
                     "xl": 4,
                     "label": "detailed info logging",
                     "help": "provide additional logging in info area"
+                },
+                "_Headline4": {
+                    "newLine": true,
+                    "type": "header",
+                    "size": 2,
+                    "text": "RFID Tags"
+                },
+                "rfidTags": {
+                    "newLine": true,
+                    "type": "table",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "label": "RFID Tags",
+                    "help": "Assign a name to each RFID chip token so it can be identified in ioBroker states and scripts",
+                    "items": [
+                        {
+                            "type": "text",
+                            "attr": "token",
+                            "title": "Token",
+                            "width": "50%"
+                        },
+                        {
+                            "type": "text",
+                            "attr": "name",
+                            "title": "Name",
+                            "width": "50%"
+                        }
+                    ]
                 }
             }
         }

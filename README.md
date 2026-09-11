@@ -35,6 +35,18 @@ dynamicCircuitCurrentPX -> All phases must be set within 500ms (script) otherwis
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+### 1.0.11-beta.8
+* new "RFID Tags" section in the adapter settings to assign a name to each RFID chip token; the resolved name is written to the new state `status.userIdTokenName`
+
+### 1.0.11-beta.7
+* the ID token of a scanned RFID chip is now read via SignalR into the new state `status.userIdToken` (byte-reversed variant from older firmware is normalized to match)
+
+### 1.0.11-beta.6
+* API errors (e.g. 404/429/503/504) on the charger state/config/site/session polling no longer stop that polling permanently; failed requests are retried automatically with exponential backoff (start ~30s, cap 5min)
+
+### 1.0.11-beta.5
+* replace the removed charger state endpoint with the Observations API and prevent SignalR failures from terminating the adapter
+
 ### 1.0.10 (2023-07-27)
 * (Newan) fix version number
 
