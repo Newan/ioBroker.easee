@@ -43,6 +43,11 @@ iobroker url 'https://github.com/NCIceWolf/ioBroker.easee/tarball/master' easee
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+### 1.0.20 (2026-10-14) – Fork by NCIceWolf
+* (NCIceWolf) Add Node.js version 26.x to workflow matrix by @NCIceWolf in https://github.com/NCIceWolf/ioBroker.easee/pull/220
+* (NCIceWolf) Update GitHub Actions workflow and Node.js engine version by @NCIceWolf in https://github.com/NCIceWolf/ioBroker.easee/pull/223
+* (dependabot) Updated many many dependencies
+
 ### 1.0.19 (2026-09-05) – Fork by NCIceWolf
 * (NCIceWolf) updated dependencies
 * (NCIceWolf) switched reading endpoints for charger states from "State" to "Get Observations" (changed by Easee on 01.09.26)
