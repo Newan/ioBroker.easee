@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "easee",
-        "version": "1.0.19-ncicewolf",
+        "version": "1.0.20-ncicewolf",
         "news": {
+			"1.0.20-ncicewolf": {
+                "en": "Updated dependencies and introduced Nodejs version 26.x to testing",
+                "de": "Abhängigkeiten aktualisiert und Nodejs Version 26.x in die Test-Workflows eingefügt"
+            },
 			"1.0.19-ncicewolf": {
                 "en": "Switched reading endpoints for charger states from State to Get Observations (Easee-API change on 01.09.26)",
                 "de": "Abruf des Ladestatus von 'State' auf den 'Get Observations' Endpunkt umgestellt (Easee-API Änderung vom 01.09.26)"
