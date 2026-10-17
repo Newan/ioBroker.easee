@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "easee",
-        "version": "1.0.10",
+        "version": "1.0.20-ncicewolf",
         "news": {
+			"1.0.20-ncicewolf": {
+                "en": "Updated dependencies and introduced Nodejs version 26.x to testing",
+                "de": "Abhängigkeiten aktualisiert und Nodejs Version 26.x in die Test-Workflows eingefügt"
+            },
+			"1.0.19-ncicewolf": {
+                "en": "Switched reading endpoints for charger states from State to Get Observations (Easee-API change on 01.09.26)",
+                "de": "Abruf des Ladestatus von 'State' auf den 'Get Observations' Endpunkt umgestellt (Easee-API Änderung vom 01.09.26)"
+            },
+			"1.0.18-ncicewolf": {
+                "en": "Updated dependencies",
+                "de": "Paket-Aktualisierungen"
+            },
             "1.0.10": {
                 "en": "fix version number",
                 "de": "versionsnummer geändert",
@@ -15,19 +27,6 @@
                 "pl": "wersja poprawna",
                 "uk": "фіксувати номер версії",
                 "zh-cn": "fix"
-            },            
-            "1.0.9": {
-                "en": "many changed by walburgf",
-                "de": "viele geändert von walburgf",
-                "ru": "много изменено walburgf",
-                "pt": "muitos mudou por walburgf",
-                "nl": "veel veranderd door walburg",
-                "fr": "beaucoup changés par walburgf",
-                "it": "molti cambiato da walburgf",
-                "es": "muchos cambiaron por walburgf",
-                "pl": "wielu z nich zmieniało się na walburgf",
-                "uk": "багато змінено walburgf",
-                "zh-cn": "倒数的改变"
             }
         },
         "titleLang": {
@@ -61,8 +60,7 @@
         ],
         "keywords": [
             "wallbox",
-            "easee",
-            "ioBroker"
+            "easee"
         ],
         "licenseInformation": {
           "type": "free",
@@ -85,15 +83,15 @@
         },
         "dependencies": [
             {
-                "js-controller": ">=5.0.19"
+                "js-controller": ">=6.0.11"
             }
+        ],
+        "globalDependencies": [
+			{
+				"admin": ">=7.6.20"
+			}
         ]
     },
-    "globalDependencies": [
-        {
-            "admin": ">=6.0.0"
-        }
-    ],
     "protectedNative": [
         "client_secret"
     ],
@@ -103,9 +101,8 @@
     "native": {
         "username": "+49",
         "client_secret": "",
-        "polltime": 30,
-        "signalR": false,
-        "logtype": false
+        "polltime": 300,
+        "signalR": true
     },
     "objects": [],
     "instanceObjects": [

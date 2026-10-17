@@ -2,15 +2,15 @@
 {
     "compileOnSave": true,
     "compilerOptions": {
-        // do not compile anything, this file is just to configure type checking
+        "module": "Node16",
+        "moduleResolution": "node16",
         "noEmit": true,
 
         // check JS files
         "allowJs": true,
         "checkJs": true,
 
-        "module": "commonjs",
-        "moduleResolution": "node",
+        // Improve compatibility between CommonJS and ES modules
         "esModuleInterop": true,
         // this is necessary for the automatic typing of the adapter config
         "resolveJsonModule": true,
@@ -31,9 +31,11 @@
     },
     "include": [
         "**/*.js",
+        "**/*.mjs",
         "**/*.d.ts"
     ],
     "exclude": [
-        "node_modules/**"
+        "node_modules/**",
+        "build"
     ]
 }

@@ -1,9 +1,10 @@
 {
-    "extends": "../tsconfig.json",
-    "compilerOptions": {
-        "noImplicitAny": false
-    },
-    "include": [
-        "./**/*.js"
-    ]
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "node16",
+    "moduleResolution": "node16",
+    "noImplicitAny": false,
+    "ignoreDeprecations": "6.0"
+  },
+  "include": ["./**/*.js"]
 }

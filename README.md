@@ -1,33 +1,41 @@
 ![Logo](admin/easee.png)
-# ioBroker.easee
+# ioBroker.easee - NCIceWolf Fork
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.easee.svg)](https://www.npmjs.com/package/iobroker.easee)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.easee.svg)](https://www.npmjs.com/package/iobroker.easee)
-![Number of Installations (latest)](http://iobroker.live/badges/easee-installed.svg)
-![Number of Installations (stable)](http://iobroker.live/badges/easee-stable.svg)
-[![Dependency Status](https://img.shields.io/david/Newan/iobroker.easee.svg)](https://david-dm.org/Newan/iobroker.easee)
-[![Known Vulnerabilities](https://snyk.io/test/github/Newan/ioBroker.easee/badge.svg)](https://snyk.io/test/github/Newan/ioBroker.easee)
+[![GitHub release](https://img.shields.io/github/v/release/NCIcewolf/ioBroker.easee?include_prereleases)](https://github.com/NCIceWolf/ioBroker.easee/releases)
+[![Last commit](https://img.shields.io/github/last-commit/NCIcewolf/ioBroker.easee)](https://github.com/NCIcewolf/ioBroker.easee/commits)
+[![License](https://img.shields.io/github/license/NCIcewolf/ioBroker.easee)](LICENSE)
 
-[![NPM](https://nodei.co/npm/iobroker.easee.png?downloads=true)](https://nodei.co/npm/iobroker.easee/)
+> **Fork-Description:** This Fork offers updates and patches for the unmaintained [Newan/ioBroker.easee](https://github.com/Newan/ioBroker.easee)-Adapter
+> (last Upstream-Release **1.0.10 in Juli 2023**).
 
-**Tests:** ![Test and Release](https://github.com/Newan/ioBroker.easee/workflows/Test%20and%20Release/badge.svg)
+## Easee Wallbox Adapter for ioBroker
 
-## easee adapter for ioBroker
+Adapter to connect ioBroker to Easee Wallbox API (Cloud, not local!) to deliver status- and configuration data,
+as well as offering the capability to control one or more wallboxes.
 
-Adapter to connect Easee Wallbox
+## Installation
+
+```bash
+iobroker url 'https://github.com/NCIceWolf/ioBroker.easee/tarball/master' easee
+```
 
 ## Help
 
-chargerOpMode =
-    Offline: 0,
-    Disconnected: 1,
-    AwaitingStart: 2,
-    Charging: 3,
-    Completed: 4,
-    Error: 5,
-    ReadyToCharge: 6
+`chargerOpMode`-Codes:
 
-dynamicCircuitCurrentPX -> All phases must be set within 500ms (script) otherwise the phase will be set to 0.    
+| Code | Description |
+|---|---|
+| 0 | Offline |
+| 1 | Disconnected |
+| 2 | AwaitingStart |
+| 3 | Charging |
+| 4 | Completed |
+| 5 | Error |
+| 6 | ReadyToCharge |
+| 7 | AwaitingAuthentication |
+| 8 | DeAuthenticating |
+
+`dynamicCircuitCurrentPX` -> All phases must be set within 500ms (script) otherwise all phases will be set to 0.    
 
 
 ## Changelog
@@ -35,6 +43,50 @@ dynamicCircuitCurrentPX -> All phases must be set within 500ms (script) otherwis
   Placeholder for the next version (at the beginning of the line):
   ### **WORK IN PROGRESS**
 -->
+### 1.0.20 (2026-10-14) – Fork by NCIceWolf
+* (NCIceWolf) Add Node.js version 26.x to workflow matrix by @NCIceWolf in https://github.com/NCIceWolf/ioBroker.easee/pull/220
+* (NCIceWolf) Update GitHub Actions workflow and Node.js engine version by @NCIceWolf in https://github.com/NCIceWolf/ioBroker.easee/pull/223
+* (dependabot) Updated many many dependencies
+
+### 1.0.19 (2026-09-05) – Fork by NCIceWolf
+* (NCIceWolf) updated dependencies
+* (NCIceWolf) switched reading endpoints for charger states from "State" to "Get Observations" (changed by Easee on 01.09.26)
+* (NCIceWolf) added Easee observation mapping
+
+### 1.0.18 (2026-07-10) – Fork by NCIceWolf
+* (NCIceWolf) updated dependencies
+
+### 1.0.17 (2026-06-13) – Fork by NCIceWolf
+* (NCIceWolf) updated dependencies
+* (NCIceWolf) changed debugging and removed unnecessary "detailed info logging"
+* (NCIceWolf) Reworked SignalR to only stay active while a car is connected
+
+### 1.0.16 (2026-06-08) – Fork by NCIceWolf
+* (NCIceWolf) updated dependencies
+* (NCIceWolf) Refactor comments and improve error handling
+* (NCIceWolf) Fix ESLint errors and code quality issues
+* (NCIceWolf) Fix SignalR issues and set SignalR as default
+* (NCIceWolf) Update dynamicCircuitCurrentPX timing requirement to 500ms
+
+### 1.0.15 (2026-05-23) – Fork by NCIceWolf
+* (NCIceWolf) updated dependencies
+* (NCIceWolf) Refactor comments and improve error handling
+* (NCIceWolf) Fix ESLint errors and code quality issues
+* (NCIceWolf) Fix circuitMaxCurrentP2 assignment
+* (NCIceWolf) Update dynamicCircuitCurrentPX timing requirement to 1000ms
+
+### 1.0.14 (2026-01-06) – Fork by NCIceWolf
+* (NCIceWolf) updated dependencies
+* (NCIceWolf) updated copyright years
+* (NCIceWolf) updated dependancy schedules
+* (NCIceWolf) changed CodeQL analysis to advanced
+  
+### 1.0.12 (2025-09-01) – Fork by NCIceWolf
+* (NCIceWolf) updated dependencies
+
+### 1.0.11 (2025-08-01) – Fork by NCIceWolf
+* (NCIceWolf) updated quite some dependencies
+
 ### 1.0.10 (2023-07-27)
 * (Newan) fix version number
 
@@ -68,13 +120,10 @@ dynamicCircuitCurrentPX -> All phases must be set within 500ms (script) otherwis
 ### 1.0.0
 * (Newan) Stable Version with SignalR
 
-## Donation
-[![](https://www.paypalobjects.com/de_DE/DE/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=L55UBQJKJEUJL)
-
 ## License
 MIT License
 
-Copyright (c) 2025 Newan <iobroker@newan.de>
+Copyright (c) 2026 Newan <iobroker@newan.de>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

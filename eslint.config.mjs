@@ -24,7 +24,20 @@ export default [
     {
         // you may disable some 'jsdoc' warnings - but using jsdoc is highly recommended
         // as this improves maintainability. jsdoc warnings will not block buiuld process.
+        files: ["**/*.js"],
+        
         rules: {
+            "jsdoc/check-tag-names": [
+                "warn",
+                {
+                    typed: false,
+                },
+            ],
+
+            // Keep type-bearing JSDoc declarations enabled in JavaScript.
+            "jsdoc/no-types": "off",
+
+            // Optional:
             // 'jsdoc/require-jsdoc': 'off',
         },
     },

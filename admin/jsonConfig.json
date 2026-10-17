@@ -1,5 +1,6 @@
 {
     "i18n": true,
+    "type": "panel",
     "items":{
         "_options": {
             "type": "panel",
@@ -10,26 +11,6 @@
                     "size": 2,
                     "text": "Donate"
                 },                
-                "_Donate": {
-                    "type": "staticImage",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 4,
-                    "href": "https://www.paypal.com/donate?hosted_button_id=AAFQ3WMM46LT8",
-                    "src": "https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif"
-                },
-                "_DonationText": {
-                    "type": "staticLink",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 4,
-                    "label": "If you like the adapter and want to support the further development, you can thank me with a donation under PayPal. You are also welcome to send me feature requests for future versions of the adapter.",
-                    "href": "https://www.paypal.com/donate?hosted_button_id=AAFQ3WMM46LT8"
-                },
                 "_Headline2": {
                     "newLine": true,
                     "type": "header",
@@ -55,7 +36,7 @@
                     "lg": 4,
                     "xl": 4,
                     "label": "Password",
-                    "help": "password of Easee cloud"
+                    "help": "Password of Easee cloud"
                 },
                 "_Headline3": {
                     "newLine": true,
@@ -65,15 +46,15 @@
                 },
                 "polltime": {
                     "type": "number",
-                    "min": 360,
-                    "max": 86400,
+                    "min": 30,
+                    "max": 3600,
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
                     "lg": 4,
                     "xl": 4,
                     "label": "polltime",
-                    "help": "Poll interval in seconds"
+                    "help": "Poll interval in seconds. With SignalR enabled, 300-600s is enough since live updates arrive via WebSocket push."
                 },
                 "signalR": {
                     "type": "checkbox",
@@ -83,16 +64,6 @@
                     "lg": 4,
                     "xl": 4,
                     "label": "Use SignalR"
-                },
-                "logtype": {
-                    "type": "checkbox",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 4,
-                    "label": "detailed info logging",
-                    "help": "provide additional logging in info area"
                 }
             }
         }
